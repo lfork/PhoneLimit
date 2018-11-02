@@ -1,24 +1,16 @@
 package com.lfork.phonelimitadvanced.main
 
 import android.os.Bundle
-import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
-import android.util.Log
-import com.lfork.phonelimitadvanced.CallBack
-import com.lfork.phonelimitadvanced.PLShell
+import com.lfork.phonelimitadvanced.limit.PLShell
 import com.lfork.phonelimitadvanced.PermissionManager
 import com.lfork.phonelimitadvanced.PermissionManager.requestStoragePermission
 import com.lfork.phonelimitadvanced.R
-import com.lfork.phonelimitadvanced.util.FileHelper
+import com.lfork.phonelimitadvanced.limit.PhoneLimitController
 import com.lfork.phonelimitadvanced.util.FileHelper.listDirectory
 import com.lfork.phonelimitadvanced.util.ToastUtil
-import com.stericson.RootShell.RootShell
-import com.stericson.RootShell.execution.Command
-import com.stericson.RootTools.RootTools
 import kotlinx.android.synthetic.main.main_act.*
-import java.io.File
-import java.lang.StringBuilder
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,29 +47,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
         btn_execute_shell.setOnClickListener {
-            if(!TextUtils.isEmpty(args_input.text.toString())){
-//                PLShell.shellExec(args_input.text.toString())
-//                sample_text.text = PLShell.execRootCmd(args_input.text.toString())
-                PLShell.asyncExecRootCmd(args_input.text.toString(),object : CallBack<String> {
-                    override fun succeed(result: String) {
-                        Log.d("ShellTest2", result)
-                        runOnUiThread {
-                            sample_text.text=result
-                        }
-                    }
-
-                    override fun failed(log: String) {
-                    }
-                })
-            } else{
+            if (!TextUtils.isEmpty(args_input.text.toString())) {
+                sample_text.text = PLShell.execRootCmd(args_input.text.toString())
             }
-          }
+        }
 
+        btn_start.setOnClickListener {
+           PhoneLimitController.startLimit()
+            ToastUtil.showLong(applicationContext, "限制已开启")
+
+        }
+
+        btn_close.setOnClickListener {
+            PhoneLimitController.closeLimit()
+            ToastUtil.showLong(applicationContext, "限制已解除")
+        }
 
 
 
         requestStoragePermission(applicationContext, REQUEST_STORAGE_PERMISSION, this);
     }
+
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -94,7 +85,6 @@ class MainActivity : AppCompatActivity() {
      * which is packaged with this application.
      */
     external fun stringFromJNI(): String
-
 
 
 }
