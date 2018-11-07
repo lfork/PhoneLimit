@@ -85,7 +85,6 @@ object PermissionManager {
     fun isGrantedStoragePermission(context: Context): Boolean {
         val checkCallPhonePermission =
             ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
         return checkCallPhonePermission == PackageManager.PERMISSION_GRANTED
 
     }

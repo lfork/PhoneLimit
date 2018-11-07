@@ -72,56 +72,6 @@ object PLShell {
         return result
     }
 
-    /**
-     * 异步执行命令
-     */
-    fun asyncExecRootCmd(cmd: String, callBack: CallBack<String>) {
-        val rootShell = Runtime.getRuntime().exec("su")// 经过Root处理的android系统即有su命令
-        val dos = DataOutputStream(rootShell.outputStream)
-        val dis = DataInputStream(rootShell.inputStream)
-        var result = ""
-        Log.d(TAG + "2", "开始执行shell命令")
-        try {
-            //处理shell输出的信息
-            Log.i(TAG + "1.0", cmd)
-            dos.writeBytes(cmd + "\n")
-            dos.flush()
-//                dos.writeBytes("exit\n")
-//                dos.flush()
-            var line: String? = dis.readLine()
-            while ((line) != null) {
-                Log.d("TAG", line)
-                result += line + "\n"
-                line = dis.readLine()
-            }
-            Log.d(TAG + "2", "执行shell命令结束")
-            callBack.succeed(result)
-            rootShell.waitFor()
-
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-//                if (dos != null) {
-//                    try {
-//                        dos.close()
-//                    } catch (e: IOException) {
-//                        e.printStackTrace()
-//                    }
-//
-//                }
-//                if (dis != null) {
-//                    try {
-//                        dis.close()
-//                    } catch (e: IOException) {
-//                        e.printStackTrace()
-//                    }
-//
-//                }
-        }
-
-
-    }
 
 
 }
