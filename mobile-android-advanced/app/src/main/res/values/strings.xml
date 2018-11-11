@@ -5,4 +5,7 @@
     <string name="execute_shell">Execute Shell</string>
     <string name="start_limit">Start Limit</string>
     <string name="close_limit">close limit</string>
+    <string name="principle_tips">
+        说明：PhoneLimit Pro主要是通过限制网络数据的方式来限制对手机的访问的。所以限制开启/关闭成功后，用户还需要<font color="#DC143C"><b>开关一次飞行模式</b></font>来刷新手机的网络状态，才能保证生效。
+    </string>
 </resources>

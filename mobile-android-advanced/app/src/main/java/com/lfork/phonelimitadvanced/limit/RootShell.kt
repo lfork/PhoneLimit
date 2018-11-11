@@ -8,8 +8,7 @@ import java.io.*
  *
  * Created by 98620 on 2018/10/30.
  */
-object PLShell {
-
+object RootShell {
 
     const val MOUNT_READ_WRITE = "mount -o rw,remount /system"
 
@@ -26,6 +25,7 @@ object PLShell {
      * root 后 shell命令的正确打开方式
      */
     // 执行命令并且输出结果
+    @Synchronized
     fun execRootCmd(cmd: String): String {
         var result = ""
         var dos: DataOutputStream? = null
@@ -70,6 +70,17 @@ object PLShell {
             }
         }
         return result
+    }
+
+    fun setAirPlaneMode(enable: Boolean) {
+        val mode = if (enable) 1 else 0
+        val cmd = "settings put global airplane_mode_on $mode"
+        try {
+            Runtime.getRuntime().exec(cmd)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
     }
 
 
