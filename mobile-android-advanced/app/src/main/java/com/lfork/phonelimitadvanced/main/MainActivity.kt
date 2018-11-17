@@ -36,13 +36,18 @@ class MainActivity : AppCompatActivity() {
 
         // Example of a call to a native method
         // sample_text.text = stringFromJNI()
-
         btn_start.setOnClickListener {
-            startLimitService()
+            if (!TextUtils.isEmpty(editText.text.toString())) {
+                startLimit(editText.text.toString().toLong())
+            } else{
+                startLimit()
+            }
+
+
         }
 
         btn_close.setOnClickListener {
-          closeLimitService()
+            closeLimit()
         }
 
 //        test_recycle.layoutManager = LinearLayoutManager(this)
@@ -66,15 +71,15 @@ class MainActivity : AppCompatActivity() {
 
                 override fun autoUnlocked(msg: String) {
                     runOnUiThread {
-                        remain_time_text.text=msg
-                        closeLimitService()
+                        remain_time_text.text = msg
+                        closeLimit()
                     }
                 }
 
                 override fun forceUnlocked(msg: String) {
                     runOnUiThread {
-                        remain_time_text.text=msg
-                        closeLimitService()
+                        remain_time_text.text = msg
+                        closeLimit()
                     }
                 }
 
@@ -82,31 +87,18 @@ class MainActivity : AppCompatActivity() {
                     runOnUiThread {
                         //刷新剩余时间
                         Log.d("timeTest", "剩余时间${timeSeconds}秒")
-                        remain_time_text.text="剩余时间${timeSeconds}秒"
+                        remain_time_text.text = "剩余时间${timeSeconds}秒"
                     }
                 }
             };
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
-
         }
     }
 
-    private fun startLimitService(){
+    private fun startLimit(limitTime: Long = 1L) {
         bindService()
-        startLimit()
-
-    }
-
-    private fun closeLimitService(){
-        closeLimit()
-        unBindService()
-    }
-
-
-    private fun startLimit() {
-
         if (!PermissionManager.isGrantedStoragePermission(applicationContext)) {
             ToastUtil.showShort(this, "请给与程序需要的权限")
             requestStoragePermission(applicationContext, REQUEST_STORAGE_PERMISSION, this);
@@ -122,19 +114,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        var limitTime = 1L
-        if (!TextUtils.isEmpty(editText.text.toString())) {
-            limitTime = editText.text.toString().toLong()
-        }
-
         val startIntent = Intent(this, LimitService::class.java)
         startIntent.putExtra("limit_time", limitTime)
         this.startService(startIntent)
     }
 
     private fun closeLimit() {
+        unBindService()
         val stopIntent = Intent(this, LimitService::class.java)
         this.stopService(stopIntent)
+    }
+
+    private fun checkAndRecoveryUnfinishedLimit() {
+        //
     }
 
     private fun bindService() {
@@ -152,7 +144,11 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_STORAGE_PERMISSION) {
             if (PermissionManager.isGrantedStoragePermission(applicationContext)) {
                 ToastUtil.showShort(applicationContext, "获取文件访问权限成功")
-                startLimit()
+                if (!TextUtils.isEmpty(editText.text.toString())) {
+                    startLimit(editText.text.toString().toLong())
+                } else{
+                    startLimit()
+                }
             }
         }
     }
@@ -162,6 +158,4 @@ class MainActivity : AppCompatActivity() {
      * which is packaged with this application.
      */
     external fun stringFromJNI(): String
-
-
 }
