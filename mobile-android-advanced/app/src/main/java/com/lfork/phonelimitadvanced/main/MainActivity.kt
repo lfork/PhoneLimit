@@ -1,6 +1,6 @@
 package com.lfork.phonelimitadvanced.main
 
-import android.content.Intent
+import android.content.*
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
@@ -10,10 +10,7 @@ import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.limit.LimitService
 import com.lfork.phonelimitadvanced.util.ToastUtil
 import kotlinx.android.synthetic.main.main_act.*
-import android.content.ComponentName
-import android.content.Context
 import android.os.IBinder
-import android.content.ServiceConnection
 import android.util.Log
 import com.lfork.phonelimitadvanced.limit.LimitStateListener
 import com.lfork.phonelimitadvanced.util.SystemToggle
@@ -38,21 +35,21 @@ class MainActivity : AppCompatActivity() {
         // sample_text.text = stringFromJNI()
         btn_start.setOnClickListener {
             if (!TextUtils.isEmpty(editText.text.toString())) {
-                startLimit(editText.text.toString().toLong())
-            } else{
+                startLimit(editText.text.toString().toLong() * 60)
+            } else {
                 startLimit()
             }
-
-
         }
 
         btn_close.setOnClickListener {
             closeLimit()
         }
 
+        checkAndRecoveryUnfinishedLimit()
 //        test_recycle.layoutManager = LinearLayoutManager(this)
 //        test_recycle.adapter = MyRecycleAdapter()
     }
+
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
@@ -87,7 +84,18 @@ class MainActivity : AppCompatActivity() {
                     runOnUiThread {
                         //刷新剩余时间
                         Log.d("timeTest", "剩余时间${timeSeconds}秒")
-                        remain_time_text.text = "剩余时间${timeSeconds}秒"
+
+                        if (timeSeconds > 60 * 60) {
+                            remain_time_text.text =
+                                    "解除限制剩余时间${timeSeconds / 3600}小时${(timeSeconds % 3600)/60}分${timeSeconds % 60}秒"
+                        } else if (timeSeconds > 60) {
+                            remain_time_text.text = "剩余时间${timeSeconds / 60}分${timeSeconds % 60}秒"
+                        } else {
+                            remain_time_text.text = "剩余时间${timeSeconds}秒"
+                        }
+
+
+                        saveRemainTimeSeconds(timeSeconds)
                     }
                 }
             };
@@ -97,8 +105,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startLimit(limitTime: Long = 1L) {
-        bindService()
+    private fun startLimit(limitTimeSeconds: Long = 60L) {
+
         if (!PermissionManager.isGrantedStoragePermission(applicationContext)) {
             ToastUtil.showShort(this, "请给与程序需要的权限")
             requestStoragePermission(applicationContext, REQUEST_STORAGE_PERMISSION, this);
@@ -114,8 +122,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        bindService()
         val startIntent = Intent(this, LimitService::class.java)
-        startIntent.putExtra("limit_time", limitTime)
+        startIntent.putExtra("limit_time", limitTimeSeconds)
         this.startService(startIntent)
     }
 
@@ -126,7 +135,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAndRecoveryUnfinishedLimit() {
-        //
+        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+        val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
+        if (remainTimeSeconds > 0) {
+            startLimit(remainTimeSeconds)
+        }
+    }
+
+    private fun saveRemainTimeSeconds(remainTimeSeconds: Long) {
+        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+        val editor = sp.edit()
+        editor.putLong("remain_time_seconds", remainTimeSeconds)
+        editor.apply()
     }
 
     private fun bindService() {
@@ -143,10 +163,10 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == REQUEST_STORAGE_PERMISSION) {
             if (PermissionManager.isGrantedStoragePermission(applicationContext)) {
-                ToastUtil.showShort(applicationContext, "获取文件访问权限成功")
+//                ToastUtil.showShort(applicationContext, "获取文件访问权限成功")
                 if (!TextUtils.isEmpty(editText.text.toString())) {
                     startLimit(editText.text.toString().toLong())
-                } else{
+                } else {
                     startLimit()
                 }
             }

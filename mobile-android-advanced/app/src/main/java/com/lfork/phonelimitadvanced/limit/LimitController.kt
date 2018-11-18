@@ -13,39 +13,53 @@ object LimitController {
     /**
      * 备份相关文件防止出现意外
      */
-    const val CMD_SECURITY_BACKUP ="asd"
+    const val CMD_SECURITY_BACKUP = "asd"
 
     /**
      * 紧急恢复命令(默认每月只有三次机会)：防止因为各种意外的原因出现的正常解锁失败的情况
      */
-    const val CMD_SECURITY_RECOVERY ="asd"
+    const val CMD_SECURITY_RECOVERY = "asd"
+
+//    private const val CMD_START_LIMIT =
+//        "mount -o rw,remount /system;" +
+//                "rm -rf /system/etc/tmp;" +
+//                "mkdir -m 777 /system/etc/tmp;" +
+//                "mv /system/etc/data /system/etc/tmp/data;" +
+//                "mv /system/etc/wifi /system/etc/tmp/wifi;"
+//
+//    //file 644 dir755
+//    private const val CMD_CLOSE_LIMIT =
+//        "mount -o rw,remount /system;" +
+//                "mv /system/etc/tmp/data /system/etc/data;" +
+//                "mv /system/etc/tmp/wifi /system/etc/wifi;"
 
     private const val CMD_START_LIMIT =
-            "mount -o rw,remount /system;" +
-                    "rm -rf /system/vendor/tmp;" +
-                    "mkdir -m 777 /system/vendor/tmp;" +
-                    "mv /system/vendor/data /system/vendor/tmp/data;" +
-                    "mv /system/vendor/wifi /system/vendor/tmp/wifi;"
+        "mount -o rw,remount /vendor;" +
+                "rm -rf /vendor/etc/tmp;" +
+                "mkdir -m 777 /vendor/etc/tmp;" +
+                "mv /vendor/etc/data /vendor/etc/tmp/data;" +
+                "mv /vendor/etc/wifi /vendor/etc/tmp/wifi;"
 
     //file 644 dir755
     private const val CMD_CLOSE_LIMIT =
-            "mount -o rw,remount /system;" +
-                    "mv /system/vendor/tmp/data /system/vendor/data;" +
-                    "mv /system/vendor/tmp/wifi /system/vendor/wifi;"
+        "mount -o rw,remount /vendor;" +
+                "mv /vendor/etc/tmp/data /vendor/etc/data;" +
+                "mv /vendor/etc/tmp/wifi /vendor/etc/wifi;"
+
     private const val TAG = "ShellTest"
 
-    var limitedTimeSeconds = 0L
+    var limitTimeSeconds = 0L
 
     var autoLockThread: Thread? = null;
 
     var limited = false
 
     @Synchronized
-    fun startLimit(limitTimeMinutes: Long): Boolean {
+    fun startLimit(limitTimeSeconds: Long): Boolean {
         if (limited) {
             return false
         }
-        limitedTimeSeconds = limitTimeMinutes * 60
+        this.limitTimeSeconds = limitTimeSeconds
         startMachineTimeMillis = System.currentTimeMillis()
         Log.d(TAG + "3", RootShell.execRootCmd(CMD_START_LIMIT))
         limited = true
@@ -65,13 +79,13 @@ object LimitController {
 
     const val FORCE_UNLOCKED = 2
 
-    fun startAutoUnlock():Int {
+    fun startAutoUnlock(): Int {
 
         var lockType = AUTO_UNLOCKED
 
         try {
             autoLockThread = Thread.currentThread()
-            Thread.sleep(limitedTimeSeconds * 1000)
+            Thread.sleep(limitTimeSeconds * 1000)
             Log.d(TAG + "4", RootShell.execRootCmd(CMD_CLOSE_LIMIT))
             Log.d(TAG, "自动解锁成功")
         } catch (e: InterruptedException) {
@@ -80,15 +94,15 @@ object LimitController {
             lockType = FORCE_UNLOCKED
         }
         autoLockThread = null;
-        limitedTimeSeconds = 0L
+        limitTimeSeconds = 0L
         startMachineTimeMillis = 0L
 
         return lockType
     }
 
     fun getRemainTimeSeconds(): Long {
-        if (limitedTimeSeconds > 0) {
-            return limitedTimeSeconds - (System.currentTimeMillis() - startMachineTimeMillis) / 1000
+        if (limitTimeSeconds > 0) {
+            return limitTimeSeconds - (System.currentTimeMillis() - startMachineTimeMillis) / 1000
         } else {
             return 0
         }

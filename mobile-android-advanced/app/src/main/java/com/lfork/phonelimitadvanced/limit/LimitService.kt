@@ -21,7 +21,7 @@ import com.lfork.phonelimitadvanced.util.ToastUtil
  */
 class LimitService : Service() {
 
-    var limitTime = 0L
+    var limitTimeSeconds = 0L
 
     var listener: LimitStateListener? = null
 
@@ -71,9 +71,9 @@ class LimitService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        limitTime = intent.getLongExtra("limit_time", 0L);
-        Log.d("timeTest", "限制时间为${limitTime}分")
-        if (LimitController.startLimit(limitTime)) {
+        limitTimeSeconds = intent.getLongExtra("limit_time", 0L);
+        Log.d("timeTest", "限制时间为${limitTimeSeconds}秒")
+        if (LimitController.startLimit(limitTimeSeconds)) {
             showNotification()
             ToastUtil.showLong(applicationContext, "限制开启成功,请开关一次飞行模式，来使限制生效")
             startAutoUnlock()
