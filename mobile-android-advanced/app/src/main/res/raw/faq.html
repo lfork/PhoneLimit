@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+	<head>
+	  <meta charset="utf-8">
+	  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  <title>FAQ</title>
+<style type="text/css">
+
+body {background:#000}
+
+a {color:#40FF00;}
+
+div.block{
+  overflow:hidden;
+  color: #FFF
+}
+
+div.block label{
+  width:120px;
+  display:block;
+  float:left;
+  text-align:left;
+}
+
+div.block .span{
+  margin-left:4px;
+  float:left;
+}
+
+#credits {margin: 0;padding: 0;}
+#credits li {list-style-type: none;font-weight:bold;color:#000;margin-left: 0;padding-left: 0;}
+#credits li ul {margin-bottom:10px;}
+#credits li ul li {font-weight:normal;color:#000;list-style-type: circle;}
+.warning {color:#F7FE2E;}
+
+span.title {padding: 10px 0;}
+
+</style>
+</head>
+<body>
+
+
+<div class="warning">
+ <span><strong>Q: Is there a more detailed Frequently Asked Questions (FAQ) online?</strong></span> 
+</div>
+<div class="block">
+    <span>A: Yes, there is a detailed online <a href="https://github.com/ukanth/afwall/wiki/FAQ">FAQ</a> page on GitHub.</span>
+</div>
+
+<br/>
+
+<div class="warning">
+ <span><strong>Q: Why is the YouTube app unable to connect?</strong></span>
+</div>
+<div class="block">
+  <span>A: Ensure 'Media Server' in the app list is checked.  Some audio and video apps need this to work properly.
+	</span>
+</div>
+
+<br/>
+
+<div class="warning">
+    <span><strong>Q: Why do I see data traffic for an app that is blocked by AFWall+?</strong></span>
+</div>
+<div class="block">
+ <span>A: It's possibly false data traffic. AFWall+ uses IPtables which is at the kernel level (low-level).<br>
+	Data use shown by Android is calculated before it gets dropped by the firewall.
+	</span>
+</div>
+
+<br/>
+
+<div class="warning">
+ <span><strong>Q: Why are downloads not working with stock browsers or the Google Play Store?</strong></span>
+</div>
+<div class="block">
+  <span>A: Allow "Downloads" from the app list.
+	</span>
+</div>
+
+<br/>
+
+<div class="warning">
+ <span><strong>Q: What's the difference between the two modes?</strong></span>
+</div>
+<div class="block">
+  <span>A: Allow Mode is for users who know exactly which apps they want to be allow to connect to the internet (including system apps).<br>
+  Block Mode is for users who only know which apps they want to block from connecting to the internet.  Block Mode is more suited for beginners.<br>
+  </span>
+</div>
+
+<br/>
+
+
+<div class="warning">
+ <span><strong>Q: Why does my entire network seem to be blocked after I enabled the experimental 'Fix Startup Data Leak' option?</strong></span>
+</div>
+<div class="block">
+  <span>A: Please uncheck that option (this will remove the init.d file automatically).<br>
+  It is under Preferences - Experimental preferences - 'Fix startup data leak'.<br>
+  In case you uninstalled AFWall+ and copied the script manually, ensure it is removed: the file is called 'afwallstart'.</span>
+</div>
+
+<br/>
+
+
+<div class="warning">
+ <span><strong>Q: What are all the icons on the top?</strong></span> 
+</div>
+<div class="block">
+ <span> Please check 'Legends' option from menu
+ </span>
+</div>
+<br/>
+
+</body>	
+</html>

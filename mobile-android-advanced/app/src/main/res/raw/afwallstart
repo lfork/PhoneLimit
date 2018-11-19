@@ -1,0 +1,30 @@
+#!/system/bin/sh
+
+export PATH=/system/bin
+
+if [ -e /data/data/dev.ukanth.ufirewall/app_bin/iptables ]; then
+  path="dev.ukanth.ufirewall"
+elif [ -e /data/data/dev.ukanth.ufirewall.donate/app_bin/iptables ]; then
+  path="dev.ukanth.ufirewall.donate"
+else
+  log -p i -t afwall "AFWall does not seem to be installed, waited for $((endDt-startDt)) seconds."
+  exit
+fi
+
+doit() {
+  for i in "$@"
+  do
+    if [ -x "$i" ]
+    then
+      "$i" -w -P INPUT DROP
+      "$i" -w -P OUTPUT DROP
+      "$i" -w -P FORWARD DROP
+      return
+    fi
+  done
+}
+
+doit /system/bin/iptables /data/data/$path/app_bin/iptables
+doit /system/bin/ip6tables /data/data/$path/app_bin/ip6tables
+log -p i -t afwall "IPv4/6 policy set to DROP"
+
