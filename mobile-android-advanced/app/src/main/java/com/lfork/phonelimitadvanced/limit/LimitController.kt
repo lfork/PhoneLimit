@@ -33,18 +33,18 @@ object LimitController {
 //                "mv /system/etc/tmp/data /system/etc/data;" +
 //                "mv /system/etc/tmp/wifi /system/etc/wifi;"
 
-    private const val CMD_START_LIMIT =
-        "mount -o rw,remount /vendor;" +
-                "rm -rf /vendor/etc/tmp;" +
-                "mkdir -m 777 /vendor/etc/tmp;" +
-                "mv /vendor/etc/data /vendor/etc/tmp/data;" +
-                "mv /vendor/etc/wifi /vendor/etc/tmp/wifi;"
+    private const val CMD_START_LIMIT ="iptables -P OUTPUT DROP"
+//        "mount -o rw,remount /vendor;" +
+//                "rm -rf /vendor/etc/tmp;" +
+//                "mkdir -m 777 /vendor/etc/tmp;" +
+//                "mv /vendor/etc/data /vendor/etc/tmp/data;" +
+//                "mv /vendor/etc/wifi /vendor/etc/tmp/wifi;"
 
     //file 644 dir755
-    private const val CMD_CLOSE_LIMIT =
-        "mount -o rw,remount /vendor;" +
-                "mv /vendor/etc/tmp/data /vendor/etc/data;" +
-                "mv /vendor/etc/tmp/wifi /vendor/etc/wifi;"
+    private const val CMD_CLOSE_LIMIT = "iptables -P OUTPUT ACCEPT"
+//        "mount -o rw,remount /vendor;" +
+//                "mv /vendor/etc/tmp/data /vendor/etc/data;" +
+//                "mv /vendor/etc/tmp/wifi /vendor/etc/wifi;"
 
     private const val TAG = "ShellTest"
 
@@ -61,7 +61,7 @@ object LimitController {
         }
         this.limitTimeSeconds = limitTimeSeconds
         startMachineTimeMillis = System.currentTimeMillis()
-        Log.d(TAG + "3", RootShell.execRootCmd(CMD_START_LIMIT))
+//        Log.d(TAG + "3", RootShell.execRootCmd(CMD_START_LIMIT))
         limited = true
         return true
     }
@@ -86,10 +86,10 @@ object LimitController {
         try {
             autoLockThread = Thread.currentThread()
             Thread.sleep(limitTimeSeconds * 1000)
-            Log.d(TAG + "4", RootShell.execRootCmd(CMD_CLOSE_LIMIT))
+//            Log.d(TAG + "4", RootShell.execRootCmd(CMD_CLOSE_LIMIT))
             Log.d(TAG, "自动解锁成功")
         } catch (e: InterruptedException) {
-            Log.d(TAG + "4", RootShell.execRootCmd(CMD_CLOSE_LIMIT))
+//            Log.d(TAG + "4", RootShell.execRootCmd(CMD_CLOSE_LIMIT))
             Log.d(TAG, "提前解锁成功")
             lockType = FORCE_UNLOCKED
         }

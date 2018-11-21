@@ -21,12 +21,18 @@ import com.lfork.phonelimitadvanced.util.ToastUtil
  */
 class LimitService : Service() {
 
+//    lateinit var afWallController: AfWallController
+
     var limitTimeSeconds = 0L
 
     var listener: LimitStateListener? = null
 
     private val stateBinder = StateBinder()
 
+    override fun onCreate() {
+        super.onCreate()
+//        afWallController = AfWallController(applicationContext)
+    }
 
     /**
      * 关闭服务后通知自动就关闭了，所以这里就不需要再写关闭通知的函数了
@@ -129,4 +135,5 @@ class LimitService : Service() {
             return this@LimitService
         }
     }
+
 }
