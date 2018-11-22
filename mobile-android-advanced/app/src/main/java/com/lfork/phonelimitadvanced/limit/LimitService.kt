@@ -1,25 +1,32 @@
 package com.lfork.phonelimitadvanced.limit
 
 import android.app.*
+import android.app.usage.UsageEvents
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
+import android.text.TextUtils
 import android.util.Log
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.base.AppConstants
 import com.lfork.phonelimitadvanced.limit.LimitController.AUTO_UNLOCKED
 import com.lfork.phonelimitadvanced.limit.LimitController.FORCE_UNLOCKED
 import com.lfork.phonelimitadvanced.main.MainActivity
-import com.lfork.phonelimitadvanced.util.ToastUtil
+import com.lfork.phonelimitadvanced.utils.ToastUtil
+import java.util.ArrayList
 
 /**
  * 单任务服务
  */
 class LimitService : Service() {
+
 
 //    lateinit var afWallController: AfWallController
 
@@ -29,9 +36,20 @@ class LimitService : Service() {
 
     private val stateBinder = StateBinder()
 
+    var threadIsTerminate = false //是否开启循环
+
+
+    private var lockState: Boolean = false
+
+    private var activityManager: ActivityManager? = null
+
     override fun onCreate() {
         super.onCreate()
-//        afWallController = AfWallController(applicationContext)
+        activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        //开启一个检查锁屏的线程
+        threadIsTerminate = true
+
     }
 
     /**
@@ -54,41 +72,41 @@ class LimitService : Service() {
 
             val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             val notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("限制已开启")
-                .setContentText("专心搞事情吧，不要玩儿手机了")
-                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .setContentIntent(pi)
-                .build()
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("限制已开启")
+                    .setContentText("专心搞事情吧，不要玩儿手机了")
+                    .setPriority(NotificationManager.IMPORTANCE_MIN)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setContentIntent(pi)
+                    .build()
             startForeground(2, notification)
         } else {
 
             val notification = NotificationCompat.Builder(this)
-                .setContentTitle("限制已开启")
-                .setContentText("专心搞事情吧，不要玩儿手机了")
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-                .setContentIntent(pi)
-                .build()
+                    .setContentTitle("限制已开启")
+                    .setContentText("专心搞事情吧，不要玩儿手机了")
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+                    .setContentIntent(pi)
+                    .build()
             startForeground(1, notification)
         }
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        limitTimeSeconds = intent.getLongExtra("limit_time", 0L);
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        limitTimeSeconds = intent!!.getLongExtra("limit_time", 0L);
         Log.d("timeTest", "限制时间为${limitTimeSeconds}秒")
         if (LimitController.startLimit(limitTimeSeconds)) {
             showNotification()
-            ToastUtil.showLong(applicationContext, "限制开启成功,请开关一次飞行模式，来使限制生效")
             startAutoUnlock()
             startStateCheck()
             listener?.onLimitStarted()
         } else {
-            ToastUtil.showLong(applicationContext, "限制已开启")
+            listener?.onLimitStarted()
         }
 
+        checkData()
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -98,8 +116,10 @@ class LimitService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        threadIsTerminate = false
         LimitController.closeLimit()
-        ToastUtil.showLong(applicationContext, "限制已解除，请开关一次飞行模式，来使限制生效")
+        listener?.onLimitFinished()
+        listener = null
     }
 
 
@@ -111,6 +131,8 @@ class LimitService : Service() {
             } else if (unlockType == FORCE_UNLOCKED) {
                 listener?.forceUnlocked("强制解锁成功")
             }
+
+            threadIsTerminate = false
             listener?.onLimitFinished()
         }).start()
     }
@@ -135,5 +157,98 @@ class LimitService : Service() {
             return this@LimitService
         }
     }
+
+
+    private fun checkData() {
+
+        Thread {
+            while (threadIsTerminate) {
+                //获取栈顶app的包名
+                val packageName = getLauncherTopApp(this@LimitService, activityManager!!)
+
+                //如果msg为空的话是不会被打印的
+                Log.d("快速上锁测试", "未获取到包名？$packageName 是否已锁定$lockState")
+                //判断包名打开解锁页面
+
+                if (!TextUtils.isEmpty(packageName)) {
+                    if (!inWhiteList(packageName)) {
+                        passwordLock(packageName)
+                    }
+                }
+                try {
+                    Thread.sleep(300)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+
+            }
+        }.start()
+
+
+    }
+
+    /**
+     * 白名单
+     */
+    private fun inWhiteList(packageName: String): Boolean {
+        return (packageName == AppConstants.APP_PACKAGE_NAME
+                || packageName == "net.oneplus.launcher")
+    }
+
+    fun getLauncherTopApp(context: Context, activityManager: ActivityManager): String {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            val appTasks = activityManager.getRunningTasks(1)
+            if (null != appTasks && !appTasks.isEmpty()) {
+                return appTasks[0].topActivity.packageName
+            }
+        } else {
+            //5.0以后需要用这方法
+            val sUsageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+            val endTime = System.currentTimeMillis()
+            val beginTime = endTime - 10000
+            var result = ""
+            val event = UsageEvents.Event()
+            val usageEvents = sUsageStatsManager.queryEvents(beginTime, endTime)
+            while (usageEvents.hasNextEvent()) {
+                usageEvents.getNextEvent(event)
+                if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                    result = event.packageName
+                }
+            }
+            if (!android.text.TextUtils.isEmpty(result)) {
+                return result
+            }
+        }
+        return ""
+    }
+
+    /**
+     * 获得属于桌面的应用的应用包名称
+     */
+    private fun getHomes(): List<String> {
+        val names = ArrayList<String>()
+        val packageManager = this.packageManager
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        val resolveInfo = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        for (ri in resolveInfo) {
+            names.add(ri.activityInfo.packageName)
+        }
+        return names
+    }
+
+    /**
+     * 转到解锁界面
+     */
+    private fun passwordLock(packageName: String) {
+        Log.d("快速上锁测试4", "开始上锁$packageName")
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName)
+        intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        Log.d("快速上锁测试4", "上锁完成$packageName")
+    }
+
 
 }

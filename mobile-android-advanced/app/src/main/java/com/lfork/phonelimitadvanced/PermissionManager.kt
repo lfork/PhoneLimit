@@ -6,9 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.util.Log
-import com.lfork.phonelimitadvanced.util.ToastUtil
 import java.io.DataOutputStream
-import java.security.AccessControlContext
 
 /**
  *

@@ -77,4 +77,21 @@
         <item name="android:textColorSecondary">@color/black</item>
     </style>-->
 
+    <style name="DialogTransparent" parent="@android:style/Theme.Dialog">
+        <!-- 背景颜色及透明程度  -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--  是否有标题  -->
+        <item name="android:windowNoTitle">true</item>
+        <!--  是否浮现在activity之上  -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否模糊  -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!--全屏-->
+        <item name="android:windowFullscreen">true</item>
+        <!--activity切换动画-->
+        <!--<item name="android:windowAnimationStyle">@style/AnimationDialogActivity</item>-->
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+    </style>
+
 </resources>

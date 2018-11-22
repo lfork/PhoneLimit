@@ -1,7 +1,6 @@
 package com.lfork.phonelimitadvanced.limit
 
-import android.util.Log
-import com.lfork.phonelimitadvanced.util.LinuxShell
+import com.lfork.phonelimitadvanced.utils.LinuxShell
 import java.io.*
 
 /**

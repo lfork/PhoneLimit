@@ -4,31 +4,18 @@
     package="com.lfork.phonelimitadvanced">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
-    <!-- Will be default in CyanogenMod Superuser App -->
-    <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
-
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <!--应用锁需要的权限-->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-    <!-- Screen support -->
-    <supports-screens
-        android:anyDensity="true"
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:smallScreens="true"
-        android:xlargeScreens="true" />
 
     <application
         android:allowBackup="true"
@@ -40,19 +27,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
-        <meta-data
-            android:name="xposedmodule"
-            android:value="true" />
-        <meta-data
-            android:name="xposeddescription"
-            android:value="Xposed related fixes for AFWall+" />
-        <meta-data
-            android:name="xposedminversion"
-            android:value="53" />
-
         <activity
             android:name=".main.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|keyboard|locale|screenLayout"
             android:hardwareAccelerated="true"
             android:launchMode="singleInstance"
             android:theme="@style/AppLightTheme"
@@ -60,27 +36,18 @@
             <intent-filter>
                 <!-- 增加lancher配置-->
                 <category android:name="android.intent.category.HOME" />
-
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
 
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
-
-
         </activity>
-
 
         <service
             android:name=".limit.LimitService"
             android:enabled="true"
             android:exported="true">
-
         </service>
 
     </application>

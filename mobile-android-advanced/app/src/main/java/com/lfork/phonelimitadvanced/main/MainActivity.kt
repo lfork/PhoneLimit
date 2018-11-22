@@ -1,6 +1,7 @@
 package com.lfork.phonelimitadvanced.main
 
 
+import android.annotation.TargetApi
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
@@ -11,26 +12,30 @@ import android.view.KeyEvent
 import android.widget.Toast
 import com.lfork.phonelimitadvanced.PermissionManager
 import com.lfork.phonelimitadvanced.PermissionManager.requestStoragePermission
-import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.limit.LimitService
 import com.lfork.phonelimitadvanced.limit.LimitStateListener
-import com.lfork.phonelimitadvanced.util.SystemToggle
-import com.lfork.phonelimitadvanced.util.ToastUtil
+import com.lfork.phonelimitadvanced.utils.ToastUtil
 import kotlinx.android.synthetic.main.main_act.*
+import android.app.usage.UsageStats
+import android.app.usage.UsageStatsManager
+import android.os.Build
+import android.provider.Settings
+import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.utils.LockUtil
+import com.lfork.phonelimitadvanced.widget.DialogPermission
 
 
 class MainActivity :
     AppCompatActivity() { //, AdapterView.OnItemSelectedListener, OnClickListener, SwipeRefreshLayout.OnRefreshListener, RadioGroup.OnCheckedChangeListener
 
     companion object {
-        public var dirty = false
 
         const val REQUEST_STORAGE_PERMISSION = 0
 
         // Used to load the 'native-lib' library on application startup.
-        init {
-            System.loadLibrary("native-lib")
-        }
+//        init {
+//            System.loadLibrary("native-lib")
+//        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +43,6 @@ class MainActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_act)
         setupToolbar()
-
 
         // Example of a call to a native method
         // sample_text.text = stringFromJNI()
@@ -54,13 +58,32 @@ class MainActivity :
             closeLimit()
         }
 
-//        checkAndRecoveryUnfinishedLimit()
+        checkAndRecoveryUnfinishedLimit()
 //        test_recycle.layoutManager = LinearLayoutManager(this)
 //        test_recycle.adapter = MyRecycleAdapter()
+        showDialog()
     }
 
-    fun setupToolbar(){
+    fun setupToolbar() {
         main_toolbar.title = resources.getString(R.string.app_name)
+    }
+
+    /**
+     * 弹出dialog
+     */
+    private fun showDialog() {
+        //如果没有获得查看使用情况权限和手机存在查看使用情况这个界面
+        if (!LockUtil.isStatAccessPermissionSet(this@MainActivity) && LockUtil.isNoOption(this@MainActivity)) {
+            val dialog = DialogPermission(this@MainActivity)
+            dialog.show()
+            dialog.setOnClickListener(object : DialogPermission.onClickListener {
+                override fun onClick() {
+                    val RESULT_ACTION_USAGE_ACCESS_SETTINGS = 1
+                    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                    startActivityForResult(intent, RESULT_ACTION_USAGE_ACCESS_SETTINGS)
+                }
+            })
+        }
     }
 
 
@@ -90,11 +113,14 @@ class MainActivity :
 
             binder.getLimitService().listener = object : LimitStateListener {
                 override fun onLimitFinished() {
-//                    SystemToggle.openAirModeSettings(this@MainActivity)
+                    runOnUiThread { ToastUtil.showLong(applicationContext, "限制已解除") }
+
                 }
 
                 override fun onLimitStarted() {
-//                    SystemToggle.openAirModeSettings(this@MainActivity)
+                    runOnUiThread {
+                        ToastUtil.showLong(this@MainActivity, "限制已开启")
+                    }
                 }
 
                 override fun autoUnlocked(msg: String) {
@@ -194,7 +220,6 @@ class MainActivity :
         permissions: Array<String>, grantResults: IntArray
     ) {
         when (requestCode) {
-
             //TODO 权限申请
             REQUEST_STORAGE_PERMISSION -> {
                 if (PermissionManager.isGrantedStoragePermission(applicationContext)) {
@@ -209,13 +234,6 @@ class MainActivity :
 
         }
     }
-
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    external fun stringFromJNI(): String
-
 
 
 }

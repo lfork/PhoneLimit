@@ -27,11 +27,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
-        }
-    }
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
@@ -67,16 +62,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
 
-    implementation 'eu.chainfire:libsuperuser:1.0.0.201704021214'
     //implementation 'com.github.topjohnwu:libsu:1.0.1'
 
-    implementation 'org.bitbucket.ukanth:android-lockpattern:8.0.1'
-    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-
-
-    annotationProcessor 'com.github.Raizlabs.DBFlow:dbflow-processor:4.2.4'
-    implementation "com.github.Raizlabs.DBFlow:dbflow-core:4.2.4"
-    implementation "com.github.Raizlabs.DBFlow:dbflow:4.2.4"
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
