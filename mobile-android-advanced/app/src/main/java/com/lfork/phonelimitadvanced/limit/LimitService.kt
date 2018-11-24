@@ -16,21 +16,12 @@ import android.text.TextUtils
 import android.util.Log
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.AppConstants
-import com.lfork.phonelimitadvanced.limit.LimitController.AUTO_UNLOCKED
-import com.lfork.phonelimitadvanced.limit.LimitController.FORCE_UNLOCKED
+import com.lfork.phonelimitadvanced.limit.LimitTimeController.AUTO_UNLOCKED
+import com.lfork.phonelimitadvanced.limit.LimitTimeController.FORCE_UNLOCKED
 import com.lfork.phonelimitadvanced.main.MainActivity
-import com.lfork.phonelimitadvanced.utils.ToastUtil
-import java.util.ArrayList
+import java.util.*
 
-/**
- * 单任务服务
- */
 class LimitService : Service() {
-
-
-//    lateinit var afWallController: AfWallController
-
-    var limitTimeSeconds = 0L
 
     var listener: LimitStateListener? = null
 
@@ -38,18 +29,48 @@ class LimitService : Service() {
 
     var threadIsTerminate = false //是否开启循环
 
-
-    private var lockState: Boolean = false
-
     private var activityManager: ActivityManager? = null
 
     override fun onCreate() {
         super.onCreate()
         activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-
-        //开启一个检查锁屏的线程
         threadIsTerminate = true
+    }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val limitTimeSeconds = intent!!.getLongExtra("limit_time", 0L);
+        if (LimitTimeController.startLimit(limitTimeSeconds)) {
+            showNotification()
+            startAutoUnlock()
+            startStateCheck()
+            listener?.onLimitStarted()
+        } else {
+            listener?.onLimitStarted()
+        }
+
+        checkData()
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onBind(intent: Intent): IBinder? {
+        return stateBinder
+    }
+
+    /**
+     * 将限制状态同步给MainActivity
+     */
+    inner class StateBinder internal constructor() : Binder() {
+        fun getLimitService(): LimitService {
+            return this@LimitService
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        threadIsTerminate = false
+        LimitTimeController.closeLimit()
+        listener?.onLimitFinished()
+        listener = null
     }
 
     /**
@@ -94,38 +115,10 @@ class LimitService : Service() {
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        limitTimeSeconds = intent!!.getLongExtra("limit_time", 0L);
-        Log.d("timeTest", "限制时间为${limitTimeSeconds}秒")
-        if (LimitController.startLimit(limitTimeSeconds)) {
-            showNotification()
-            startAutoUnlock()
-            startStateCheck()
-            listener?.onLimitStarted()
-        } else {
-            listener?.onLimitStarted()
-        }
-
-        checkData()
-        return super.onStartCommand(intent, flags, startId)
-    }
-
-    override fun onBind(intent: Intent): IBinder? {
-        return stateBinder
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        threadIsTerminate = false
-        LimitController.closeLimit()
-        listener?.onLimitFinished()
-        listener = null
-    }
-
 
     private fun startAutoUnlock() {
         Thread(Runnable {
-            val unlockType = LimitController.startAutoUnlock()
+            val unlockType = LimitTimeController.startAutoUnlock()
             if (unlockType == AUTO_UNLOCKED) {
                 listener?.autoUnlocked("自动解锁成功")
             } else if (unlockType == FORCE_UNLOCKED) {
@@ -139,37 +132,23 @@ class LimitService : Service() {
 
     private fun startStateCheck() {
         Thread {
-            var remainTime = LimitController.getRemainTimeSeconds()
+            var remainTime = LimitTimeController.getRemainTimeSeconds()
             Log.d("timeTest", "开始状态刷新,剩余时间${remainTime}秒")
             while (remainTime > 0) {
                 listener?.remainTimeRefreshed(remainTime)
                 Thread.sleep(999)
-                remainTime = LimitController.getRemainTimeSeconds()
+                remainTime = LimitTimeController.getRemainTimeSeconds()
             }
         }.start()
     }
 
-    /**
-     * 将限制状态同步给MainActivity
-     */
-    inner class StateBinder internal constructor() : Binder() {
-        fun getLimitService(): LimitService {
-            return this@LimitService
-        }
-    }
-
-
     private fun checkData() {
-
         Thread {
             while (threadIsTerminate) {
                 //获取栈顶app的包名
                 val packageName = getLauncherTopApp(this@LimitService, activityManager!!)
 
-                //如果msg为空的话是不会被打印的
-                Log.d("快速上锁测试", "未获取到包名？$packageName 是否已锁定$lockState")
                 //判断包名打开解锁页面
-
                 if (!TextUtils.isEmpty(packageName)) {
                     if (!inWhiteList(packageName)) {
                         passwordLock(packageName)
@@ -180,11 +159,8 @@ class LimitService : Service() {
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
-
             }
         }.start()
-
-
     }
 
     /**
@@ -195,7 +171,7 @@ class LimitService : Service() {
                 || packageName == "net.oneplus.launcher")
     }
 
-    fun getLauncherTopApp(context: Context, activityManager: ActivityManager): String {
+    private fun getLauncherTopApp(context: Context, activityManager: ActivityManager): String {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             val appTasks = activityManager.getRunningTasks(1)
             if (null != appTasks && !appTasks.isEmpty()) {
@@ -241,14 +217,18 @@ class LimitService : Service() {
      * 转到解锁界面
      */
     private fun passwordLock(packageName: String) {
-        Log.d("快速上锁测试4", "开始上锁$packageName")
+        //如果是华为的话，这里就需要显示悬浮窗
+        //否则就进行跳转
+
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName)
         intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
-        Log.d("快速上锁测试4", "上锁完成$packageName")
     }
 
 
+    companion object {
+
+    }
 }

@@ -30,17 +30,4 @@ object RootShell {
         return "code:${result.result}  errorMsg:${result.errorMsg}  successMsg:${result.successMsg}"
     }
 
-    fun setAirPlaneMode(enable: Boolean) {
-        val mode = if (enable) 1 else 0
-        val cmd = "settings put global airplane_mode_on $mode"
-        try {
-            Runtime.getRuntime().exec(cmd)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-    }
-
-
-
 }

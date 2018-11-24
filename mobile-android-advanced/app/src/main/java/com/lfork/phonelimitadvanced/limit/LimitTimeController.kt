@@ -6,7 +6,7 @@ import android.util.Log
  *
  * Created by 98620 on 2018/11/2.
  */
-object LimitController {
+object LimitTimeController {
 
     var startMachineTimeMillis = 0L
 

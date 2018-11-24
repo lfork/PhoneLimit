@@ -1,41 +1,28 @@
 package com.lfork.phonelimitadvanced.main
 
-
-import android.annotation.TargetApi
 import android.content.*
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
-import android.view.KeyEvent
-import android.widget.Toast
-import com.lfork.phonelimitadvanced.PermissionManager
-import com.lfork.phonelimitadvanced.PermissionManager.requestStoragePermission
+import com.lfork.phonelimitadvanced.utils.PermissionManager
+import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.limit.LimitService
 import com.lfork.phonelimitadvanced.limit.LimitStateListener
-import com.lfork.phonelimitadvanced.utils.ToastUtil
-import kotlinx.android.synthetic.main.main_act.*
-import android.app.usage.UsageStats
-import android.app.usage.UsageStatsManager
-import android.os.Build
-import android.provider.Settings
-import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.utils.LockUtil
+import com.lfork.phonelimitadvanced.utils.QMUIDeviceHelper
+import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.widget.DialogPermission
-
+import kotlinx.android.synthetic.main.main_act.*
 
 class MainActivity :
-    AppCompatActivity() { //, AdapterView.OnItemSelectedListener, OnClickListener, SwipeRefreshLayout.OnRefreshListener, RadioGroup.OnCheckedChangeListener
+        AppCompatActivity() { //, AdapterView.OnItemSelectedListener, OnClickListener, SwipeRefreshLayout.OnRefreshListener, RadioGroup.OnCheckedChangeListener
 
     companion object {
-
         const val REQUEST_STORAGE_PERMISSION = 0
-
-        // Used to load the 'native-lib' library on application startup.
-//        init {
-//            System.loadLibrary("native-lib")
-//        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,8 +31,6 @@ class MainActivity :
         setContentView(R.layout.main_act)
         setupToolbar()
 
-        // Example of a call to a native method
-        // sample_text.text = stringFromJNI()
         btn_start.setOnClickListener {
             if (!TextUtils.isEmpty(editText.text.toString())) {
                 startLimit(editText.text.toString().toLong() * 60)
@@ -54,62 +39,51 @@ class MainActivity :
             }
         }
 
-        btn_close.setOnClickListener {
-            closeLimit()
-        }
-
-        checkAndRecoveryUnfinishedLimit()
+        btn_close.setOnClickListener { closeLimit() }
+        btn_set_launcher.setOnClickListener { setDefaultLauncher() }
+        checkAndRecoveryLimitTask()
 //        test_recycle.layoutManager = LinearLayoutManager(this)
 //        test_recycle.adapter = MyRecycleAdapter()
-        showDialog()
+        requestPermission()
     }
 
-    fun setupToolbar() {
+
+    private fun requestPermission() {
+        //申请获取使用情况的权限
+        requestStateUsagePermission()
+
+        //如果是华为手机 就申请悬浮窗的权限 否则就申请默认桌面
+        if (QMUIDeviceHelper.isHuawei()) {
+            PermissionManager.requestFloatingWindowPermission(this)
+        } else {
+            setDefaultLauncher()
+        }
+
+    }
+
+    private fun setupToolbar() {
         main_toolbar.title = resources.getString(R.string.app_name)
     }
 
     /**
-     * 弹出dialog
+     * 弹出dialog requestStateUsagePermission
      */
-    private fun showDialog() {
+    private fun requestStateUsagePermission() {
         //如果没有获得查看使用情况权限和手机存在查看使用情况这个界面
         if (!LockUtil.isStatAccessPermissionSet(this@MainActivity) && LockUtil.isNoOption(this@MainActivity)) {
             val dialog = DialogPermission(this@MainActivity)
             dialog.show()
-            dialog.setOnClickListener(object : DialogPermission.onClickListener {
-                override fun onClick() {
-                    val RESULT_ACTION_USAGE_ACCESS_SETTINGS = 1
-                    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-                    startActivityForResult(intent, RESULT_ACTION_USAGE_ACCESS_SETTINGS)
-                }
-            })
+            dialog.setOnClickListener {
+                val RESULT_ACTION_USAGE_ACCESS_SETTINGS = 1
+                val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                startActivityForResult(intent, RESULT_ACTION_USAGE_ACCESS_SETTINGS)
+            }
         }
     }
-
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            //Toast.makeText(MainActivity.this, "返回键无效，认真学习哈", Toast.LENGTH_SHORT).show();
-
-            return true;//return true;拦截事件传递,从而屏蔽back键。
-        }
-
-        if (KeyEvent.KEYCODE_HOME == keyCode) {
-            Toast.makeText(getApplicationContext(), "HOME 键已被禁用...", Toast.LENGTH_SHORT).show();
-
-            return false;//同理
-        }
-
-        //Toast.makeText(this.getApplicationContext(), "你返回了主界面",  Toast.LENGTH_SHORT).show();
-        return super.onKeyDown(keyCode, event)
-    }
-
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
             val binder = iBinder as LimitService.StateBinder
-
-//            SystemToggle.openAirModeSettings(this@MainActivity)
 
             binder.getLimitService().listener = object : LimitStateListener {
                 override fun onLimitFinished() {
@@ -152,7 +126,7 @@ class MainActivity :
                         }
 
 
-                        saveRemainTimeSeconds(timeSeconds)
+                        saveRemainTime(timeSeconds)
                     }
                 }
             }
@@ -164,66 +138,75 @@ class MainActivity :
 
     private fun startLimit(limitTimeSeconds: Long = 60L) {
 
-        if (!PermissionManager.isGrantedStoragePermission(applicationContext)) {
-            ToastUtil.showShort(this, "请给与程序需要的权限")
-            requestStoragePermission(applicationContext, REQUEST_STORAGE_PERMISSION, this)
-            return
-        }
+//        if (!PermissionManager.isGrantedStoragePermission(applicationContext)) {
+//            ToastUtil.showShort(this, "请给与程序需要的权限")
+//            requestStoragePermission(applicationContext, REQUEST_STORAGE_PERMISSION, this)
+//            return
+//        }
 
-        if (!PermissionManager.getRootAhth()) {
-            PermissionManager.getRootPermission(packageCodePath)
-
+        if (PermissionManager.checkRootPermission()) {
             if (!PermissionManager.getRootAhth()) {
-                ToastUtil.showShort(this, "请授予Root权限")
-                return
+                PermissionManager.getRootPermission(packageCodePath)
+
+                if (!PermissionManager.getRootAhth()) {
+                    ToastUtil.showShort(this, "请授予Root权限")
+                    return
+                } else{
+
+                    //TODO 如果是root设备 就把相应的app给停用掉
+                }
             }
         }
 
-        bindService()
-        val startIntent = Intent(this, LimitService::class.java)
-        startIntent.putExtra("limit_time", limitTimeSeconds)
-        this.startService(startIntent)
+
+        val limitIntent = Intent(this, LimitService::class.java)
+        limitIntent.putExtra("limit_time", limitTimeSeconds)
+
+        bindService(limitIntent, connection, Context.BIND_AUTO_CREATE)
+        startService(limitIntent)
     }
 
     private fun closeLimit() {
-        unBindService()
+        unbindService(connection)
         val stopIntent = Intent(this, LimitService::class.java)
         this.stopService(stopIntent)
     }
 
-    private fun checkAndRecoveryUnfinishedLimit() {
+    private fun checkAndRecoveryLimitTask() {
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
-        if (remainTimeSeconds > 0) {
+        if (remainTimeSeconds > 1) {
             startLimit(remainTimeSeconds)
         }
     }
 
-    private fun saveRemainTimeSeconds(remainTimeSeconds: Long) {
+    private fun saveRemainTime(remainTimeSeconds: Long) {
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val editor = sp.edit()
         editor.putLong("remain_time_seconds", remainTimeSeconds)
         editor.apply()
     }
 
-    private fun bindService() {
-        val bindIntent = Intent(this, LimitService::class.java)
-        bindService(bindIntent, connection, Context.BIND_AUTO_CREATE)
+    private fun setDefaultLauncher() {
+        val c = this
+        val p = c.packageManager
+        val cN = ComponentName(c, FakeHomeActivity::class.java)
+        p.setComponentEnabledSetting(cN, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
+
+        val selector = Intent(Intent.ACTION_MAIN)
+        selector.addCategory(Intent.CATEGORY_HOME)
+        c.startActivity(selector)
+        p.setComponentEnabledSetting(cN, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
 
-    private fun unBindService() {
-        unbindService(connection)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
-    ) {
+    /**
+     * 暂时还不需要访问文件的权限
+     */
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             //TODO 权限申请
             REQUEST_STORAGE_PERMISSION -> {
                 if (PermissionManager.isGrantedStoragePermission(applicationContext)) {
-//                ToastUtil.showShort(applicationContext, "获取文件访问权限成功")
                     if (!TextUtils.isEmpty(editText.text.toString())) {
                         startLimit(editText.text.toString().toLong())
                     } else {
@@ -231,9 +214,6 @@ class MainActivity :
                     }
                 }
             }
-
         }
     }
-
-
 }

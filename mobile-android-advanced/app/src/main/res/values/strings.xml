@@ -5,23 +5,6 @@
     <string name="execute_shell">Execute Shell</string>
     <string name="start_limit">Start Limit</string>
     <string name="close_limit">close limit</string>
-    <string name="principle_tips">
-        <font color="#DC143C">
-            <b>免责声明</b>
-        </font>
-        ：本软件是通过Root权限修改系统配置文件来达到限制手机使用的目的，所以如果您不是专业用户请不要使用次软件，以免对您的手机造成危害，\n
-        专业用户需要满足下面2个条件\n
-        1.手机已经ROOT 2.您会重装手机系统 \n\n
-        <b>说明</b>：\n
-        1.PhoneLimit Pro主要是通过限制网络数据的方式来限制对手机的访问的。所以限制开启/关闭成功后，
-        用户还需要
-        <font color="#DC143C">
-            <b>开关一次飞行模式</b>
-        </font>
-        来刷新手机的网络状态，才能保证生效。\n
-        2.开启限制后卸载本软件、重启手机是无法解除限制的，所以开启限制的时候请保持本软件的正常运行，以保证限制的自动解除。
-        对软件的运行进行干扰的话可能会延长限制解除的时间或者导致无法恢复限制(只能通过重装系统或者在线求助解决)
-    </string>
-
+    <string name="principle_tips"><font color="#DC143C"><b>免责声明\n</b></font>本软件是通过Root权限修改系统配置文件来达到限制手机使用的目的，所以如果您不是专业用户请不要使用次软件，以免对您的手机造成危害，\n专业用户需要满足下面2个条件\n1.手机已经ROOT 2.您会重装手机系统 \n\n<b>Pro版工作原理\n</b><font color="#DC143C">冻结桌面APP+ 设置白名单软件 + 设置默认桌面\n</font>其实就是限制了程序的入口。然后当软件开启限制后，请不要采用各种方法卸载本软件。不然可能会出现没有桌面的情况。所以请在限制解除后再进行关闭。\n\n<b>进阶操作\n</b>如果你最后还是发现上面的工作模式对你无效，那么您可以结合一些其他软件，比如冰箱来冻结一些其他的程序入口(应用商店，浏览器等)。\n<font color="#DC143C">如果您还有电脑的话，你可以先把手机上的ADB入口关掉，这样就不会因为电脑影响到Phone Limit的运行</font>\n如果电脑也会影响您的学习或休息的话，我建议您把电脑上的网络配置文件放到云盘上面去。然后此时再开启手机的限制模式。等到手机的限制模式结束后，您就可以用手机把云盘上的网络配置文件下载下来，从而恢复电脑的联网状态。\n</string>
     <string name="dialog_tip">你的系统大于等于5.0，我们需要获取 “查看应用使用情况” 权限</string>
-</resources>
+    <string name="set_launcher">Set Launcher</string></resources>
