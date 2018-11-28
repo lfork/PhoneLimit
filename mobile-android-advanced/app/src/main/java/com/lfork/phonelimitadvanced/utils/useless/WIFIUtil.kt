@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.utils
+package com.lfork.phonelimitadvanced.utils.useless
 
 import android.content.Context
 import android.net.wifi.WifiManager

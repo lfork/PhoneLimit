@@ -2,6 +2,9 @@ package com.lfork.phonelimitadvanced.utils
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
+import android.app.AppOpsManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,35 +12,34 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat.startActivity
 import android.util.Log
-import android.widget.Toast
+import com.lfork.phonelimitadvanced.main.FakeHomeActivity
 import com.lfork.phonelimitadvanced.utils.LinuxShell.execCommand
+import com.lfork.phonelimitadvanced.widget.DialogPermission
 import java.io.DataOutputStream
+import java.util.ArrayList
+import android.content.pm.ResolveInfo
+
+
 
 /**
  *
  * Created by 98620 on 2018/10/30.
  */
-object PermissionManager {
 
-
+object PermissionManager{
     /**
-     * 查看是否有了root权限
-     *
-     * @return
+     * 查看设备是否已经Root
+     * @return true is rooted else false
      */
-    fun checkRootPermission(): Boolean {
+    fun isRooted(): Boolean {
         return execCommand("echo root", true, false).result == 0
     }
 
-
     /**
-     * 应用程序运行命令获取 Root权限，设备必须已破解(获得ROOT权限)
-     *
-     * @return 应用程序是/否获取Root权限
+     * @return true succeed else false
      */
-    fun getRootPermission(pkgCodePath: String): Boolean {
+    fun requestRootPermission(pkgCodePath: String): Boolean {
         var process: Process? = null
         var os: DataOutputStream? = null
         try {
@@ -64,7 +66,7 @@ object PermissionManager {
     }
 
     @Synchronized
-    fun getRootAhth(): Boolean {
+    fun isGrantedRootPermission(): Boolean {
         var process: Process? = null
         var os: DataOutputStream? = null
         try {
@@ -91,44 +93,154 @@ object PermissionManager {
     fun requestStoragePermission(context: Context, requestCode: Int, activity: Activity) {
         if (!isGrantedStoragePermission(context)) {
             ActivityCompat.requestPermissions(
-                    activity,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    requestCode
+                activity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                requestCode
             )
         }
     }
 
     fun isGrantedStoragePermission(context: Context): Boolean {
         val checkCallPhonePermission =
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return checkCallPhonePermission == PackageManager.PERMISSION_GRANTED
 
     }
 
-    fun requestFloatingWindowPermission(context: Context) {
+    fun Context.requestFloatingWindowPermission() {
         //权限申请
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (!Settings.canDrawOverlays(context)) {
-
+            if (!Settings.canDrawOverlays(this)) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                intent.data = Uri.parse("package:" + context.packageName)
-                //                            "为了更好的监督学习监督，App需要一些更高的权限，来进行更好的监督");
+                intent.data = Uri.parse("package:" + packageName)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent)
+                startActivity(intent)
             }
         }
     }
 
-    fun checkFloatingWindowPermission(context: Context): Boolean {
+    fun Context.isGrantedWindowPermission(): Boolean {
         //权限申请
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (!Settings.canDrawOverlays(context)) {
+            if (!Settings.canDrawOverlays(this)) {
                 return false
             }
         }
-
         return true
     }
 
+    fun Context.setDefaultLauncher() {
+        val context = this
+        val packageManager = context.packageManager
+        val componentName = ComponentName(context, FakeHomeActivity::class.java)
+        packageManager.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
 
+        val selector = Intent(Intent.ACTION_MAIN)
+        selector.addCategory(Intent.CATEGORY_HOME)
+        context.startActivity(selector)
+
+        packageManager.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
+
+    }
+
+
+
+
+
+    /**
+     * Returns whether the launcher which running on the device is importance foreground.
+     *
+     * @return True if the importance of the launcher process is [android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND].
+     */
+    fun Context.isDefaultLauncher(): Boolean {
+        val intent = Intent(Intent.ACTION_MAIN)//Intent.ACTION_VIEW
+        intent.addCategory("android.intent.category.HOME")
+        intent.addCategory("android.intent.category.DEFAULT")
+        val pm = packageManager
+        val info = pm.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        return packageName == info.activityInfo.packageName
+    }
+
+    /**
+     * 判断是否已经获取 有权查看使用情况的应用程序 权限
+     *
+     * @param context
+     * @return
+     */
+    fun Context.isGrantedStatAccessPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                val packageManager =packageManager
+                val info = packageManager.getApplicationInfo(packageName, 0)
+                val appOpsManager = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+                appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, info.uid, info.packageName)
+                appOpsManager.checkOpNoThrow(
+                    AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    info.uid,
+                    info.packageName
+                ) == AppOpsManager.MODE_ALLOWED
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+
+        } else {
+            true
+        }
+    }
+
+
+    fun Activity.requestStateUsagePermission(requestCode: Int) {
+        val dialog = DialogPermission(this)
+        dialog.show()
+        dialog.setOnClickListener {
+            startActivityForResult(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS) ,requestCode)
+        }
+    }
+
+
+
+    /**
+     * Return PackageManager.
+     *
+     * @param context A Context of the application package implementing this class.
+     * @return a PackageManager instance.
+     */
+    private fun getActivityManager(context: Context): ActivityManager {
+        return context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+    }
+
+    /**
+     * Returns a list of launcher that are running on the device.
+     *
+     * @param context A Context of the application package implementing this class.
+     * @return A list which contains all the launcher package name.If there are no launcher, an empty
+     * list is returned.
+     */
+    private fun getLaunchers(context: Context): List<String> {
+        val packageNames = ArrayList<String>()
+        val packageManager = context.packageManager
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+
+        val resolveInfos = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+
+        for (resolveInfo in resolveInfos) {
+            val activityInfo = resolveInfo.activityInfo
+            if (activityInfo != null) {
+                packageNames.add(resolveInfo.activityInfo.processName)
+                packageNames.add(resolveInfo.activityInfo.packageName)
+            }
+        }
+        return packageNames
+    }
 }

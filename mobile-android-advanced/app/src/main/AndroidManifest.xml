@@ -22,23 +22,18 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
             android:name=".main.MainActivity"
-            android:hardwareAccelerated="true"
             android:launchMode="singleInstance"
-            android:theme="@style/AppLightTheme"
             android:windowSoftInputMode="adjustNothing|stateHidden">
             <intent-filter>
-
-                <!-- 增加lancher配置 -->
-                <category android:name="android.intent.category.HOME" />
-
+                <!-- 增加launcher配置 -->
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -57,21 +52,14 @@
             android:name=".main.FakeHomeActivity"
             android:enabled="false">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.HOME" />
 
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+
             </intent-filter>
         </activity>
 
-
-        <receiver android:name=".limit.BootCompletedReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-                <!--<category android:name="android.intent.category.HOME"/>-->
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

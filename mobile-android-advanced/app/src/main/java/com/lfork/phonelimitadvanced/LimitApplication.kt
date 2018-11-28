@@ -12,11 +12,13 @@ class LimitApplication : Application() {
     companion object {
         val TAG = "LimitApplication"
 
+        var isHuawei = false
 
-        /**
-         * 用户是否已经完全授权
-         */
-        var isPermitted = false
+        var isRooted = false
+
+        var isOnLimitation = false
+
+
     }
 
 

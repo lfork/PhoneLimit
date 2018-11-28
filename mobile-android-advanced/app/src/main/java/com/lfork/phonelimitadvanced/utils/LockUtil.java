@@ -31,28 +31,7 @@ import java.util.List;
  */
 
 public class LockUtil {
-    /**
-     * 判断是否已经获取 有权查看使用情况的应用程序 权限
-     *
-     * @param context
-     * @return
-     */
-    public static boolean isStatAccessPermissionSet(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                PackageManager packageManager = context.getPackageManager();
-                ApplicationInfo info = packageManager.getApplicationInfo(context.getPackageName(), 0);
-                AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-                appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, info.uid, info.packageName);
-                return appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, info.uid, info.packageName) == AppOpsManager.MODE_ALLOWED;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return true;
-        }
-    }
+
 
     /**
      * 查看是存在查看使用情况的应用程序界面
