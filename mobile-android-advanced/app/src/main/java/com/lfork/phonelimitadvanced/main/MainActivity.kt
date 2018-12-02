@@ -1,24 +1,27 @@
 package com.lfork.phonelimitadvanced.main
 
+import android.app.Dialog
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.lfork.phonelimitadvanced.LimitApplication
+import com.lfork.phonelimitadvanced.LimitApplication.Companion.tempInputTimeMinute
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.limit.LimitService
 import com.lfork.phonelimitadvanced.limit.LimitStateListener
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedStatAccessPermission
-import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedStoragePermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedWindowPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestFloatingWindowPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestStateUsagePermission
-import com.lfork.phonelimitadvanced.utils.PermissionManager.setDefaultLauncher
+import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
+import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncherFake
 import kotlinx.android.synthetic.main.main_act.*
 
 class MainActivity :
@@ -29,56 +32,72 @@ class MainActivity :
 
         const val REQUEST_USAGE_ACCESS_PERMISSION = 1
 
-        var tempInputTimeMinute = 0L
+
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (!LimitApplication.isOnLimitation && tempInputTimeMinute > 0) {
-            startLimit(tempInputTimeMinute)
-
-        }
-    }
-
+    lateinit var dialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_act)
-//        setupToolbar()
 
-        btn_start.setOnClickListener {
-            if (!TextUtils.isEmpty(editText.text.toString())) {
-                startLimit(editText.text.toString().toLong() * 60)
-            } else {
-                startLimit()
-            }
-        }
-
-        btn_close.setOnClickListener { closeLimit() }
-        btn_set_launcher.setOnClickListener { setDefaultLauncher() }
+        registerListener()
         checkAndRecoveryLimitTask()
-
-
-
-        if (DeviceHelper.isHuawei()) {
-            tips_huawei.visibility = View.VISIBLE
-        } else {
-            btn_set_launcher.visibility = View.VISIBLE
-            if (android.os.Build.BRAND == "OnePlus") {
-                tips_normal.visibility = View.VISIBLE
-            } else if (PermissionManager.isRooted()) {
-                tips_root.visibility = View.VISIBLE
-            } else {
-                tips_normal.visibility = View.VISIBLE
-            }
-        }
-
+        displaySetting()
 
 //        test_recycle.layoutManager = LinearLayoutManager(this)
 //        test_recycle.adapter = MyRecycleAdapter()
     }
 
+    override fun onResume() {
+        super.onResume()
+        //可能需要多次开启，因为之前可能没有权限，导致开启无效
+        if (tempInputTimeMinute > 0) {
+            startLimit(tempInputTimeMinute)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        clearDefaultLauncherFake()
+    }
+
+    override fun onBackPressed() {
+        if (!LimitApplication.isOnLimitation) {
+            super.onBackPressed()
+        }
+    }
+
+    /**
+     * 暂时还不需要访问文件的权限
+     */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            //TODO 权限申请
+//            REQUEST_STORAGE_PERMISSION -> {
+//                if (isGrantedStoragePermission(applicationContext)) {
+//                    if (!TextUtils.isEmpty(editText.text.toString())) {
+//                        startLimit(editText.text.toString().toLong())
+//                    } else {
+//                        startLimit()
+//                    }
+//                }
+//            }
+
+            REQUEST_USAGE_ACCESS_PERMISSION -> {
+                if (isGrantedStatAccessPermission()) {
+                    startLimit()
+                } else {
+                    ToastUtil.showShort(this, getString(R.string.permission_denied_tips))
+                }
+            }
+        }
+    }
 
     /**
      * 开启限制前需要检查相应的权限
@@ -100,10 +119,12 @@ class MainActivity :
             }
         } else {
             if (!isDefaultLauncher()) {
-                setDefaultLauncher()
 
+                if (!dialog.isShowing) {
+                    dialog.show()
+                }
                 if (!isDefaultLauncher()) {
-                    ToastUtil.showShort(this, getString(R.string.launcher_denied_tips))
+                    ToastUtil.showLong(this, getString(R.string.launcher_denied_tips))
                     return false
                 }
             }
@@ -132,10 +153,49 @@ class MainActivity :
         return true
     }
 
-    private fun setupToolbar() {
-//        main_toolbar.title = getString(R.string.app_name)
+    private fun registerListener() {
+        btn_start.setOnClickListener {
+            if (!TextUtils.isEmpty(editText.text.toString())) {
+                startLimit(editText.text.toString().toLong() * 60)
+            } else {
+                startLimit()
+            }
+        }
+        btn_set_launcher.setOnClickListener { clearDefaultLauncher() }
     }
 
+    private fun displaySetting() {
+
+        dialog = AlertDialog.Builder(this).setTitle(R.string.tips_launcher_setting)
+            .setPositiveButton(R.string.action_default_apps_setting) { dialog, id ->
+                //去设置默认桌面
+                openDefaultAppsSetting()
+            }.setNegativeButton(R.string.cancel) { dialog, id ->
+                tempInputTimeMinute = -1
+            }
+            .setCancelable(false)
+            .create()
+
+        //tips设置
+        if (DeviceHelper.isHuawei()) {
+            tips_huawei.visibility = View.VISIBLE
+        } else {
+//            btn_set_launcher.visibility = View.VISIBLE
+            if (android.os.Build.BRAND == "OnePlus") {
+                tips_normal.visibility = View.VISIBLE
+            } else if (PermissionManager.isRooted()) {
+                tips_root.visibility = View.VISIBLE
+            } else {
+                tips_normal.visibility = View.VISIBLE
+            }
+        }
+
+
+        //button显示设置 如果是7.0 以上的系统就跳转到设置界面让用户手动设置默认程序【主流用户】
+        //如果是定制系统 就跳转到设置界面即可。  就不主动在当前的界面手动设置默认桌面了。
+
+
+    }
 
     private val limitServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
@@ -200,8 +260,8 @@ class MainActivity :
             return
         }
 
-        tempInputTimeMinute = 0
-        btn_set_launcher.visibility = View.INVISIBLE
+
+//        btn_set_launcher.visibility = View.INVISIBLE
 
         //开启之前需要把权限获取到位
         val limitIntent = Intent(this, LimitService::class.java)
@@ -209,19 +269,24 @@ class MainActivity :
 
         bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
         startService(limitIntent)
+
+
+        //开启完成
         LimitApplication.isOnLimitation = true
+        tempInputTimeMinute = -1
     }
 
     private fun closeLimit() {
-        btn_set_launcher.visibility = View.VISIBLE
+//        btn_set_launcher.visibility = View.VISIBLE
         unbindService(limitServiceConnection)
         val stopIntent = Intent(this, LimitService::class.java)
         this.stopService(stopIntent)
 
         if (!LimitApplication.isHuawei) {
-            setDefaultLauncher()
+            clearDefaultLauncher()
         }
     }
+
 
     private fun checkAndRecoveryLimitTask() {
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
@@ -238,36 +303,4 @@ class MainActivity :
         editor.apply()
     }
 
-    override fun onBackPressed() {
-        if (!LimitApplication.isOnLimitation) {
-            super.onBackPressed()
-        }
-
-    }
-
-    /**
-     * 暂时还不需要访问文件的权限
-     */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            //TODO 权限申请
-            REQUEST_STORAGE_PERMISSION -> {
-                if (isGrantedStoragePermission(applicationContext)) {
-                    if (!TextUtils.isEmpty(editText.text.toString())) {
-                        startLimit(editText.text.toString().toLong())
-                    } else {
-                        startLimit()
-                    }
-                }
-            }
-
-            REQUEST_USAGE_ACCESS_PERMISSION -> {
-                if (isGrantedStatAccessPermission()) {
-                    startLimit()
-                } else {
-                    ToastUtil.showShort(this, getString(R.string.permission_denied_tips))
-                }
-            }
-        }
-    }
 }

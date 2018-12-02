@@ -18,6 +18,10 @@ class LimitApplication : Application() {
 
         var isOnLimitation = false
 
+        /**
+         * 大于0的话说明正在开启当中，但是还没有完全开启
+         */
+        var tempInputTimeMinute = -1L
 
     }
 
@@ -26,4 +30,12 @@ class LimitApplication : Application() {
         super.onCreate()
         Log.d(TAG, "BAND:" +android.os.Build.BRAND + "  MANUFACTURER:"+ android.os.Build.MANUFACTURER)
     }
+
+    fun saveWhiteList(){
+    }
+
+    fun loadWhiteList(){
+    }
+
+
 }

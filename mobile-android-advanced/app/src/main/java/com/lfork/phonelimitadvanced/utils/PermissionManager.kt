@@ -129,7 +129,7 @@ object PermissionManager{
         return true
     }
 
-    fun Context.setDefaultLauncher() {
+    fun Context.clearDefaultLauncher() {
         val context = this
         val packageManager = context.packageManager
         val componentName = ComponentName(context, FakeHomeActivity::class.java)
@@ -139,16 +139,29 @@ object PermissionManager{
             PackageManager.DONT_KILL_APP
         )
 
-        val selector = Intent(Intent.ACTION_MAIN)
-        selector.addCategory(Intent.CATEGORY_HOME)
-        context.startActivity(selector)
 
+//        val selector = Intent(Intent.ACTION_MAIN)
+//        selector.addCategory(Intent.CATEGORY_HOME)
+//        context.startActivity(selector)
+
+//        packageManager.setComponentEnabledSetting(
+//            componentName,
+//            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//            PackageManager.DONT_KILL_APP
+//        )
+
+    }
+
+
+    fun Context.clearDefaultLauncherFake() {
+        val context = this
+        val packageManager = context.packageManager
+        val componentName = ComponentName(context, FakeHomeActivity::class.java)
         packageManager.setComponentEnabledSetting(
             componentName,
             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
-
     }
 
 

@@ -18,8 +18,6 @@ import android.provider.MediaStore;
 public class UriHelper {
 
 
-
-
     /**
      *  获取图片的真实路径，在4.4之后的系统可以调用，包括4.4 api>= 19
      * @param context 上下文
