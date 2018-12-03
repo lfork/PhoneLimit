@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!-- 应用锁需要的权限 -->
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -31,10 +31,11 @@
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustNothing|stateHidden">
             <intent-filter>
+
                 <!-- 增加launcher配置 -->
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.HOME" />
 
+                <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
@@ -44,22 +45,19 @@
         <service
             android:name=".limit.LimitService"
             android:enabled="true"
-            android:exported="true">
-
-        </service>
+            android:exported="true" />
 
         <activity
-            android:name=".main.FakeHomeActivity"
+            android:name=".main.focus.FakeHomeActivity"
             android:enabled="false">
             <intent-filter>
-
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
-
             </intent-filter>
         </activity>
-
+        <activity android:name=".statistic.StatisticActivity"></activity>
     </application>
 
 </manifest>

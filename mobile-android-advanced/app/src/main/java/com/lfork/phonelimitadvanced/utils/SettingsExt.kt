@@ -6,6 +6,7 @@ import android.provider.Settings.ACTION_ADD_ACCOUNT
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.widget.EditText
@@ -24,10 +25,10 @@ fun Context.openDefaultAppsSetting() {
         val intent = Intent(Settings.ACTION_APPLICATION_SETTINGS)
         startActivity(intent)
     }
+}
 
 
-
-
-
+fun Fragment.openDefaultAppsSetting() {
+    context?.openDefaultAppsSetting()
 }
 

@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.main
+package com.lfork.phonelimitadvanced.main.focus
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +10,5 @@ class FakeHomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fake_home_act)
     }
-
 
 }

@@ -12,14 +12,13 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
 import android.util.Log
-import com.lfork.phonelimitadvanced.main.FakeHomeActivity
+import com.lfork.phonelimitadvanced.main.focus.FakeHomeActivity
 import com.lfork.phonelimitadvanced.utils.LinuxShell.execCommand
 import com.lfork.phonelimitadvanced.widget.DialogPermission
 import java.io.DataOutputStream
 import java.util.ArrayList
-import android.content.pm.ResolveInfo
-
 
 
 /**
@@ -119,6 +118,11 @@ object PermissionManager{
         }
     }
 
+    fun Fragment.requestFloatingWindowPermission() {
+       context?.requestFloatingWindowPermission()
+    }
+
+
     fun Context.isGrantedWindowPermission(): Boolean {
         //权限申请
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -127,6 +131,11 @@ object PermissionManager{
             }
         }
         return true
+    }
+
+
+    fun Fragment.isGrantedWindowPermission(): Boolean {
+        return context!!.isGrantedWindowPermission()
     }
 
     fun Context.clearDefaultLauncher() {
@@ -152,6 +161,10 @@ object PermissionManager{
 
     }
 
+    fun Fragment.clearDefaultLauncher() {
+        context?.clearDefaultLauncherFake()
+    }
+
 
     fun Context.clearDefaultLauncherFake() {
         val context = this
@@ -164,6 +177,10 @@ object PermissionManager{
         )
     }
 
+
+    fun Fragment.clearDefaultLauncherFake() {
+        context?.clearDefaultLauncherFake()
+    }
 
 
 
@@ -180,6 +197,11 @@ object PermissionManager{
         val pm = packageManager
         val info = pm.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
         return packageName == info.activityInfo.packageName
+    }
+
+
+    fun Fragment.isDefaultLauncher(): Boolean {
+       return context!!.isDefaultLauncher()
     }
 
     /**
@@ -210,6 +232,10 @@ object PermissionManager{
         }
     }
 
+    fun Fragment.isGrantedStatAccessPermission(): Boolean {
+        return context!!.isGrantedStatAccessPermission()
+    }
+
 
     fun Activity.requestStateUsagePermission(requestCode: Int) {
         val dialog = DialogPermission(this)
@@ -217,6 +243,10 @@ object PermissionManager{
         dialog.setOnClickListener {
             startActivityForResult(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS) ,requestCode)
         }
+    }
+
+    fun Fragment.requestStateUsagePermission(requestCode: Int) {
+       activity!!.requestStateUsagePermission(requestCode)
     }
 
 

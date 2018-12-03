@@ -1,7 +1,6 @@
-package com.lfork.phonelimitadvanced.main
+package com.lfork.phonelimitadvanced.main.focus
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
