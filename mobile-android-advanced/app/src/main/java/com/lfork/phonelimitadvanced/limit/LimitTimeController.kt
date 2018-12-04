@@ -1,6 +1,8 @@
 package com.lfork.phonelimitadvanced.limit
 
+import android.app.Application
 import android.util.Log
+import com.lfork.phonelimitadvanced.LimitApplication
 
 /**
  *
@@ -58,6 +60,9 @@ object LimitTimeController {
     fun startLimit(limitTimeSeconds: Long): Boolean {
         if (limited) {
             return false
+        }
+        if(LimitApplication.isRooted){
+
         }
         this.limitTimeSeconds = limitTimeSeconds
         startMachineTimeMillis = System.currentTimeMillis()
