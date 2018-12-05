@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.util.Log
 
 
@@ -27,7 +28,7 @@ class LimitApplication : Application() {
          */
         var tempInputTimeMinute = -1L
 
-        private var launcherAppInfo: List<PackageInfo>? = null
+        private var launcherAppInfo: List<ResolveInfo>? = null
 
     }
 
@@ -50,13 +51,11 @@ class LimitApplication : Application() {
 
     private fun getLauncherApps() {
         // 桌面应用的启动在INTENT中需要包含ACTION_MAIN 和CATEGORY_HOME.
-        val intent = Intent()
-        intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        intent.action = Intent.ACTION_MAIN
-
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
         val manager = packageManager
-        launcherAppInfo = manager.getInstalledPackages(android.content.pm.PackageManager.GET_ACTIVITIES)
-        Log.d(TAG, "Activities" + launcherAppInfo)
+        val info = manager.resolveActivity(intent,0)
+        Log.d(TAG, "Activities " + info)
 
     }
 

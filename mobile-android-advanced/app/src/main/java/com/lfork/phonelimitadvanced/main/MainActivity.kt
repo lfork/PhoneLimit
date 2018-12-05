@@ -56,13 +56,11 @@ class MainActivity : AppCompatActivity(),BrowserFragment.OnFragmentInteractionLi
     }
 
 
-
     companion object {
         private const val FRAG_FOCUS = 0
         private const val FRAG_BROWSER = 1
         private const val FRAG_MY = 2
     }
-
 
     private fun initFragments() {
         fragments[FRAG_FOCUS] = FocusFragment()
@@ -77,5 +75,8 @@ class MainActivity : AppCompatActivity(),BrowserFragment.OnFragmentInteractionLi
         transaction.replace(R.id.main_frag, fragment)
         transaction.commit()
     }
+
+
+
 
 }

@@ -18,6 +18,7 @@ import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.AppConstants
 import com.lfork.phonelimitadvanced.limit.LimitTimeController.AUTO_UNLOCKED
 import com.lfork.phonelimitadvanced.limit.LimitTimeController.FORCE_UNLOCKED
+import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.main.focus.FocusFragment
 import java.util.*
 
@@ -220,7 +221,7 @@ class LimitService : Service() {
         //如果是华为的话，这里就需要显示悬浮窗
         //否则就进行跳转
 
-        val intent = Intent(this, FocusFragment::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName)
         intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

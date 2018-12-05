@@ -45,7 +45,7 @@ class FocusFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        super.onCreate(savedInstanceState)
+        super.onCreateView(inflater, container, savedInstanceState)
 
         if (root == null) {
             root = inflater.inflate(R.layout.main_focus_frag, container, false)
