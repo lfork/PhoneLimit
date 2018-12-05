@@ -1,6 +1,5 @@
 package com.lfork.phonelimitadvanced.limit
 
-import android.app.Application
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
 
@@ -35,7 +34,16 @@ object LimitTimeController {
 //                "mv /system/etc/tmp/data /system/etc/data;" +
 //                "mv /system/etc/tmp/wifi /system/etc/wifi;"
 
-    private const val CMD_START_LIMIT ="iptables -P OUTPUT DROP"
+    private const val CMD_START_LIMIT = "iptables -P OUTPUT DROP"
+//        "mount -o rw,remount /vendor;" +
+//                "rm -rf /vendor/etc/tmp;" +
+//                "mkdir -m 777 /vendor/etc/tmp;" +
+//                "mv /vendor/etc/data /vendor/etc/tmp/data;" +
+//                "mv /vendor/etc/wifi /vendor/etc/tmp/wifi;"
+
+    private const val CMD_HIDE_OTHER_LAUNCHER = "pm hide "
+
+    private const val CMD_UNHIDE_OTHER_LAUNCHER = "pm unhide "
 //        "mount -o rw,remount /vendor;" +
 //                "rm -rf /vendor/etc/tmp;" +
 //                "mkdir -m 777 /vendor/etc/tmp;" +
@@ -61,8 +69,12 @@ object LimitTimeController {
         if (limited) {
             return false
         }
-        if(LimitApplication.isRooted){
-
+        if (LimitApplication.isRooted) {
+            val launchers = LimitApplication.getLauncherApps()
+            Log.d("上锁测试",launchers.toString());
+            launchers?.forEach {
+                RootShell.execRootCmd(CMD_HIDE_OTHER_LAUNCHER + it)
+            }
         }
         this.limitTimeSeconds = limitTimeSeconds
         startMachineTimeMillis = System.currentTimeMillis()
@@ -78,6 +90,13 @@ object LimitTimeController {
     fun closeLimit() {
         autoLockThread?.interrupt()
         limited = false
+        if (LimitApplication.isRooted) {
+            val launchers = LimitApplication.getLauncherApps()
+            Log.d("解锁测试",launchers.toString());
+            launchers?.forEach {
+                RootShell.execRootCmd(CMD_UNHIDE_OTHER_LAUNCHER + it)
+            }
+        }
     }
 
     const val AUTO_UNLOCKED = 1

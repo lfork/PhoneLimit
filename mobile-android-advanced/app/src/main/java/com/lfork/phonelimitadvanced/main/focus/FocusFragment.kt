@@ -50,6 +50,7 @@ class FocusFragment : Fragment() {
         if (root == null) {
             root = inflater.inflate(R.layout.main_focus_frag, container, false)
 
+            initDialog()
             registerListener(root!!)
             checkAndRecoveryLimitTask()
             displaySetting(root!!)
@@ -59,9 +60,9 @@ class FocusFragment : Fragment() {
 //        test_recycle.layoutManager = LinearLayoutManager(this)
 //        test_recycle.adapter = MyRecycleAdapter()
 
-
         return root
     }
+
 
 
     override fun onResume() {
@@ -72,10 +73,6 @@ class FocusFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        clearDefaultLauncherFake()
-    }
 
 
     /**
@@ -146,9 +143,12 @@ class FocusFragment : Fragment() {
                         ToastUtil.showShort(context, getString(R.string.permission_denied_tips))
                         return false
                     }
-                }
 
+
+                }
                 LimitApplication.isRooted = true
+                LimitApplication.getLauncherApps()
+
             }
         }
 
@@ -173,8 +173,7 @@ class FocusFragment : Fragment() {
         view.btn_set_launcher.setOnClickListener { clearDefaultLauncher() }
     }
 
-    private fun displaySetting(view: View) {
-
+    private fun initDialog(){
         dialog = AlertDialog.Builder(context!!).setTitle(R.string.tips_launcher_setting)
             .setPositiveButton(R.string.action_default_apps_setting) { dialog, id ->
                 //去设置默认桌面
@@ -184,6 +183,9 @@ class FocusFragment : Fragment() {
             }
             .setCancelable(false)
             .create()
+    }
+
+    private fun displaySetting(view: View) {
 
         //tips设置
         if (DeviceHelper.isHuawei()) {

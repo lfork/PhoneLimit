@@ -10,9 +10,10 @@ import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.main.browser.BrowserFragment
 import com.lfork.phonelimitadvanced.main.focus.FocusFragment
 import com.lfork.phonelimitadvanced.main.my.MyFragment
+import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncherFake
 import kotlinx.android.synthetic.main.main2_act.*
 
-class MainActivity : AppCompatActivity(),BrowserFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionListener {
 
     override fun onFragmentInteraction(uri: Uri) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -47,14 +48,17 @@ class MainActivity : AppCompatActivity(),BrowserFragment.OnFragmentInteractionLi
     }
 
 
+    override fun onPause() {
+        super.onPause()
+        clearDefaultLauncherFake()
+    }
+
     override fun onBackPressed() {
         if (!LimitApplication.isOnLimitation) {
             super.onBackPressed()
         }
-
-        runOnUiThread {  }
+        runOnUiThread { }
     }
-
 
     companion object {
         private const val FRAG_FOCUS = 0
@@ -66,17 +70,28 @@ class MainActivity : AppCompatActivity(),BrowserFragment.OnFragmentInteractionLi
         fragments[FRAG_FOCUS] = FocusFragment()
         fragments[FRAG_BROWSER] = BrowserFragment()
         fragments[FRAG_MY] = MyFragment()
-        replaceFragment(fragments[FRAG_FOCUS]!!)
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.add(R.id.main_frag, fragments[FRAG_BROWSER]!!, "FRAG_FOCUS")
+            .hide(fragments[FRAG_BROWSER]!!)
+        transaction.add(R.id.main_frag, fragments[FRAG_MY]!!, "FRAG_BROWSER")
+            .hide(fragments[FRAG_MY]!!)
+        transaction.add(R.id.main_frag, fragments[FRAG_FOCUS]!!, "FRAG_MY")
+            .show(fragments[FRAG_FOCUS]!!);
+        transaction.commit()
+
+        mCurrentFragment = fragments[FRAG_FOCUS]!!
     }
+
+    lateinit var mCurrentFragment: Fragment
 
     private fun replaceFragment(fragment: Fragment) {
-        val fragmentManager = supportFragmentManager
-        val transaction = fragmentManager.beginTransaction()
-        transaction.replace(R.id.main_frag, fragment)
-        transaction.commit()
+
+        supportFragmentManager.beginTransaction()
+            .hide(mCurrentFragment)
+            .show(fragment)
+            .commit()
+        mCurrentFragment = fragment
     }
-
-
-
 
 }

@@ -174,10 +174,10 @@ public class LinuxShell {
 						process.getErrorStream()));
 				String s;
 				while ((s = successResult.readLine()) != null) {
-					successMsg.append(s);
+					successMsg.append(s).append('\n');
 				}
 				while ((s = errorResult.readLine()) != null) {
-					errorMsg.append(s);
+					errorMsg.append(s).append('\n');
 				}
 			}
 		} catch (IOException e) {

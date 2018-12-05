@@ -6,6 +6,8 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.util.Log
+import com.lfork.phonelimitadvanced.limit.RootShell
+import com.lfork.phonelimitadvanced.utils.LinuxShell
 
 
 /**
@@ -28,35 +30,52 @@ class LimitApplication : Application() {
          */
         var tempInputTimeMinute = -1L
 
-        private var launcherAppInfo: List<ResolveInfo>? = null
+        private var launcherAppInfo: List<String>? = null
 
+        /**
+         * 获取到桌面的应用程序
+         */
+
+        fun getLauncherApps(): List<String>? {
+
+            if (launcherAppInfo != null) {
+                return launcherAppInfo
+            }
+
+            if (isRooted) {
+                val result = LinuxShell.execCommand(
+                    " pm list package | grep  '.*launcher'",
+                    true
+                )
+                var launchers = result.successMsg.replace("package:", "").split('\n')
+                launchers = launchers.subList(0, launchers.size - 1)
+
+                Log.d(
+                    TAG,
+                    "Activities $launchers"
+                )
+                launcherAppInfo = launchers
+
+            }
+
+            return launcherAppInfo;
+        }
     }
 
 
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG, "BAND:" +android.os.Build.BRAND + "  MANUFACTURER:"+ android.os.Build.MANUFACTURER)
-        getLauncherApps()
+        Log.d(
+            TAG,
+            "BAND:" + android.os.Build.BRAND + "  MANUFACTURER:" + android.os.Build.MANUFACTURER
+        )
+
     }
 
-    fun saveWhiteList(){
+    fun saveWhiteList() {
     }
 
-    fun loadWhiteList(){
-    }
-
-    /**
-     * 获取到桌面的应用程序
-     */
-
-    private fun getLauncherApps() {
-        // 桌面应用的启动在INTENT中需要包含ACTION_MAIN 和CATEGORY_HOME.
-        val intent = Intent(Intent.ACTION_MAIN)
-        intent.addCategory(Intent.CATEGORY_HOME)
-        val manager = packageManager
-        val info = manager.resolveActivity(intent,0)
-        Log.d(TAG, "Activities " + info)
-
+    fun loadWhiteList() {
     }
 
 
