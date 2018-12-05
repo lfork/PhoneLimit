@@ -2,6 +2,7 @@ package com.lfork.phonelimitadvanced.limit
 
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
+import com.lfork.phonelimitadvanced.LimitApplication.Companion.App
 
 /**
  *
@@ -70,7 +71,7 @@ object LimitTimeController {
             return false
         }
         if (LimitApplication.isRooted) {
-            val launchers = LimitApplication.getLauncherApps()
+            val launchers = App.getLauncherApps()
             Log.d("上锁测试",launchers.toString());
             launchers?.forEach {
                 RootShell.execRootCmd(CMD_HIDE_OTHER_LAUNCHER + it)
@@ -91,7 +92,7 @@ object LimitTimeController {
         autoLockThread?.interrupt()
         limited = false
         if (LimitApplication.isRooted) {
-            val launchers = LimitApplication.getLauncherApps()
+            val launchers = App.getLauncherApps()
             Log.d("解锁测试",launchers.toString());
             launchers?.forEach {
                 RootShell.execRootCmd(CMD_UNHIDE_OTHER_LAUNCHER + it)

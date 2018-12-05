@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.lfork.phonelimitadvanced.LimitApplication
+import com.lfork.phonelimitadvanced.LimitApplication.Companion.App
+import com.lfork.phonelimitadvanced.LimitApplication.Companion.haveRemainTime
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.tempInputTimeMinute
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.limit.LimitService
@@ -23,7 +25,6 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedWindowPermi
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestFloatingWindowPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestStateUsagePermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
-import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncherFake
 import kotlinx.android.synthetic.main.main_focus_frag.*
 import kotlinx.android.synthetic.main.main_focus_frag.view.*
 
@@ -147,7 +148,7 @@ class FocusFragment : Fragment() {
 
                 }
                 LimitApplication.isRooted = true
-                LimitApplication.getLauncherApps()
+                App.getLauncherApps()
 
             }
         }
@@ -271,6 +272,7 @@ class FocusFragment : Fragment() {
             return
         }
 
+        haveRemainTime  = true
 
 //        btn_set_launcher.visibility = View.INVISIBLE
 
@@ -294,15 +296,21 @@ class FocusFragment : Fragment() {
         stopService(stopIntent)
 
         if (!LimitApplication.isHuawei) {
+
             clearDefaultLauncher()
         }
+
+        haveRemainTime  = false
     }
 
 
     private fun checkAndRecoveryLimitTask() {
+
+
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
         if (remainTimeSeconds > 1) {
+            haveRemainTime  = true
             startLimit(remainTimeSeconds)
         }
     }

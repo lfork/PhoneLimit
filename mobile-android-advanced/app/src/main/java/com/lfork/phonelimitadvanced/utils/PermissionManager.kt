@@ -175,6 +175,8 @@ object PermissionManager{
             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
+
+        Log.d("清除桌面测试","成功")
     }
 
 
