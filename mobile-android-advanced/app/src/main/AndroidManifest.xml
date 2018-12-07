@@ -57,7 +57,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".statistic.StatisticActivity"></activity>
+        <activity android:name=".statistic.StatisticActivity" />
+        <activity android:name=".whitename.WhiteNameEditActivity"></activity>
     </application>
 
 </manifest>

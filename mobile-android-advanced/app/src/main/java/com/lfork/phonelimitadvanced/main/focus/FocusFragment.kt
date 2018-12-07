@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -55,15 +57,15 @@ class FocusFragment : Fragment() {
             registerListener(root!!)
             checkAndRecoveryLimitTask()
             displaySetting(root!!)
+            root!!.recycle_white_list.layoutManager =
+                    LinearLayoutManager(context, HORIZONTAL, false)
+            val adapter = FocusRecycleAdapter()
+
+            root!!.recycle_white_list.adapter = adapter
         }
-
-
-//        test_recycle.layoutManager = LinearLayoutManager(this)
-//        test_recycle.adapter = MyRecycleAdapter()
 
         return root
     }
-
 
 
     override fun onResume() {
@@ -72,8 +74,9 @@ class FocusFragment : Fragment() {
         if (tempInputTimeMinute > 0) {
             startLimit(tempInputTimeMinute)
         }
+        (root!!.recycle_white_list.adapter as FocusRecycleAdapter).setItems(App.getWhiteNameAppsInfo())
+        root!!.recycle_white_list.adapter?.notifyDataSetChanged()
     }
-
 
 
     /**
@@ -144,22 +147,16 @@ class FocusFragment : Fragment() {
                         ToastUtil.showShort(context, getString(R.string.permission_denied_tips))
                         return false
                     }
-
-
                 }
                 LimitApplication.isRooted = true
                 App.getLauncherApps()
-
             }
         }
-
         //        if (!PermissionManager.isGrantedStoragePermission(applicationContext)) {
 //            ToastUtil.showShort(this, "请给与程序需要的权限")
 //            requestStoragePermission(applicationContext, REQUEST_STORAGE_PERMISSION, this)
 //            return
 //        }
-
-
         return true
     }
 
@@ -174,7 +171,7 @@ class FocusFragment : Fragment() {
         view.btn_set_launcher.setOnClickListener { clearDefaultLauncher() }
     }
 
-    private fun initDialog(){
+    private fun initDialog() {
         dialog = AlertDialog.Builder(context!!).setTitle(R.string.tips_launcher_setting)
             .setPositiveButton(R.string.action_default_apps_setting) { dialog, id ->
                 //去设置默认桌面
@@ -272,7 +269,7 @@ class FocusFragment : Fragment() {
             return
         }
 
-        haveRemainTime  = true
+        haveRemainTime = true
 
 //        btn_set_launcher.visibility = View.INVISIBLE
 
@@ -300,7 +297,7 @@ class FocusFragment : Fragment() {
             clearDefaultLauncher()
         }
 
-        haveRemainTime  = false
+        haveRemainTime = false
     }
 
 
@@ -310,7 +307,7 @@ class FocusFragment : Fragment() {
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
         if (remainTimeSeconds > 1) {
-            haveRemainTime  = true
+            haveRemainTime = true
             startLimit(remainTimeSeconds)
         }
     }
