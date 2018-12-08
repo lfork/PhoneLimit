@@ -16,6 +16,8 @@ import android.text.TextUtils
 import android.util.Log
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.AppConstants
+import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
+import com.lfork.phonelimitadvanced.data.limittask.LimitTaskRepository
 import com.lfork.phonelimitadvanced.limit.LimitTimeController.AUTO_UNLOCKED
 import com.lfork.phonelimitadvanced.limit.LimitTimeController.FORCE_UNLOCKED
 import com.lfork.phonelimitadvanced.main.MainActivity
@@ -168,8 +170,7 @@ class LimitService : Service() {
      * 白名单
      */
     private fun inWhiteList(packageName: String): Boolean {
-        return (packageName == AppConstants.APP_PACKAGE_NAME
-                || packageName == "net.oneplus.launcher")
+        return AppInfoRepository.whiteNameList.contains(packageName)
     }
 
     private fun getLauncherTopApp(context: Context, activityManager: ActivityManager): String {

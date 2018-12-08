@@ -33,7 +33,7 @@
         <!--全屏-->
         <item name="android:windowFullscreen">true</item>
         <!--activity切换动画-->
-        <!--<item name="android:windowAnimationStyle">@style/AnimationDialogActivity</item>-->
+        <!--<item appName="android:windowAnimationStyle">@style/AnimationDialogActivity</item>-->
         <item name="android:backgroundDimAmount">0.4</item>
         <item name="android:windowCloseOnTouchOutside">false</item>
     </style>

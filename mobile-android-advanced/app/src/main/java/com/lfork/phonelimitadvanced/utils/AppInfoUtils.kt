@@ -32,7 +32,7 @@ import com.lfork.phonelimitadvanced.R
 //                    val pkg = resolveInfo.activityInfo.packageName
 //                    if (!TextUtils.isEmpty(pkg) && pkg == pkgName) {
 //
-//                        val clsName = resolveInfo.activityInfo.name
+//                        val clsName = resolveInfo.activityInfo.appName
 //                        if (clsName == className) {
 //                            drawable = resolveInfo.loadIcon(pm)
 //                            return drawable

@@ -1,6 +1,6 @@
 package com.lfork.phonelimitadvanced.main.focus
 
-import android.support.v4.content.ContextCompat.startActivity
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,9 @@ import android.widget.ImageView
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.utils.startActivity
+import com.lfork.phonelimitadvanced.utils.startOtherApp
 import com.lfork.phonelimitadvanced.whitename.WhiteNameEditActivity
+import kotlinx.android.synthetic.main.main2_act.view.*
 import kotlinx.android.synthetic.main.main_focus_recycle_item.view.*
 
 
@@ -64,15 +66,30 @@ class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolde
     override fun onBindViewHolder(holder: NormalHolder, p1: Int) {
 
         if (p1 != itemCount - 1) {
-            holder.textView.text = items[p1].name
+            holder.textView.text = items[p1].appName
             holder.textView.setOnClickListener {
                 deleteItem(holder.adapterPosition)
             }
-            holder.imageView.setImageDrawable(items[p1].icon)
+            val icon = items[p1].icon
+            if (icon != null) {
+                holder.imageView.setImageDrawable(icon)
+            } else {
+                items.removeAt(p1)
+                notifyItemRemoved(p1)
+
+
+            }
+
+            holder.item.setOnClickListener {
+                //跳转到编辑界面
+                it.context.startOtherApp(items[p1].packageName)
+            }
         } else {
             holder.item.setOnClickListener {
-               //跳转到编辑界面
+                //跳转到编辑界面
                 it.context.startActivity<WhiteNameEditActivity>()
+
+
             }
         }
     }
@@ -96,7 +113,7 @@ class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolde
         val imageView: ImageView = itemView.icon
     }
 
-    fun setItems(itemList: ArrayList<AppInfo>) {
+    fun setItems(itemList: List<AppInfo>) {
         items.clear()
         items.addAll(itemList)
     }

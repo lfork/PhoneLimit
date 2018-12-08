@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.util.AsyncListUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
 import android.text.TextUtils
@@ -18,6 +19,9 @@ import com.lfork.phonelimitadvanced.LimitApplication.Companion.App
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.haveRemainTime
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.tempInputTimeMinute
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.data.DataCallback
+import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
+import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.limit.LimitService
 import com.lfork.phonelimitadvanced.limit.LimitStateListener
 import com.lfork.phonelimitadvanced.utils.*
@@ -27,6 +31,7 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedWindowPermi
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestFloatingWindowPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestStateUsagePermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
+import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
 import kotlinx.android.synthetic.main.main_focus_frag.*
 import kotlinx.android.synthetic.main.main_focus_frag.view.*
 
@@ -42,6 +47,8 @@ class FocusFragment : Fragment() {
     lateinit var dialog: AlertDialog
 
     private var root: View? = null
+
+    private lateinit var adapter: FocusRecycleAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +66,7 @@ class FocusFragment : Fragment() {
             displaySetting(root!!)
             root!!.recycle_white_list.layoutManager =
                     LinearLayoutManager(context, HORIZONTAL, false)
-            val adapter = FocusRecycleAdapter()
+            adapter = FocusRecycleAdapter()
 
             root!!.recycle_white_list.adapter = adapter
         }
@@ -74,10 +81,33 @@ class FocusFragment : Fragment() {
         if (tempInputTimeMinute > 0) {
             startLimit(tempInputTimeMinute)
         }
-        (root!!.recycle_white_list.adapter as FocusRecycleAdapter).setItems(App.getWhiteNameAppsInfo())
-        root!!.recycle_white_list.adapter?.notifyDataSetChanged()
+
+        refreshData()
     }
 
+    private fun refreshData() {
+
+        AppInfoRepository.getWhiteNameApps(object : DataCallback<List<AppInfo>> {
+            override fun succeed(data: List<AppInfo>) {
+                if (context != null) {
+                    data.forEach {
+                        val icon = getAppIcon(context!!, it.packageName)
+                        it.icon = icon
+                    }
+                    adapter.setItems(data)
+                    runOnUiThread { adapter.notifyDataSetChanged() }
+                }
+            }
+
+            override fun failed(code: Int, log: String) {
+                if (context != null) {
+                    showLong(context!!, log)
+                }
+            }
+        })
+
+
+    }
 
     /**
      * 暂时还不需要访问文件的权限

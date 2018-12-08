@@ -268,7 +268,7 @@ object PermissionManager{
      * Returns a list of launcher that are running on the device.
      *
      * @param context A Context of the application package implementing this class.
-     * @return A list which contains all the launcher package name.If there are no launcher, an empty
+     * @return A list which contains all the launcher package appName.If there are no launcher, an empty
      * list is returned.
      */
     private fun getLaunchers(context: Context): List<String> {

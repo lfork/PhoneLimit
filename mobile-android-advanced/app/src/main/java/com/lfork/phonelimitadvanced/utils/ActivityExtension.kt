@@ -24,7 +24,7 @@ fun AppCompatActivity.setupActionBar() {
     actionBar.setDisplayShowHomeEnabled(false)
 }
 
-fun AppCompatActivity.setupToolBar(toolbar:Toolbar, title:String) {
+fun AppCompatActivity.setupToolBar(toolbar: Toolbar, title: String) {
     setSupportActionBar(toolbar)
     val actionBar = supportActionBar
     actionBar?.setDisplayHomeAsUpEnabled(true)  //设置返回按钮，需要在监听里面实现返回功能   onOptionsItemSelected(MenuItem item)
@@ -48,4 +48,10 @@ inline fun <reified T : Activity> Activity.startActivity() {
 inline fun <reified T : Activity> Context.startActivity() {
     val intent = Intent(this, T::class.java)
     startActivity(intent)
+}
+
+
+fun  Context.startOtherApp(packageName:String) {
+    val resolveIntent = packageManager.getLaunchIntentForPackage(packageName);
+    startActivity(resolveIntent)
 }

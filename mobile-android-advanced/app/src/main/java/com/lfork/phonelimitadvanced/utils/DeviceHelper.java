@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 @SuppressLint("PrivateApi")
 public class DeviceHelper {
     private final static String TAG = "QMUIDeviceHelper";
-    private final static String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
+    private final static String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.appName";
     private static final String KEY_FLYME_VERSION_NAME = "ro.build.display.id";
     private final static String FLYME = "flyme";
     private final static String ZTEC2016 = "zte c2016";

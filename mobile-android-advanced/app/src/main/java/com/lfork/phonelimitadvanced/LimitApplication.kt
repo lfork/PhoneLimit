@@ -4,10 +4,17 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.lfork.phonelimitadvanced.base.Config
+import com.lfork.phonelimitadvanced.base.thread.MyThreadFactory
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
+import com.lfork.phonelimitadvanced.data.common.db.LimitDatabase
 import com.lfork.phonelimitadvanced.utils.LinuxShell
 import com.lfork.phonelimitadvanced.utils.getAppIcon
 import com.lfork.phonelimitadvanced.utils.getAppName
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.LinkedBlockingDeque
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -35,7 +42,7 @@ class LimitApplication : Application() {
          */
         var tempInputTimeMinute = -1L
 
-        private var launcherAppInfo: List<String>? = null
+        private var latestLauncherAppInfo: List<String>? = null
 
         private var whiteNameApps: ArrayList<AppInfo>? = null
 
@@ -44,6 +51,16 @@ class LimitApplication : Application() {
         /**
          * 获取到桌面的应用程序
          */
+
+        /**
+         * 用于异步任务的线程池
+         */
+        var appFixedThreadPool: ExecutorService? = null
+            private set
+
+        fun executeAsyncDataTask(r: () -> Unit) {
+            appFixedThreadPool?.execute(r)
+        }
 
     }
 
@@ -56,8 +73,25 @@ class LimitApplication : Application() {
             TAG,
             "BAND:" + android.os.Build.BRAND + "  MANUFACTURER:" + android.os.Build.MANUFACTURER
         )
-        getWhiteNameAppsInfo()
+        initThreadPool()
+        initDataBase()
+    }
 
+    private fun initThreadPool() {
+        val namedThreadFactory = MyThreadFactory("异步任务线程池")
+        appFixedThreadPool = ThreadPoolExecutor(
+            Config.BASE_THREAD_POOL_SIZE,
+            Config.BASE_THREAD_POOL_SIZE * 2,
+            0L,
+            TimeUnit.MICROSECONDS,
+            LinkedBlockingDeque(),
+            namedThreadFactory
+        )
+    }
+
+
+    private fun initDataBase() {
+        LimitDatabase.initDataBase(this)
     }
 
     @Synchronized
@@ -65,7 +99,7 @@ class LimitApplication : Application() {
         whiteNameApps?.add(appInfo)
         //更新缓存，把数据写到文件
 
-        val appNameSet = HashSet<String>()
+        val appNameSet = HashSet<String?>()
         whiteNameApps?.forEach {
             appNameSet.add(it.packageName)
         }
@@ -81,7 +115,7 @@ class LimitApplication : Application() {
         whiteNameApps?.remove(appInfo)
         //更新缓存，把数据写到文件
 
-        val appNameSet = HashSet<String>()
+        val appNameSet = HashSet<String?>()
         whiteNameApps?.forEach {
             appNameSet.add(it.packageName)
         }
@@ -145,8 +179,8 @@ class LimitApplication : Application() {
 
 
     fun getLauncherApps(): List<String>? {
-        if (launcherAppInfo != null) {
-            return launcherAppInfo
+        if (latestLauncherAppInfo != null) {
+            return latestLauncherAppInfo
         }
 
         if (isRooted) {
@@ -159,7 +193,7 @@ class LimitApplication : Application() {
                 tempSet?.iterator()?.forEach {
                     tempArray.add(it)
                 }
-                launcherAppInfo = tempArray
+                latestLauncherAppInfo = tempArray
             } else {
                 val resultStr = StringBuffer()
 
@@ -178,7 +212,7 @@ class LimitApplication : Application() {
                     TAG,
                     "Activities $launchers"
                 )
-                launcherAppInfo = launchers
+                latestLauncherAppInfo = launchers
 
                 getSharedPreferences("LimitStatus", Context.MODE_PRIVATE).edit()
                     .putStringSet("launchers", launchers.toSet()).apply()
@@ -186,7 +220,9 @@ class LimitApplication : Application() {
             }
         }
 
-        return launcherAppInfo;
+        return latestLauncherAppInfo;
     }
+
+
 
 }

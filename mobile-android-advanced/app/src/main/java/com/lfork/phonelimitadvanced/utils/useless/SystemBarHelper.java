@@ -455,7 +455,7 @@
 //    try {
 //      Class<?> clz = Class.forName("android.os.SystemProperties");
 //      Method mtd = clz.getMethod("get", String.class);
-//      String val = (String) mtd.invoke(null, "ro.miui.ui.version.name");
+//      String val = (String) mtd.invoke(null, "ro.miui.ui.version.appName");
 //      val = val.replaceAll("[vV]", "");
 //      int version = Integer.parseInt(val);
 //      return version >= 6;

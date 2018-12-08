@@ -77,7 +77,7 @@ class BrowserFragment : Fragment() {
      * for more information.
      */
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+        // TODO: Update argument type and appName
         fun onFragmentInteraction(uri: Uri)
     }
 
