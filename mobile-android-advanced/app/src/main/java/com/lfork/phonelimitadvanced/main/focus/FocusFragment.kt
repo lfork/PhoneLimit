@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.util.AsyncListUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
 import android.text.TextUtils
@@ -15,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.lfork.phonelimitadvanced.LimitApplication
-import com.lfork.phonelimitadvanced.LimitApplication.Companion.App
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.haveRemainTime
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.tempInputTimeMinute
 import com.lfork.phonelimitadvanced.R
@@ -27,7 +25,7 @@ import com.lfork.phonelimitadvanced.limit.LimitStateListener
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedStatAccessPermission
-import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedWindowPermission
+import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedFloatingWindowPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestFloatingWindowPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestStateUsagePermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
@@ -49,6 +47,7 @@ class FocusFragment : Fragment() {
     private var root: View? = null
 
     private lateinit var adapter: FocusRecycleAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,14 +86,19 @@ class FocusFragment : Fragment() {
 
     private fun refreshData() {
 
+
         AppInfoRepository.getWhiteNameApps(object : DataCallback<List<AppInfo>> {
             override fun succeed(data: List<AppInfo>) {
                 if (context != null) {
+                    val tempData = ArrayList<AppInfo>();
+
                     data.forEach {
-                        val icon = getAppIcon(context!!, it.packageName)
-                        it.icon = icon
+                        it.icon = getAppIcon(context!!, it.packageName)
+                        if(it.icon != null){
+                            tempData.add(it)
+                        }
                     }
-                    adapter.setItems(data)
+                    adapter.setItems(tempData)
                     runOnUiThread { adapter.notifyDataSetChanged() }
                 }
             }
@@ -122,9 +126,9 @@ class FocusFragment : Fragment() {
 //            REQUEST_STORAGE_PERMISSION -> {
 //                if (isGrantedStoragePermission(applicationContext)) {
 //                    if (!TextUtils.isEmpty(editText.text.toString())) {
-//                        startLimit(editText.text.toString().toLong())
+//                        initTimer(editText.text.toString().toLong())
 //                    } else {
-//                        startLimit()
+//                        initTimer()
 //                    }
 //                }
 //            }
@@ -149,13 +153,16 @@ class FocusFragment : Fragment() {
             return false
         }
 
-        //如果是华为手机 就申请悬浮窗的权限 否则就申请默认桌面
+        //如果是华为手机 就申请悬浮窗的权限 否则就申请默认桌面(如果有root权限还要把其他的桌面unhide掉)
         if (DeviceHelper.isHuawei()) {
-            LimitApplication.isHuawei = true
-            if (!isGrantedWindowPermission()) {
+            LimitApplication.isFloatingWindowMode = true
+            if (!isGrantedFloatingWindowPermission()) {
                 requestFloatingWindowPermission()
                 //TODO result
-                return false
+                if (!isGrantedFloatingWindowPermission()) {
+                    ToastUtil.showLong(context, getString(R.string.floating_window_denied_tips))
+                    return false
+                }
             }
         } else {
             if (!isDefaultLauncher()) {
@@ -179,7 +186,9 @@ class FocusFragment : Fragment() {
                     }
                 }
                 LimitApplication.isRooted = true
-                App.getLauncherApps()
+//                App.getLauncherApps()
+            } else{
+                Log.d(LimitApplication.TAG, "看来是没有ROOT")
             }
         }
         //        if (!PermissionManager.isGrantedStoragePermission(applicationContext)) {
@@ -199,6 +208,9 @@ class FocusFragment : Fragment() {
             }
         }
         view.btn_set_launcher.setOnClickListener { clearDefaultLauncher() }
+
+//        view.btn_set_launcher
+//        limitBinder.getLimitService()
     }
 
     private fun initDialog() {
@@ -220,12 +232,10 @@ class FocusFragment : Fragment() {
             view.tips_huawei.visibility = View.VISIBLE
         } else {
 //            btn_set_launcher.visibility = View.VISIBLE
-            if (android.os.Build.BRAND == "OnePlus") {
-                view.tips_normal.visibility = View.VISIBLE
-            } else if (PermissionManager.isRooted()) {
-                view.tips_root.visibility = View.VISIBLE
-            } else {
-                view.tips_normal.visibility = View.VISIBLE
+            when {
+//                android.os.Build.BRAND == "OnePlus" -> view.tips_normal.visibility = View.VISIBLE
+                PermissionManager.isRooted() -> view.tips_root.visibility = View.VISIBLE
+                else -> view.tips_normal.visibility = View.VISIBLE
             }
         }
 
@@ -236,56 +246,53 @@ class FocusFragment : Fragment() {
 
     }
 
+
+    private lateinit var limitBinder: LimitService.LimitBinder
+
+    val limitStateListener = object : LimitStateListener {
+        override fun onLimitFinished() {
+            runOnUiThread {
+                ToastUtil.showLong(context, "限制已解除")
+                unbindLimitService()
+            }
+        }
+
+        override fun onLimitStarted() {
+            runOnUiThread {
+                ToastUtil.showLong(context, "限制已开启")
+            }
+        }
+
+        override fun onUnlocked(msg: String) {
+            runOnUiThread {
+                remain_time_text.text = msg
+
+            }
+        }
+
+        override fun remainTimeRefreshed(timeSeconds: Long) {
+            runOnUiThread {
+                //刷新剩余时间
+                Log.d("timeTest", "剩余时间${timeSeconds}秒")
+
+                if (timeSeconds > 60 * 60) {
+                    remain_time_text.text =
+                            "解除限制剩余时间${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
+                } else if (timeSeconds > 60) {
+                    remain_time_text.text = "剩余时间${timeSeconds / 60}分${timeSeconds % 60}秒"
+                } else {
+                    remain_time_text.text = "剩余时间${timeSeconds}秒"
+                }
+
+                saveRemainTime(timeSeconds)
+            }
+        }
+    }
+
     private val limitServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
-            val binder = iBinder as LimitService.StateBinder
-
-            binder.getLimitService().listener = object : LimitStateListener {
-                override fun onLimitFinished() {
-                    runOnUiThread {
-                        ToastUtil.showLong(context, "限制已解除")
-                        LimitApplication.isOnLimitation = false
-                    }
-                }
-
-                override fun onLimitStarted() {
-                    runOnUiThread {
-                        ToastUtil.showLong(context, "限制已开启")
-                    }
-                }
-
-                override fun autoUnlocked(msg: String) {
-                    runOnUiThread {
-                        remain_time_text.text = msg
-                        closeLimit()
-                    }
-                }
-
-                override fun forceUnlocked(msg: String) {
-                    runOnUiThread {
-                        remain_time_text.text = msg
-                        closeLimit()
-                    }
-                }
-
-                override fun remainTimeRefreshed(timeSeconds: Long) {
-                    runOnUiThread {
-                        //刷新剩余时间
-                        Log.d("timeTest", "剩余时间${timeSeconds}秒")
-
-                        if (timeSeconds > 60 * 60) {
-                            remain_time_text.text =
-                                    "解除限制剩余时间${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
-                        } else if (timeSeconds > 60) {
-                            remain_time_text.text = "剩余时间${timeSeconds / 60}分${timeSeconds % 60}秒"
-                        } else {
-                            remain_time_text.text = "剩余时间${timeSeconds}秒"
-                        }
-
-                        saveRemainTime(timeSeconds)
-                    }
-                }
-            }
+            limitBinder = iBinder as LimitService.LimitBinder
+            limitBinder.setLimitStateListener(limitStateListener)
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
@@ -299,41 +306,24 @@ class FocusFragment : Fragment() {
             return
         }
 
-        haveRemainTime = true
-
 //        btn_set_launcher.visibility = View.INVISIBLE
 
         //开启之前需要把权限获取到位
         val limitIntent = Intent(context, LimitService::class.java)
         limitIntent.putExtra("limit_time", limitTimeSeconds)
-
         bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
         startService(limitIntent)
-
-
-        //开启完成
-        LimitApplication.isOnLimitation = true
         tempInputTimeMinute = -1
     }
 
-    private fun closeLimit() {
+    private fun unbindLimitService() {
 //        btn_set_launcher.visibility = View.VISIBLE
         unbindService(limitServiceConnection)
         val stopIntent = Intent(context, LimitService::class.java)
         stopService(stopIntent)
-
-        if (!LimitApplication.isHuawei) {
-
-            clearDefaultLauncher()
-        }
-
-        haveRemainTime = false
     }
 
-
     private fun checkAndRecoveryLimitTask() {
-
-
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
         if (remainTimeSeconds > 1) {

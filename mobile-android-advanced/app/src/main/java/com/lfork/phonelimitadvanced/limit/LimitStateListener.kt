@@ -8,9 +8,7 @@ interface LimitStateListener {
 
     fun remainTimeRefreshed(timeSeconds:Long)
 
-    fun autoUnlocked(msg:String)
-
-    fun forceUnlocked(msg:String)
+    fun onUnlocked(msg:String)
 
     fun onLimitStarted()
 

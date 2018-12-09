@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionL
 
     override fun onPause() {
         super.onPause()
+        //清楚Fake桌面，不然在选择默认桌面的时候fake activity会出现在列表当中
         clearDefaultLauncherFake()
     }
 
@@ -67,6 +68,11 @@ class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionL
     }
 
     private fun initFragments() {
+
+        if (fragments.size > 1) {
+            return
+        }
+
         fragments[FRAG_FOCUS] = FocusFragment()
         fragments[FRAG_BROWSER] = BrowserFragment()
         fragments[FRAG_MY] = MyFragment()

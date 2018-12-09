@@ -12,4 +12,6 @@ object Constants {
     const val MANUFACTURE_XIAOMI = "XIAOMI";
 
     const val MANUFACTURE_ONEPLUS = "ONEPLUS";
+
+    val DEFAULT_WHITE_NAME_LIST = arrayOf("dialer","calculator","mms","contacts") //"camera","calendar","photos",,"contacts"
 }

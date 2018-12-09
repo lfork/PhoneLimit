@@ -13,11 +13,15 @@ import org.litepal.crud.DataSupport
  * @date 2018/12/7
  */
 @Entity(tableName = "app_info")
-data class AppInfo(
+data class AppInfo (
     @ColumnInfo(name = "app_name") var appName: String?,
     @PrimaryKey @ColumnInfo(name = "package_name") var packageName: String,
     @ColumnInfo(name = "is_in_white_name_list") var isInWhiteNameList: Boolean
-)  {
+) :Comparable<AppInfo> {
+
+    override fun compareTo(other: AppInfo): Int {
+        return appName!!.compareTo(other.appName!!)
+    }
 
     @Ignore
     var icon: Drawable? = null

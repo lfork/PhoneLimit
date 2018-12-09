@@ -1,14 +1,12 @@
 package com.lfork.phonelimitadvanced.limit
 
 import android.util.Log
-import com.lfork.phonelimitadvanced.LimitApplication
-import com.lfork.phonelimitadvanced.LimitApplication.Companion.App
 
 /**
  *
  * Created by 98620 on 2018/11/2.
  */
-object LimitTimeController {
+object TimeController {
 
     var startMachineTimeMillis = 0L
 
@@ -59,75 +57,70 @@ object LimitTimeController {
 
     private const val TAG = "ShellTest"
 
-    var limitTimeSeconds = 0L
+    var timeSeconds = 0L
 
-    var autoLockThread: Thread? = null;
+    var autoEndThread: Thread? = null;
 
-    var limited = false
+    var started = false
 
+    /**
+     * @return false表示已经初始化了
+     */
     @Synchronized
-    fun startLimit(limitTimeSeconds: Long): Boolean {
-        if (limited) {
+    fun initTimer(timeSeconds: Long): Boolean {
+        if (started) {
             return false
         }
-        if (LimitApplication.isRooted) {
-            val launchers = App.getLauncherApps()
-            Log.d("上锁测试",launchers.toString());
-            launchers?.forEach {
-                RootShell.execRootCmd(CMD_HIDE_OTHER_LAUNCHER + it)
-            }
-        }
-        this.limitTimeSeconds = limitTimeSeconds
+        this.timeSeconds = timeSeconds
         startMachineTimeMillis = System.currentTimeMillis()
 //        Log.d(TAG + "3", RootShell.execRootCmd(CMD_START_LIMIT))
-        limited = true
+        started = true
         return true
     }
 
 
     /**
-     * 只能通过自动解锁的方式来解锁，这个函数也不是直接解锁的，而是通过发送中断命令给自动解锁的进程，让其提前解锁
+     * 这个函数也不是直接解锁的，而是通过发送中断命令给自动解锁的进程，让其提前解锁
      */
-    fun closeLimit() {
-        autoLockThread?.interrupt()
-        limited = false
-        if (LimitApplication.isRooted) {
-            val launchers = App.getLauncherApps()
-            Log.d("解锁测试",launchers.toString());
-            launchers?.forEach {
-                RootShell.execRootCmd(CMD_UNHIDE_OTHER_LAUNCHER + it)
-            }
-        }
+    fun forceEndTimer() {
+        autoEndThread?.interrupt()
+
     }
 
-    const val AUTO_UNLOCKED = 1
+    const val AUTO_EXIT = 1
 
-    const val FORCE_UNLOCKED = 2
+    const val FORCE_EXIT = 2
 
-    fun startAutoUnlock(): Int {
-
-        var lockType = AUTO_UNLOCKED
-
+    fun startTimer(): Int {
+        var lockType = AUTO_EXIT
         try {
-            autoLockThread = Thread.currentThread()
-            Thread.sleep(limitTimeSeconds * 1000)
+            autoEndThread = Thread.currentThread()
+            Thread.sleep(timeSeconds * 1000)
 //            Log.d(TAG + "4", RootShell.execRootCmd(CMD_CLOSE_LIMIT))
             Log.d(TAG, "自动解锁成功")
         } catch (e: InterruptedException) {
 //            Log.d(TAG + "4", RootShell.execRootCmd(CMD_CLOSE_LIMIT))
             Log.d(TAG, "提前解锁成功")
-            lockType = FORCE_UNLOCKED
+            lockType = FORCE_EXIT
         }
-        autoLockThread = null;
-        limitTimeSeconds = 0L
-        startMachineTimeMillis = 0L
-
+        timeIsUp()
         return lockType
     }
 
+
+    /**
+     * 到点了，进行状态设置
+     */
+    private fun timeIsUp(){
+        autoEndThread = null;
+        timeSeconds = 0L
+        startMachineTimeMillis = 0L
+        started = false
+    }
+
     fun getRemainTimeSeconds(): Long {
-        if (limitTimeSeconds > 0) {
-            return limitTimeSeconds - (System.currentTimeMillis() - startMachineTimeMillis) / 1000
+        if (timeSeconds > 0) {
+            return timeSeconds - (System.currentTimeMillis() - startMachineTimeMillis) / 1000
         } else {
             return 0
         }

@@ -58,7 +58,7 @@ abstract class LimitDatabase : RoomDatabase() {
 
     /**
      * Populate the database in the background.
-     * If you want to start with more words, just add them.
+     * If you want to initTimer with more words, just add them.
      */
     private class PopulateDbAsync internal constructor(db: LimitDatabase) :
         AsyncTask<Void, Void, Void>() {

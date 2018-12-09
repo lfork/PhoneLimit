@@ -176,7 +176,7 @@ public class DeviceHelper {
     }
 
     public static boolean isHuawei() {
-        return BRAND.contains("huawei") || BRAND.contains("honor");
+        return BRAND.contains("huawei") || BRAND.contains("honor")||BRAND.contains("oneplus");
     }
 
     public static boolean isEssentialPhone(){

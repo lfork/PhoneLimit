@@ -17,6 +17,7 @@
     <string name="set_launcher">设置默认桌面</string>
     <string name="permission_denied_tips">请您授予相应的权限，不然程序无法正常工作</string>
     <string name="launcher_denied_tips">【默认桌面设置中…】请您将程序设置为默认桌面来保证程序正常工作。</string>
+    <string name="floating_window_denied_tips">请您授予程序悬浮窗权限来保证程序正常工作。</string>
     <string name="tips_launcher_setting">APP需要默认桌面的权限才能保证正常运行😁</string>
     <string name="cancel">Cancel</string>
     <string name="action_default_apps_setting">去设置</string>

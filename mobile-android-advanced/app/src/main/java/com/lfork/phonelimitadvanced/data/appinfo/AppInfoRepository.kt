@@ -2,6 +2,7 @@ package com.lfork.phonelimitadvanced.data.appinfo
 
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.executeAsyncDataTask
+import com.lfork.phonelimitadvanced.LimitApplication.Companion.isFirstOpen
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.common.db.LimitDatabase
 
@@ -18,8 +19,12 @@ object AppInfoRepository {
     // 【做同步】每一次onResume都需要把数据进行同步：获取App信息列表 -> 对比 -> 删掉/或插入不存在的App
     //只插入，不删除，但是当客户端获取到icon为空时，说明该app已经被卸载 。此时就不显示这个app即可
     fun getAllAppInfo(callback: DataCallback<List<AppInfo>>) {
+
+
         executeAsyncDataTask {
-            val latestApps: List<AppInfo> = LimitApplication.App.getAllAppsInfo()
+
+
+            val latestApps: List<AppInfo> = LimitApplication.App.getOrInitAllAppsInfo()
             latestApps.forEach {
                 if (mAppInfoDao.getAppInfo(it.packageName) == null) {
                     //不存在就插入 ：应对突然新安装的APP
@@ -33,9 +38,14 @@ object AppInfoRepository {
     }
 
     fun getWhiteNameApps(callback: DataCallback<List<AppInfo>>) {
+
         executeAsyncDataTask {
+            if (isFirstOpen) {
+                LimitApplication.App.getOrInitAllAppsInfo().forEach { mAppInfoDao.insert(it) }
+            }
+
             whiteNameList.clear()
-            val data =mAppInfoDao.getWhiteNameApps()
+            val data = mAppInfoDao.getWhiteNameApps()
 
             data.forEach {
                 whiteNameList.add(it.packageName)

@@ -21,6 +21,7 @@ import com.lfork.phonelimitadvanced.utils.getAppIcon
 import com.lfork.phonelimitadvanced.utils.setupToolBar
 import kotlinx.android.synthetic.main.white_name_edit_act.*
 import kotlinx.android.synthetic.main.white_name_edit_recycle_item.view.*
+import java.util.*
 
 class WhiteNameEditActivity : AppCompatActivity() {
 
@@ -44,13 +45,19 @@ class WhiteNameEditActivity : AppCompatActivity() {
     private fun refreshData() {
         AppInfoRepository.getAllAppInfo(object : DataCallback<List<AppInfo>> {
             override fun succeed(data: List<AppInfo>) {
+
+                val tempData = ArrayList<AppInfo>();
                 data.forEach {
                     val icon = getAppIcon(this@WhiteNameEditActivity, it.packageName)
                     it.icon = icon
+                    if(icon != null){
+                        tempData.add(it)
+                    }
+
                 }
 
                 runOnUiThread {
-                    adapter.setItems(data)
+                    adapter.setItems(tempData)
                     adapter.notifyDataSetChanged()
                 }
 
@@ -104,7 +111,8 @@ class WhiteNameEditActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: NormalHolder, p1: Int) {
 
             val item = items[p1]
-            Log.d("奇怪的Item", item.toString())
+
+//            Log.d("奇怪的Item", item.toString())
             holder.textView.text = item.appName
             holder.textView.setOnClickListener {
                 deleteItem(holder.adapterPosition)
@@ -114,7 +122,6 @@ class WhiteNameEditActivity : AppCompatActivity() {
                 AppInfoRepository.update(item, simpleTips)
             }
             holder.imageView.setImageDrawable(item.icon)
-
             holder.checkBox.isChecked = item.isInWhiteNameList
         }
 
@@ -138,8 +145,9 @@ class WhiteNameEditActivity : AppCompatActivity() {
             val checkBox: CheckBox = itemView.checkBox
         }
 
-        fun setItems(itemList: List<AppInfo>) {
+        fun setItems(itemList: MutableList<AppInfo>) {
             items.clear()
+            itemList.sort()
             items.addAll(itemList)
         }
 

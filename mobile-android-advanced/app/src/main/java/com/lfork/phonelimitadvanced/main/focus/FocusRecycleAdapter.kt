@@ -14,6 +14,7 @@ import com.lfork.phonelimitadvanced.utils.startOtherApp
 import com.lfork.phonelimitadvanced.whitename.WhiteNameEditActivity
 import kotlinx.android.synthetic.main.main2_act.view.*
 import kotlinx.android.synthetic.main.main_focus_recycle_item.view.*
+import java.util.*
 
 
 /**
@@ -71,15 +72,7 @@ class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolde
                 deleteItem(holder.adapterPosition)
             }
             val icon = items[p1].icon
-            if (icon != null) {
-                holder.imageView.setImageDrawable(icon)
-            } else {
-                items.removeAt(p1)
-                notifyItemRemoved(p1)
-
-
-            }
-
+            holder.imageView.setImageDrawable(icon)
             holder.item.setOnClickListener {
                 //跳转到编辑界面
                 it.context.startOtherApp(items[p1].packageName)
@@ -113,8 +106,9 @@ class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolde
         val imageView: ImageView = itemView.icon
     }
 
-    fun setItems(itemList: List<AppInfo>) {
+    fun setItems(itemList: MutableList<AppInfo>) {
         items.clear()
+        itemList.sort()
         items.addAll(itemList)
     }
 

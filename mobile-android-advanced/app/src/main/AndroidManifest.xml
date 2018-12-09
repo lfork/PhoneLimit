@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
+
         android:name=".LimitApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,6 +30,7 @@
         <activity
             android:name=".main.MainActivity"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing|stateHidden">
             <intent-filter>
 

@@ -123,7 +123,7 @@ object PermissionManager{
     }
 
 
-    fun Context.isGrantedWindowPermission(): Boolean {
+    fun Context.isGrantedFloatingWindowPermission(): Boolean {
         //权限申请
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             if (!Settings.canDrawOverlays(this)) {
@@ -134,8 +134,8 @@ object PermissionManager{
     }
 
 
-    fun Fragment.isGrantedWindowPermission(): Boolean {
-        return context!!.isGrantedWindowPermission()
+    fun Fragment.isGrantedFloatingWindowPermission(): Boolean {
+        return context!!.isGrantedFloatingWindowPermission()
     }
 
     fun Context.clearDefaultLauncher() {
@@ -175,8 +175,6 @@ object PermissionManager{
             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
-
-        Log.d("清除桌面测试","成功")
     }
 
 
