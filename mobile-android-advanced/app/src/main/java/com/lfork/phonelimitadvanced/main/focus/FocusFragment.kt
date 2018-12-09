@@ -86,7 +86,6 @@ class FocusFragment : Fragment() {
 
     private fun refreshData() {
 
-
         AppInfoRepository.getWhiteNameApps(object : DataCallback<List<AppInfo>> {
             override fun succeed(data: List<AppInfo>) {
                 if (context != null) {

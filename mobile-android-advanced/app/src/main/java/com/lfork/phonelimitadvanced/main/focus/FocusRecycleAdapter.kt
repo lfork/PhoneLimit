@@ -12,7 +12,6 @@ import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.utils.startActivity
 import com.lfork.phonelimitadvanced.utils.startOtherApp
 import com.lfork.phonelimitadvanced.whitename.WhiteNameEditActivity
-import kotlinx.android.synthetic.main.main2_act.view.*
 import kotlinx.android.synthetic.main.main_focus_recycle_item.view.*
 import java.util.*
 

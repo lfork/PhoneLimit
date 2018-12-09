@@ -20,9 +20,7 @@ object AppInfoRepository {
     //只插入，不删除，但是当客户端获取到icon为空时，说明该app已经被卸载 。此时就不显示这个app即可
     fun getAllAppInfo(callback: DataCallback<List<AppInfo>>) {
 
-
         executeAsyncDataTask {
-
 
             val latestApps: List<AppInfo> = LimitApplication.App.getOrInitAllAppsInfo()
             latestApps.forEach {
@@ -41,7 +39,12 @@ object AppInfoRepository {
 
         executeAsyncDataTask {
             if (isFirstOpen) {
-                LimitApplication.App.getOrInitAllAppsInfo().forEach { mAppInfoDao.insert(it) }
+                LimitApplication.App.getOrInitAllAppsInfo().forEach {
+                    if (mAppInfoDao.getAppInfo(it.packageName) == null) {
+                        //不存在就插入 ：应对突然新安装的APP
+                        mAppInfoDao.insert(it)
+                    }
+                }
             }
 
             whiteNameList.clear()
@@ -51,13 +54,14 @@ object AppInfoRepository {
                 whiteNameList.add(it.packageName)
             }
 
+            whiteNameList.add("com.lfork.phonelimitadvanced")
+
             callback.succeed(data)
         }
     }
 
     fun update(appInfo: AppInfo, callback: DataCallback<String>) {
         executeAsyncDataTask {
-
             val result = mAppInfoDao.update(appInfo)
             if (result > 0) {
                 callback.succeed("操作成功")
