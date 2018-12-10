@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.focus.FocusFragment"
-    tools:layout_editor_absoluteY="81dp">
+    android:background="@color/app_green_3"
+    tools:context=".main.focus.FocusFragment">
 
 
     <android.support.v7.widget.Toolbar
@@ -14,91 +14,93 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:visibility="gone" />
 
-    <Button
-        android:id="@+id/btn_start"
+    <ImageView
+        android:id="@+id/home_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/start_limit"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
-
-    <Button
-        android:id="@+id/btn_set_launcher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@null"
-        android:text="@string/set_launcher"
-        android:textAllCaps="false"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_start"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_start"
-        app:layout_constraintTop_toTopOf="@+id/btn_start"
-        tools:visibility="visible" />
+        android:layout_centerHorizontal="true"
+        android:background="@mipmap/ic_launcher_foreground"
+        android:contentDescription="@string/app_name" />
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginEnd="64dp"
-        android:ems="10"
-        android:hint="请输入时间/分钟(默认1分钟）"
+        android:layout_below="@id/home_img"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/input_selector"
+        android:ems="16"
+        android:textCursorDrawable="@drawable/text_cursor"
+        android:hint="@string/tip_time"
         android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/main_toolbar" />
+        android:padding="12dp"
+        android:textColorHighlight="@color/app_green_4"
+        android:textSize="13sp" />
 
     <TextView
         android:id="@+id/remain_time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_below="@id/editText"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_start"
-        tools:text="sadasdasdasd" />
+        tools:text="time" />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_below="@id/editText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="64dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="38dp"
+        android:background="@color/app_green_4"
+        android:text="@string/start_limit"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/btn_set_launcher"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_below="@id/btn_start"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="6dp"
+        android:background="@null"
+        android:text="@string/set_launcher"
+        android:textAllCaps="false"
+        android:textColor="@color/app_green_4"
+        android:textSize="11sp"
+        android:visibility="invisible"
+        tools:visibility="visible" />
+
 
     <ScrollView
         android:id="@+id/tips_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/remain_time_text"
-        >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/recycle_white_list"
+        android:layout_below="@id/btn_start"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="32dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp">
 
             <TextView
                 android:id="@+id/tips_root"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
                 android:text="@string/principle_tips_root_user"
                 android:visibility="gone" />
 
@@ -106,10 +108,6 @@
                 android:id="@+id/tips_huawei"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
                 android:text="@string/principle_tips_huawei_user"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -118,17 +116,10 @@
                 android:id="@+id/tips_normal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
                 android:text="@string/principle_tips_normal_user"
                 android:visibility="gone" />
-
-
         </LinearLayout>
-
-
     </ScrollView>
 
 
@@ -136,23 +127,22 @@
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/dark_bg"
-        app:layout_constraintBottom_toTopOf="@+id/recycle_white_list" />
+        android:layout_above="@id/recycle_white_list"
+        android:visibility="gone"
+        android:background="@color/app_green_4" />
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycle_white_list"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingLeft="8dp"
+        android:background="@color/app_green_5"
+        android:paddingRight="8dp" />
 
 
-    </android.support.v7.widget.RecyclerView>
-
-
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

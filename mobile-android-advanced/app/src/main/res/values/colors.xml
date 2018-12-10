@@ -24,4 +24,13 @@
     <color name="textPrimary">#f5f5f5</color>
     <color name="textPrimaryDark">#95aab4</color>
     <color name="errorText">#ff7878</color>
+
+    <color name="app_green_1">#66cc66</color>
+    <color name="app_green_2">#ccff99</color>
+    <color name="app_green_3">#99cc99</color>
+    <color name="app_green_4">#006600</color>
+    <color name="app_green_5">#83b983</color>
+    <color name="app_green_6">#ccff99</color>
+
+    <color name="src_text">#DC143C</color>
 </resources>
