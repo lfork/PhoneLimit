@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.view.LayoutInflater
 import android.widget.ImageView
+import com.lfork.phonelimitadvanced.LimitApplication.Companion.isOnLimitation
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
+import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.startActivity
 import com.lfork.phonelimitadvanced.utils.startOtherApp
 import com.lfork.phonelimitadvanced.whitename.WhiteNameEditActivity
@@ -78,10 +80,12 @@ class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolde
             }
         } else {
             holder.item.setOnClickListener {
-                //跳转到编辑界面
-                it.context.startActivity<WhiteNameEditActivity>()
-
-
+                if(!isOnLimitation){
+                    //跳转到编辑界面
+                    it.context.startActivity<WhiteNameEditActivity>()
+                } else {
+                    ToastUtil.showShort(it.context, "暂时不能编辑噢")
+                }
             }
         }
     }

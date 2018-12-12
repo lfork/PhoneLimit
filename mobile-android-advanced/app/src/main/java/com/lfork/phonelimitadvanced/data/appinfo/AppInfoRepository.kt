@@ -24,10 +24,7 @@ object AppInfoRepository {
 
             val latestApps: List<AppInfo> = LimitApplication.App.getOrInitAllAppsInfo()
             latestApps.forEach {
-                if (mAppInfoDao.getAppInfo(it.packageName) == null) {
-                    //不存在就插入 ：应对突然新安装的APP
-                    mAppInfoDao.insert(it)
-                }
+                safeInsertAppInfo(it)
             }
             //如果存在话就不管了
             callback.succeed(mAppInfoDao.getAll())
@@ -40,10 +37,7 @@ object AppInfoRepository {
         executeAsyncDataTask {
             if (isFirstOpen) {
                 LimitApplication.App.getOrInitAllAppsInfo().forEach {
-                    if (mAppInfoDao.getAppInfo(it.packageName) == null) {
-                        //不存在就插入 ：应对突然新安装的APP
-                        mAppInfoDao.insert(it)
-                    }
+                    safeInsertAppInfo(it)
                 }
             }
 
@@ -74,6 +68,14 @@ object AppInfoRepository {
     fun updateAll(vararg appInfo: AppInfo, callback: DataCallback<String>) {
         executeAsyncDataTask {
             mAppInfoDao.update(*appInfo)
+        }
+    }
+
+    @Synchronized
+    private fun safeInsertAppInfo(it:AppInfo){
+        if (mAppInfoDao.getAppInfo(it.packageName) == null) {
+            //不存在就插入 ：应对突然新安装的APP
+            mAppInfoDao.insert(it)
         }
     }
 

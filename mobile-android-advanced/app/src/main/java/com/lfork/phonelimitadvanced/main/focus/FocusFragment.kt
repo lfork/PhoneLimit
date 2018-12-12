@@ -251,6 +251,9 @@ class FocusFragment : Fragment() {
     val limitStateListener = object : LimitStateListener {
         override fun onLimitFinished() {
             runOnUiThread {
+                if (!LimitApplication.isFloatingWindowMode) {
+                    clearDefaultLauncher()
+                }
                 ToastUtil.showLong(context, "限制已解除")
                 unbindLimitService()
             }

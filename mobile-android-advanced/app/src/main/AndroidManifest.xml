@@ -54,13 +54,18 @@
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".statistic.StatisticActivity" />
         <activity android:name=".whitename.WhiteNameEditActivity"></activity>
+
+
+        <!--解决oneplus 6 android 9的奇怪日志-->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     </application>
+
+
 
 </manifest>

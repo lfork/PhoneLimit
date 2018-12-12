@@ -107,7 +107,7 @@ class LimitService : Service() {
 
             val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             val notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_notification1)
                 .setContentTitle("限制已开启")
                 .setContentText("专心搞事情吧，不要玩儿手机了")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
@@ -227,9 +227,7 @@ class LimitService : Service() {
             }
         }
 
-        if (!LimitApplication.isFloatingWindowMode) {
-            clearDefaultLauncher()
-        }
+
     }
 
 

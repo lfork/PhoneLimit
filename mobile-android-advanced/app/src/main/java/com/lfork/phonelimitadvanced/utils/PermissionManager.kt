@@ -138,21 +138,36 @@ object PermissionManager{
         return context!!.isGrantedFloatingWindowPermission()
     }
 
+    /**
+     * 必须要切换一下外部Context才能生效
+     */
     fun Context.clearDefaultLauncher() {
+
         val context = this
         val packageManager = context.packageManager
         val componentName = ComponentName(context, FakeHomeActivity::class.java)
+
+//        packageManager.setComponentEnabledSetting(
+//            componentName,
+//            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//            PackageManager.DONT_KILL_APP
+//        )
+
         packageManager.setComponentEnabledSetting(
             componentName,
             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
             PackageManager.DONT_KILL_APP
         )
 
-
-//        val selector = Intent(Intent.ACTION_MAIN)
-//        selector.addCategory(Intent.CATEGORY_HOME)
-//        context.startActivity(selector)
-
+//        try {
+//            val selector = Intent(Intent.ACTION_MAIN)
+//            selector.addCategory(Intent.CATEGORY_HOME)
+//            context.startActivity(selector)
+//        } catch (e:Exception){
+//            //这个操作在小米手机上可能会崩溃掉
+//            //do nothing
+//        }
+//
 //        packageManager.setComponentEnabledSetting(
 //            componentName,
 //            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -162,7 +177,8 @@ object PermissionManager{
     }
 
     fun Fragment.clearDefaultLauncher() {
-        context?.clearDefaultLauncherFake()
+        context?.clearDefaultLauncher()
+//        context?.clearDefaultLauncherFake()
     }
 
 

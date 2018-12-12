@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.main.browser.BrowserFragment
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionL
         super.onPause()
         //清楚Fake桌面，不然在选择默认桌面的时候fake activity会出现在列表当中
         clearDefaultLauncherFake()
+        Log.d("Pause", "eee")
     }
 
     override fun onBackPressed() {
