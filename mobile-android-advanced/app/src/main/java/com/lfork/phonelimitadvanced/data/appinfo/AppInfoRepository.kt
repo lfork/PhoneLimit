@@ -22,9 +22,10 @@ object AppInfoRepository {
 
         executeAsyncDataTask {
 
-            val latestApps: List<AppInfo> = LimitApplication.App.getOrInitAllAppsInfo()
-            latestApps.forEach {
-                safeInsertAppInfo(it)
+            val apps = LimitApplication.App.getOrInitAllAppsInfo()
+
+            for (i in 0 until apps!!.size) {
+                safeInsertAppInfo(apps[i])
             }
             //如果存在话就不管了
             callback.succeed(mAppInfoDao.getAll())
@@ -36,8 +37,11 @@ object AppInfoRepository {
 
         executeAsyncDataTask {
             if (isFirstOpen) {
-                LimitApplication.App.getOrInitAllAppsInfo().forEach {
-                    safeInsertAppInfo(it)
+
+                //TODO 使用Kotlin的ForEach可能会出现一些奇怪的BUG，所以在一些多线程的复杂操作上尽量不要用foreach
+                val apps = LimitApplication.App.getOrInitAllAppsInfo()
+                for (i in 0 until apps!!.size) {
+                    safeInsertAppInfo(apps[i])
                 }
             }
 
@@ -72,7 +76,7 @@ object AppInfoRepository {
     }
 
     @Synchronized
-    private fun safeInsertAppInfo(it:AppInfo){
+    private fun safeInsertAppInfo(it: AppInfo) {
         if (mAppInfoDao.getAppInfo(it.packageName) == null) {
             //不存在就插入 ：应对突然新安装的APP
             mAppInfoDao.insert(it)

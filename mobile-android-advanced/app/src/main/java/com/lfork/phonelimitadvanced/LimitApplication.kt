@@ -12,10 +12,14 @@ import com.lfork.phonelimitadvanced.utils.Constants.DEFAULT_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.LinuxShell
 import com.lfork.phonelimitadvanced.utils.getAppIcon
 import com.lfork.phonelimitadvanced.utils.getAppName
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
+import java.util.Collections.synchronizedList
+
+
 
 
 /**
@@ -49,7 +53,7 @@ class LimitApplication : Application() {
 
         private var whiteNameApps: ArrayList<AppInfo>? = null
 
-        private var appInfoList = ArrayList<AppInfo>()
+        private var appInfoList = Collections.synchronizedList(ArrayList<AppInfo>());
 
         /**
          * 获取到桌面的应用程序
@@ -103,7 +107,7 @@ class LimitApplication : Application() {
 
 
 
-    fun getOrInitAllAppsInfo(): ArrayList<AppInfo> {
+    fun getOrInitAllAppsInfo(): MutableList<AppInfo>? {
 
         if (appInfoList.size > 1) {
             return appInfoList
