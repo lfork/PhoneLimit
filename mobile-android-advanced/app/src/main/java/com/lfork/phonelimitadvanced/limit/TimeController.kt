@@ -6,19 +6,21 @@ import android.util.Log
  *
  * Created by 98620 on 2018/11/2.
  */
-object TimeController {
+class TimeController {
 
     var startMachineTimeMillis = 0L
 
-    /**
-     * 备份相关文件防止出现意外
-     */
-    const val CMD_SECURITY_BACKUP = "asd"
 
-    /**
-     * 紧急恢复命令(默认每月只有三次机会)：防止因为各种意外的原因出现的正常解锁失败的情况
-     */
-    const val CMD_SECURITY_RECOVERY = "asd"
+    companion object {
+        /**
+         * 备份相关文件防止出现意外
+         */
+        const val CMD_SECURITY_BACKUP = "asd"
+
+        /**
+         * 紧急恢复命令(默认每月只有三次机会)：防止因为各种意外的原因出现的正常解锁失败的情况
+         */
+        const val CMD_SECURITY_RECOVERY = "asd"
 
 //    private const val CMD_START_LIMIT =
 //        "mount -o rw,remount /system;" +
@@ -33,29 +35,37 @@ object TimeController {
 //                "mv /system/etc/tmp/data /system/etc/data;" +
 //                "mv /system/etc/tmp/wifi /system/etc/wifi;"
 
-    private const val CMD_START_LIMIT = "iptables -P OUTPUT DROP"
+        private const val CMD_START_LIMIT = "iptables -P OUTPUT DROP"
 //        "mount -o rw,remount /vendor;" +
 //                "rm -rf /vendor/etc/tmp;" +
 //                "mkdir -m 777 /vendor/etc/tmp;" +
 //                "mv /vendor/etc/data /vendor/etc/tmp/data;" +
 //                "mv /vendor/etc/wifi /vendor/etc/tmp/wifi;"
 
-    private const val CMD_HIDE_OTHER_LAUNCHER = "pm hide "
+        private const val CMD_HIDE_OTHER_LAUNCHER = "pm hide "
 
-    private const val CMD_UNHIDE_OTHER_LAUNCHER = "pm unhide "
+        private const val CMD_UNHIDE_OTHER_LAUNCHER = "pm unhide "
 //        "mount -o rw,remount /vendor;" +
 //                "rm -rf /vendor/etc/tmp;" +
 //                "mkdir -m 777 /vendor/etc/tmp;" +
 //                "mv /vendor/etc/data /vendor/etc/tmp/data;" +
 //                "mv /vendor/etc/wifi /vendor/etc/tmp/wifi;"
 
-    //file 644 dir755
-    private const val CMD_CLOSE_LIMIT = "iptables -P OUTPUT ACCEPT"
+        //file 644 dir755
+        private const val CMD_CLOSE_LIMIT = "iptables -P OUTPUT ACCEPT"
 //        "mount -o rw,remount /vendor;" +
 //                "mv /vendor/etc/tmp/data /vendor/etc/data;" +
 //                "mv /vendor/etc/tmp/wifi /vendor/etc/wifi;"
 
-    private const val TAG = "ShellTest"
+        private const val TAG = "ShellTest"
+
+
+        const val AUTO_EXIT = 1
+
+        const val FORCE_EXIT = 2
+    }
+
+
 
     var timeSeconds = 0L
 
@@ -87,9 +97,6 @@ object TimeController {
 
     }
 
-    const val AUTO_EXIT = 1
-
-    const val FORCE_EXIT = 2
 
     fun startTimer(): Int {
         var lockType = AUTO_EXIT
@@ -118,11 +125,15 @@ object TimeController {
         started = false
     }
 
+
+    //TODO  【DEBUG】返回值不变  所以计时器是挂了。因为返回的时间是一定会变的
+
     fun getRemainTimeSeconds(): Long {
-        if (timeSeconds > 0) {
-            return timeSeconds - (System.currentTimeMillis() - startMachineTimeMillis) / 1000
+        return if (timeSeconds > 0) {
+            //总时间 - 过去了的时间
+            timeSeconds - (System.currentTimeMillis() - startMachineTimeMillis) / 1000
         } else {
-            return 0
+            0
         }
     }
 

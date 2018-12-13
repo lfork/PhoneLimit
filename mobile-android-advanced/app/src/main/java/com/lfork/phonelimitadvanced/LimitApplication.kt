@@ -20,8 +20,6 @@ import java.util.concurrent.TimeUnit
 import java.util.Collections.synchronizedList
 
 
-
-
 /**
  *
  * Created by 98620 on 2018/11/24.
@@ -37,21 +35,12 @@ class LimitApplication : Application() {
 
         var isOnLimitation = false
 
-        var haveRemainTime = false
-
         var isFirstOpen = false
 
         lateinit var App: LimitApplication
 
-
-        /**
-         * 大于0的话说明正在开启当中，但是还没有完全开启
-         */
-        var tempInputTimeMinute = -1L
-
         private var latestLauncherAppInfo: List<String>? = null
 
-        private var whiteNameApps: ArrayList<AppInfo>? = null
 
         private var appInfoList = Collections.synchronizedList(ArrayList<AppInfo>());
 
@@ -85,7 +74,6 @@ class LimitApplication : Application() {
         isFirstOpen = isFirstOpen()
 
 
-
     }
 
     private fun initThreadPool() {
@@ -104,7 +92,6 @@ class LimitApplication : Application() {
     private fun initDataBase() {
         LimitDatabase.initDataBase(this)
     }
-
 
 
     fun getOrInitAllAppsInfo(): MutableList<AppInfo>? {
@@ -161,20 +148,25 @@ class LimitApplication : Application() {
         }
 
         if (isRooted) {
-            if (haveRemainTime) {
-                val tempSet = getSharedPreferences(
-                    "LimitStatus",
-                    Context.MODE_PRIVATE
-                ).getStringSet("launchers", null)
+
+            val tempSet = getSharedPreferences(
+                "LimitStatus",
+                Context.MODE_PRIVATE
+            ).getStringSet("launchers", null)
+
+
+            if (tempSet != null) {
                 val tempArray = ArrayList<String>()
-                tempSet?.iterator()?.forEach {
+                tempSet.iterator().forEach {
                     tempArray.add(it)
                 }
                 Log.d(
                     TAG,
                     "Activities $tempArray"
                 )
+
                 latestLauncherAppInfo = tempArray
+
             } else {
                 val resultStr = StringBuffer()
 
@@ -198,6 +190,7 @@ class LimitApplication : Application() {
                     .putStringSet("launchers", launchers.toSet()).apply()
 
             }
+
         }
 
         return latestLauncherAppInfo;

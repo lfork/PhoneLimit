@@ -14,8 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.lfork.phonelimitadvanced.LimitApplication
-import com.lfork.phonelimitadvanced.LimitApplication.Companion.haveRemainTime
-import com.lfork.phonelimitadvanced.LimitApplication.Companion.tempInputTimeMinute
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
@@ -39,6 +37,11 @@ class FocusFragment : Fragment() {
         const val REQUEST_STORAGE_PERMISSION = 0
 
         const val REQUEST_USAGE_ACCESS_PERMISSION = 1
+
+        /**
+         * 大于0的话说明正在开启当中，但是还没有完全开启
+         */
+        var inputTimeMinuteCache = -1L
 
     }
 
@@ -77,11 +80,16 @@ class FocusFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         //可能需要多次开启，因为之前可能没有权限，导致开启无效
-        if (tempInputTimeMinute > 0) {
-            startLimit(tempInputTimeMinute)
+        if (inputTimeMinuteCache > 0) {
+            startLimit(inputTimeMinuteCache)
         }
 
         refreshData()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
     }
 
     private fun refreshData() {
@@ -93,7 +101,7 @@ class FocusFragment : Fragment() {
 
                     data.forEach {
                         it.icon = getAppIcon(context!!, it.packageName)
-                        if(it.icon != null){
+                        if (it.icon != null) {
                             tempData.add(it)
                         }
                     }
@@ -186,7 +194,7 @@ class FocusFragment : Fragment() {
                 }
                 LimitApplication.isRooted = true
 //                App.getLauncherApps()
-            } else{
+            } else {
                 Log.d(LimitApplication.TAG, "看来是没有ROOT")
             }
         }
@@ -218,7 +226,7 @@ class FocusFragment : Fragment() {
                 //去设置默认桌面
                 openDefaultAppsSetting()
             }.setNegativeButton(R.string.cancel) { dialog, id ->
-                tempInputTimeMinute = -1
+                inputTimeMinuteCache = -1
             }
             .setCancelable(false)
             .create()
@@ -251,9 +259,6 @@ class FocusFragment : Fragment() {
     val limitStateListener = object : LimitStateListener {
         override fun onLimitFinished() {
             runOnUiThread {
-                if (!LimitApplication.isFloatingWindowMode) {
-                    clearDefaultLauncher()
-                }
                 ToastUtil.showLong(context, "限制已解除")
                 unbindLimitService()
             }
@@ -274,19 +279,17 @@ class FocusFragment : Fragment() {
 
         override fun remainTimeRefreshed(timeSeconds: Long) {
             runOnUiThread {
-                //刷新剩余时间
-                Log.d("timeTest", "剩余时间${timeSeconds}秒")
+                if (remain_time_text != null) {
 
-                if (timeSeconds > 60 * 60) {
-                    remain_time_text.text =
-                            "解除限制剩余时间${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
-                } else if (timeSeconds > 60) {
-                    remain_time_text.text = "剩余时间${timeSeconds / 60}分${timeSeconds % 60}秒"
-                } else {
-                    remain_time_text.text = "剩余时间${timeSeconds}秒"
+                    when {
+                        timeSeconds > 60 * 60 -> remain_time_text.text =
+                                "解除限制剩余时间${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
+                        timeSeconds > 60 -> remain_time_text.text = "剩余时间${timeSeconds / 60}分${timeSeconds % 60}秒"
+                        else -> remain_time_text.text = "剩余时间${timeSeconds}秒"
+                    }
                 }
-
                 saveRemainTime(timeSeconds)
+
             }
         }
     }
@@ -302,7 +305,10 @@ class FocusFragment : Fragment() {
     }
 
     private fun startLimit(limitTimeSeconds: Long = 60L) {
-        tempInputTimeMinute = limitTimeSeconds
+        if(LimitApplication.isOnLimitation){
+            return
+        }
+        inputTimeMinuteCache = limitTimeSeconds
 
         if (!isPermitted()) {
             return
@@ -315,21 +321,22 @@ class FocusFragment : Fragment() {
         limitIntent.putExtra("limit_time", limitTimeSeconds)
         bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
         startService(limitIntent)
-        tempInputTimeMinute = -1
+        inputTimeMinuteCache = -1
     }
 
-    private fun unbindLimitService() {
+    fun unbindLimitService() {
 //        btn_set_launcher.visibility = View.VISIBLE
-        unbindService(limitServiceConnection)
-        val stopIntent = Intent(context, LimitService::class.java)
-        stopService(stopIntent)
+        if (context != null) {
+            val stopIntent = Intent(context, LimitService::class.java)
+            stopService(stopIntent)
+            unbindService(limitServiceConnection)
+        }
     }
 
     private fun checkAndRecoveryLimitTask() {
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
         if (remainTimeSeconds > 1) {
-            haveRemainTime = true
             startLimit(remainTimeSeconds)
         }
     }

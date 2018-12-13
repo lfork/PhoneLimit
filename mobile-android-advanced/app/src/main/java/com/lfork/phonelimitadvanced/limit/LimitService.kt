@@ -18,8 +18,8 @@ import com.lfork.phonelimitadvanced.LimitApplication.Companion.isFloatingWindowM
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.AppConstants
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
-import com.lfork.phonelimitadvanced.limit.TimeController.AUTO_EXIT
-import com.lfork.phonelimitadvanced.limit.TimeController.FORCE_EXIT
+import com.lfork.phonelimitadvanced.limit.TimeController.Companion.AUTO_EXIT
+import com.lfork.phonelimitadvanced.limit.TimeController.Companion.FORCE_EXIT
 import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
 
@@ -29,19 +29,32 @@ class LimitService : Service() {
 
     private val stateBinder = LimitBinder()
 
-    var threadIsTerminate = false //是否开启循环
+    private var threadIsGoodRunning = true //服务是否在运行
+
+    var serviceIsDestroyed = false
+
+    var autoUnlockThread: Thread? = null
+
+    var timeListenerThread: Thread? = null
+
+    var limitExecutorThread: Thread? = null
+
+    var timeController: TimeController? = null
 
     private var activityManager: ActivityManager? = null
 
+
     override fun onCreate() {
         super.onCreate()
+        Log.d("异常重启测试2", " ${this} ${LimitApplication.isOnLimitation}")
         activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        threadIsTerminate = true
+        timeController = TimeController()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("异常重启测试3", " ${this} ${LimitApplication.isOnLimitation}")
         val limitTimeSeconds = intent!!.getLongExtra("limit_time", 0L);
-        if (TimeController.initTimer(limitTimeSeconds)) {
+        if (timeController?.initTimer(limitTimeSeconds)!!) {
             beforeLimitation()
             showNotification()
             startLimitationListener()
@@ -68,19 +81,23 @@ class LimitService : Service() {
             listener = limitStateListener
         }
 
-        fun forceEndLimitation(){
+        fun forceEndLimitation() {
             forceEnd()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        threadIsTerminate = false
+        threadIsGoodRunning = false
         listener = null
+        activityManager = null
+        forceEnd()
+        timeController = null
+        serviceIsDestroyed = true
     }
 
     fun forceEnd() {
-        TimeController.forceEndTimer()
+        timeController?.forceEndTimer()
     }
 
     /**
@@ -131,45 +148,54 @@ class LimitService : Service() {
 
 
     private fun startAutoUnlock() {
-        Thread(Runnable {
+        autoUnlockThread = Thread(Runnable {
             //开启完成
             LimitApplication.isOnLimitation = true
             //计时器结束后会有返回值
-            val exitType = TimeController.startTimer()
-            releaseLimitation()
+            val exitType = timeController!!.startTimer()
 
-            LimitApplication.isOnLimitation = false
-            threadIsTerminate = false
-            if (exitType == AUTO_EXIT) {
-                listener?.onUnlocked("自动解锁成功")
-            } else if (exitType == FORCE_EXIT) {
-                listener?.onUnlocked("强制解锁成功")
+            if (threadIsGoodRunning) {
+                releaseLimitation()
+                LimitApplication.isOnLimitation = false
+                //TODO 【DEBUG】这行代码是没有执行的
+                threadIsGoodRunning = false
+                if (exitType == AUTO_EXIT) {
+                    listener?.onUnlocked("自动解锁成功")
+                } else if (exitType == FORCE_EXIT) {
+                    listener?.onUnlocked("强制解锁成功")
+                }
+                listener?.onLimitFinished()
             }
-            listener?.onLimitFinished()
-        }).start()
+        })
+
+        autoUnlockThread?.start()
     }
 
 
     /**
      * 一个粗略的时间监听 不能作为限制结束的标识
      */
+    //TODO  【DEBUG】这个线程被挂起了
     private fun startTimeListener() {
-        Thread {
-            LimitApplication.haveRemainTime = true
-            var remainTime = TimeController.getRemainTimeSeconds()
+        timeListenerThread = Thread {
+            var   remainTime = timeController?.getRemainTimeSeconds() ?: 0
             Log.d("timeTest", "开始状态刷新,剩余时间${remainTime}秒")
-            while (remainTime > 0) {
+            while (remainTime > 0 && !serviceIsDestroyed) {
+                Log.d("timeTest", "开始状态刷新,剩余时间${remainTime}秒")
                 listener?.remainTimeRefreshed(remainTime)
                 Thread.sleep(999)
-                remainTime = TimeController.getRemainTimeSeconds()
+                remainTime = timeController?.getRemainTimeSeconds() ?: 0
+
             }
-            LimitApplication.haveRemainTime = false
-        }.start()
+        }
+
+        timeListenerThread?.start()
     }
 
+    //TODO  【DEBUG】这个线程还在运行
     private fun startLimitationListener() {
-        Thread {
-            while (threadIsTerminate) {
+        limitExecutorThread = Thread {
+            while (threadIsGoodRunning && !serviceIsDestroyed) {
                 //获取栈顶app的包名
                 val packageName = getLauncherTopApp(this@LimitService, activityManager!!)
 
@@ -185,7 +211,17 @@ class LimitService : Service() {
                     e.printStackTrace()
                 }
             }
-        }.start()
+        }
+
+        limitExecutorThread?.start()
+    }
+
+
+    /**
+     * 如果时间不动 -> 那么就重启程序
+     */
+    private fun deadDetect() {
+
     }
 
     /**
@@ -206,7 +242,7 @@ class LimitService : Service() {
      */
     private fun doLimit(packageName: String) {
 
-        if(isFloatingWindowMode){
+        if (isFloatingWindowMode) {
 
         } else {
             val intent = Intent(this, MainActivity::class.java)
@@ -218,6 +254,9 @@ class LimitService : Service() {
     }
 
     //已经到时间了，现在需要做一些真正的解除限制的操作
+    /**
+     * 结束限制：时间到了，然后可以选桌面了
+     */
     private fun releaseLimitation() {
         if (LimitApplication.isRooted) {
             val launchers = LimitApplication.App.getLauncherApps()
@@ -227,7 +266,9 @@ class LimitService : Service() {
             }
         }
 
-
+        if (!LimitApplication.isFloatingWindowMode) {
+            clearDefaultLauncher()
+        }
     }
 
 

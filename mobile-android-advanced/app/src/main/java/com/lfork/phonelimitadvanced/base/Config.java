@@ -17,4 +17,6 @@ public class Config {
 
     public final static int BASE_THREAD_POOL_SIZE = 5;
 
+    // (^[^libc]) (^[^type])
+
 }

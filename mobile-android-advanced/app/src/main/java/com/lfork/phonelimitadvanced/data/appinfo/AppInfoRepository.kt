@@ -37,7 +37,6 @@ object AppInfoRepository {
 
         executeAsyncDataTask {
             if (isFirstOpen) {
-
                 //TODO 使用Kotlin的ForEach可能会出现一些奇怪的BUG，所以在一些多线程的复杂操作上尽量不要用foreach
                 val apps = LimitApplication.App.getOrInitAllAppsInfo()
                 for (i in 0 until apps!!.size) {

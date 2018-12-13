@@ -12,6 +12,7 @@ import com.lfork.phonelimitadvanced.main.browser.BrowserFragment
 import com.lfork.phonelimitadvanced.main.focus.FocusFragment
 import com.lfork.phonelimitadvanced.main.my.MyFragment
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncherFake
+import com.lfork.phonelimitadvanced.utils.unbindService
 import kotlinx.android.synthetic.main.main2_act.*
 
 class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionListener {
@@ -41,11 +42,21 @@ class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionL
             false
         }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Log.d("异常重启测试 ${this}", "  ${LimitApplication.isOnLimitation}")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main2_act)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         initFragments()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (fragments[FRAG_FOCUS]!! as FocusFragment).unbindLimitService()
     }
 
 
@@ -89,6 +100,7 @@ class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionL
         transaction.commit()
 
         mCurrentFragment = fragments[FRAG_FOCUS]!!
+        Log.d("异常重启测试4 fragment init ${this}", "  ${LimitApplication.isOnLimitation}")
     }
 
     lateinit var mCurrentFragment: Fragment

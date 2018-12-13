@@ -12,7 +12,7 @@ import android.support.v4.app.Fragment
  */
 
 fun Fragment.runOnUiThread(action: () -> Unit) {
-    activity!!.runOnUiThread(action)
+    activity?.runOnUiThread(action)
 }
 
 fun Fragment.bindService(
@@ -30,10 +30,10 @@ fun Fragment.unbindService(conn: ServiceConnection) {
     return activity!!.unbindService(conn)
 }
 
-fun Fragment.stopService(intent: Intent):Boolean{
+fun Fragment.stopService(intent: Intent): Boolean {
     return activity!!.stopService(intent)
 }
 
-fun Fragment.getSharedPreferences(name:String,  mode:Int):SharedPreferences{
+fun Fragment.getSharedPreferences(name: String, mode: Int): SharedPreferences {
     return activity!!.getSharedPreferences(name, mode)
 }
