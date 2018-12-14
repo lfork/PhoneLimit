@@ -10,7 +10,7 @@
     -->
     <dbname value="appinfo" />
     <!--
-            Define the version of your database. Each time you want
+            Define the version of your database. Each timeSeconds you want
             to upgrade your database, the version tag would helps.
             Modify the models you defined in the mapping tag, and just
             make the version value plus one, the upgrade of database

@@ -41,9 +41,9 @@ abstract class LimitDatabase : RoomDatabase() {
 
     /**
      * Override the onOpen method to populate the database.
-     * For this sample, we clear the database every time it is created or opened.
+     * For this sample, we clear the database every timeSeconds it is created or opened.
      *
-     * If you want to populate the database only when the database is created for the 1st time,
+     * If you want to populate the database only when the database is created for the 1st timeSeconds,
      * override RoomDatabase.Callback()#onCreate
      */
 //    private val sRoomDatabaseCallback = object : RoomDatabase.Callback() {
@@ -70,7 +70,7 @@ abstract class LimitDatabase : RoomDatabase() {
         }
 
         override fun doInBackground(vararg params: Void): Void? {
-            // Start the app with a clean database every time.
+            // Start the app with a clean database every timeSeconds.
             // Not needed if you only populate on creation.
 //            mDao.deleteAll()
 //

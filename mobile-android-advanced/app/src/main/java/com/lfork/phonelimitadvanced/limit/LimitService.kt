@@ -43,6 +43,25 @@ class LimitService : Service() {
 
     private var activityManager: ActivityManager? = null
 
+    private lateinit var timer: Timer
+
+    private val timerListener = object : Timer.TimeListener {
+        override fun onInterpreted(remainTimeSeconds: Long) {
+            listener?.onLimitFinished()
+        }
+
+        override fun onCompleted() {
+            //TODO 计时器结束前需要先关闭限制服务，再通知用户
+
+            LimitApplication.isOnLimitation
+            listener?.onLimitFinished()
+        }
+
+        override fun onRemainTimeRefreshed(remainTimeSeconds: Long) {
+            listener?.remainTimeRefreshed(remainTimeSeconds)
+        }
+    }
+
 
     override fun onCreate() {
         super.onCreate()
@@ -52,13 +71,32 @@ class LimitService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("异常重启测试3", " ${this} ${LimitApplication.isOnLimitation}")
+
+
+        //如果限制已开启，那么直接返回
+        if (LimitApplication.isOnLimitation) {
+            listener?.onLimitStarted()
+            return super.onStartCommand(intent, flags, startId)
+        }
+
+        //计时器开启前需要先开启限制服务
+        //开启限制服务
+        val monitor:Monitor
+
+
         val limitTimeSeconds = intent!!.getLongExtra("limit_time", 0L);
+        timer = Timer(limitTimeSeconds, timerListener)
+        timer.start()
+
+        //通知用户 显示通知(开启前台服务)
+        showNotification()
+        listener?.onLimitStarted()
+
+        //计时器结束时前需要先关闭限制服务，再通知用户
+
         if (timeController?.initTimer(limitTimeSeconds)!!) {
             beforeLimitation()
-            showNotification()
             startLimitationListener()
-            startTimeListener()
             startAutoUnlock()
             listener?.onLimitStarted()
         } else {
@@ -178,15 +216,17 @@ class LimitService : Service() {
     //TODO  【DEBUG】这个线程被挂起了
     private fun startTimeListener() {
         timeListenerThread = Thread {
-            var   remainTime = timeController?.getRemainTimeSeconds() ?: 0
-            Log.d("timeTest", "开始状态刷新,剩余时间${remainTime}秒")
-            while (remainTime > 0 && !serviceIsDestroyed) {
-                Log.d("timeTest", "开始状态刷新,剩余时间${remainTime}秒")
-                listener?.remainTimeRefreshed(remainTime)
-                Thread.sleep(999)
-                remainTime = timeController?.getRemainTimeSeconds() ?: 0
 
-            }
+
+            //            var   remainTime = timeController?.getRemainTimeSeconds() ?: 0
+//            Log.d("timeTest", "开始状态刷新,剩余时间${remainTime}秒")
+//            while (remainTime > 0 && !serviceIsDestroyed) {
+//                Log.d("timeTest", "开始状态刷新,剩余时间${remainTime}秒")
+//                listener?.remainTimeRefreshed(remainTime)
+//                Thread.sleep(999)
+//                remainTime = timeController?.getRemainTimeSeconds() ?: 0
+//
+//            }
         }
 
         timeListenerThread?.start()
