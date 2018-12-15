@@ -38,4 +38,10 @@
         <item name="android:windowCloseOnTouchOutside">false</item>
     </style>
 
+    <!--titleBar样式-->
+    <style name="ToolbarStyle" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+
 </resources>

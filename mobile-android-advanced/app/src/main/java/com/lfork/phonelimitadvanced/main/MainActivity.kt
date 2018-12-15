@@ -1,6 +1,5 @@
 package com.lfork.phonelimitadvanced.main
 
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -12,29 +11,25 @@ import com.lfork.phonelimitadvanced.main.browser.BrowserFragment
 import com.lfork.phonelimitadvanced.main.focus.FocusFragment
 import com.lfork.phonelimitadvanced.main.my.MyFragment
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncherFake
-import com.lfork.phonelimitadvanced.utils.unbindService
 import kotlinx.android.synthetic.main.main2_act.*
 
-class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity() {
 
-    override fun onFragmentInteraction(uri: Uri) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     private var fragments = HashMap<Int, Fragment>()
 
     private val mOnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_home -> {
+                R.id.navigation_back -> {
                     replaceFragment(fragments[FRAG_FOCUS]!!)
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.navigation_dashboard -> {
+                R.id.navigation_reload -> {
                     replaceFragment(fragments[FRAG_BROWSER]!!)
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.navigation_notifications -> {
+                R.id.navigation_forward -> {
                     replaceFragment(fragments[FRAG_MY]!!)
                     return@OnNavigationItemSelectedListener true
                 }

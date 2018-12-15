@@ -28,6 +28,7 @@ data class AppInfo (
 
     constructor() : this(null, "", false)
 
+    @Ignore
     constructor(appName: String?, packageName: String, appIcon: Drawable?) : this(
         appName,
         packageName,

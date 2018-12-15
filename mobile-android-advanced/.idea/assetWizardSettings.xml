@@ -150,7 +150,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_edit_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_refresh_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -160,8 +160,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="56d0b5" />
-                            <entry key="outputName" value="ic_edit_black_24dp" />
+                            <entry key="outputName" value="ic_refresh_black_24dp" />
                             <entry key="sourceFile" value="C:\Users\98620" />
                           </map>
                         </option>
