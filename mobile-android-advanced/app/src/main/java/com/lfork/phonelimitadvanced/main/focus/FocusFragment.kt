@@ -19,7 +19,6 @@ import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.limit.LimitService
-import com.lfork.phonelimitadvanced.limit.LimitStateListener
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedStatAccessPermission
@@ -49,7 +48,7 @@ class FocusFragment : Fragment() {
 
     private var root: View? = null
 
-    private lateinit var adapter: FocusRecycleAdapter
+    private lateinit var adapter: WhiteNameAdapter
 
 
     override fun onCreateView(
@@ -68,7 +67,7 @@ class FocusFragment : Fragment() {
             displaySetting(root!!)
             root!!.recycle_white_list.layoutManager =
                     LinearLayoutManager(context, HORIZONTAL, false)
-            adapter = FocusRecycleAdapter()
+            adapter = WhiteNameAdapter()
 
             root!!.recycle_white_list.adapter = adapter
         }
@@ -256,9 +255,11 @@ class FocusFragment : Fragment() {
 
     private lateinit var limitBinder: LimitService.LimitBinder
 
-    val limitStateListener = object : LimitStateListener {
+    val limitStateListener = object : LimitService.StateListener {
         override fun onLimitFinished() {
             runOnUiThread {
+                saveRemainTime(0)
+                remain_time_text.text = "限制已解除"
                 ToastUtil.showLong(context, "限制已解除")
                 unbindLimitService()
             }
@@ -270,15 +271,10 @@ class FocusFragment : Fragment() {
             }
         }
 
-        override fun onUnlocked(msg: String) {
-            runOnUiThread {
-                remain_time_text.text = msg
-
-            }
-        }
 
         override fun remainTimeRefreshed(timeSeconds: Long) {
             runOnUiThread {
+                saveRemainTime(timeSeconds)
                 if (remain_time_text != null) {
 
                     when {
@@ -288,8 +284,6 @@ class FocusFragment : Fragment() {
                         else -> remain_time_text.text = "剩余时间${timeSeconds}秒"
                     }
                 }
-                saveRemainTime(timeSeconds)
-
             }
         }
     }
@@ -306,6 +300,7 @@ class FocusFragment : Fragment() {
 
     private fun startLimit(limitTimeSeconds: Long = 60L) {
         if(LimitApplication.isOnLimitation){
+            limitStateListener.onLimitStarted()
             return
         }
         inputTimeMinuteCache = limitTimeSeconds

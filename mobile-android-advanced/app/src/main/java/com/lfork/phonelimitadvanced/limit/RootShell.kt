@@ -9,21 +9,9 @@ import java.io.*
  */
 object RootShell {
 
-    const val MOUNT_READ_WRITE = "mount -o rw,remount /system"
-
-    const val MOVE_NET_FILE=
-        """
-            mount -o rw,remount /system
-
-        """
-
-    private const val TAG = "ShellTest"
-
-
     /**
-     * root 后 shell命令的正确打开方式
+     * root 后 shell命令的正确打开方式 执行命令并且输出结果
      */
-    // 执行命令并且输出结果
     @Synchronized
     fun execRootCmd(cmd: String): String {
         val result = LinuxShell.execCommand(cmd, true)

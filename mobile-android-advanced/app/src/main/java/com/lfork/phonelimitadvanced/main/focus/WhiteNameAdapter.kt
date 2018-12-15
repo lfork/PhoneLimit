@@ -1,6 +1,5 @@
 package com.lfork.phonelimitadvanced.main.focus
 
-import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -22,9 +21,7 @@ import java.util.*
  *
  * Created by 98620 on 2018/11/8.
  */
-class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolder>() {
-
-    private val tailItem = "sad"
+class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
     private val items = ArrayList<AppInfo>(0);
 
@@ -69,9 +66,9 @@ class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolde
 
         if (p1 != itemCount - 1) {
             holder.textView.text = items[p1].appName
-            holder.textView.setOnClickListener {
-                deleteItem(holder.adapterPosition)
-            }
+//            holder.textView.setOnClickListener {
+//                deleteItem(holder.adapterPosition)
+//            }
             val icon = items[p1].icon
             holder.imageView.setImageDrawable(icon)
             holder.item.setOnClickListener {
@@ -79,6 +76,8 @@ class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolde
                 it.context.startOtherApp(items[p1].packageName)
             }
         } else {
+            val context = holder.imageView.context
+            holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_edit_black_24dp))
             holder.item.setOnClickListener {
                 if(!isOnLimitation){
                     //跳转到编辑界面
@@ -90,18 +89,18 @@ class FocusRecycleAdapter : RecyclerView.Adapter<FocusRecycleAdapter.NormalHolde
         }
     }
 
-    @Synchronized
-    private fun deleteItem(position: Int) {
-        //防止动画未消失再次点击到View ，此时Index为-1
-        //ViewHolder是会复用的
-        //减一是剪掉tail item
-        if (position !in (0 until items.size - 1)) {
-            return
-        }
-        items.remove(items[position])
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, items.size - position)
-    }
+//    @Synchronized
+//    private fun deleteItem(position: Int) {
+//        //防止动画未消失再次点击到View ，此时Index为-1
+//        //ViewHolder是会复用的
+//        //减一是剪掉tail item
+//        if (position !in (0 until items.size - 1)) {
+//            return
+//        }
+//        items.remove(items[position])
+//        notifyItemRemoved(position)
+//        notifyItemRangeChanged(position, items.size - position)
+//    }
 
     inner class NormalHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val item = itemView

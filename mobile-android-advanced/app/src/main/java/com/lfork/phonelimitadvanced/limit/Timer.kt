@@ -6,7 +6,7 @@ import java.lang.Exception
  * 倒计时的计时器,只能使用一次。
  * Created by 98620 on 2018/12/14.
  */
-class Timer(val timeSeconds:Long, private val listener:TimeListener) {
+class Timer(timeSeconds:Long, private val listener:TimeListener) {
 
     private var remainTimeSeconds:Long = timeSeconds
 
@@ -43,7 +43,7 @@ class Timer(val timeSeconds:Long, private val listener:TimeListener) {
                 }
                 listener.onCompleted()
             } catch (e:Exception){
-                listener.onInterpreted(remainTimeSeconds)
+                listener.onClosedInAdvance(remainTimeSeconds)
             }
 
             isActive = false
@@ -58,9 +58,9 @@ class Timer(val timeSeconds:Long, private val listener:TimeListener) {
     }
 
     /**
-     * 打断计时器，提前结束
+     * 提前关闭计时器
      */
-    fun interrupt() {
+    fun closeInAdvance() {
 
         if (isEnd){
             throw TimerEndException()
@@ -74,7 +74,10 @@ class Timer(val timeSeconds:Long, private val listener:TimeListener) {
 
     interface TimeListener{
 
-        fun onInterpreted(remainTimeSeconds:Long)
+        /**
+         * 提前被关闭
+         */
+        fun onClosedInAdvance(remainTimeSeconds:Long)
 
         fun onCompleted()
 

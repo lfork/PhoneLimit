@@ -54,12 +54,6 @@ class MainActivity : AppCompatActivity(), BrowserFragment.OnFragmentInteractionL
         initFragments()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        (fragments[FRAG_FOCUS]!! as FocusFragment).unbindLimitService()
-    }
-
-
     override fun onPause() {
         super.onPause()
         //清楚Fake桌面，不然在选择默认桌面的时候fake activity会出现在列表当中
