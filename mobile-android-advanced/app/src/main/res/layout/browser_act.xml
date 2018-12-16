@@ -8,12 +8,6 @@
         android:layout_height="match_parent"
         tools:context=".browser.BrowserActivity">
 
-    <!--播放全屏视频时用-->
-    <FrameLayout
-        android:id="@+id/video_fullView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
 
 
     <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationContentDescription="返回"
-        app:navigationIcon="@drawable/icon_back"
+        app:navigationIcon="@drawable/ic_arrow_white_black_24dp"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ToolbarStyle">
 
@@ -60,8 +54,6 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:max="100"
         android:progress="0"
         android:progressDrawable="@drawable/process_bg"
@@ -84,7 +76,77 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"
         app:menu="@menu/browser_navigation"/>
+
+    <!--播放全屏视频时用-->
+    <FrameLayout
+        android:id="@+id/video_fullView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/white" />
+
+    <android.support.constraint.ConstraintLayout
+        android:background="@color/white"
+        android:id="@+id/item_limit_tips"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_tool_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!--播放全屏视频时用-->
+        <TextView
+            android:id="@+id/site_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:text="目的站点域名:www.baidu.com"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@color/white"
+            tools:visibility="visible" />
+
+        <!--播放全屏视频时用-->
+        <TextView
+            android:id="@+id/limit_tips"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:text="该网站当前不在白名单当中，无法访问。\n如果要访问可以在非限制模式下，将该站点添加到白名单"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/site_info"
+            tools:background="@color/white"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_close_limit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="我知道了"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/limit_tips" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
 
 
 </android.support.constraint.ConstraintLayout>

@@ -20,10 +20,14 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.browser.config.*
 import com.lfork.phonelimitadvanced.browser.utils.BaseTools
 import com.lfork.phonelimitadvanced.browser.utils.StatusBarUtil
+import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
+import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository.ADD_SUCCEED
+import com.lfork.phonelimitadvanced.utils.getUrlDomainName
 import kotlinx.android.synthetic.main.browser_act.*
 
 /**
@@ -39,7 +43,7 @@ import kotlinx.android.synthetic.main.browser_act.*
  * - 网页自带js跳转
  * 被作为第三方浏览器打开
  */
-class WebViewActivity : AppCompatActivity(), IWebPageView {
+class BrowserActivity : AppCompatActivity(), IWebPageView {
 
     // 进度条
     private var mProgressBar: ProgressBar? = null
@@ -55,6 +59,7 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
     // 可滚动的title 使用简单 没有渐变效果，文字两旁有阴影
     private var tvGunTitle: TextView? = null
     private var mTitle: String? = null
+    private var webClient: MyWebViewClient? = null
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
@@ -82,8 +87,9 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
         initWebView()
         webView!!.loadUrl(mUrl)
         getDataFromBrowser(intent)
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        setupLimitService()
     }
+
 
     private fun getIntentData() {
         mUrl = intent.getStringExtra("mUrl")
@@ -105,13 +111,14 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
         setSupportActionBar(mTitleToolBar)
         val actionBar = supportActionBar
         actionBar?.setDisplayShowTitleEnabled(false)
-        mTitleToolBar!!.overflowIcon = ContextCompat.getDrawable(this, R.drawable.actionbar_more)
+        mTitleToolBar!!.overflowIcon = ContextCompat.getDrawable(this, R.drawable.ic_more_vert_white_24dp)
         tvGunTitle!!.postDelayed({ tvGunTitle!!.isSelected = true }, 1900)
         setTitle(mTitle)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_webview, menu)
+        addOrDeleteItem = menu.findItem(R.id.actionbar_cope)
         return true
     }
 
@@ -123,18 +130,24 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
             } else {
                 finish()
             }
-            R.id.actionbar_share// 分享到
-            -> {
-                val shareText = webView!!.title + webView!!.url
-                BaseTools.share(this@WebViewActivity, shareText)
-            }
+//            R.id.actionbar_share// 分享到
+//            -> {
+//                val shareText = webView!!.title + webView!!.url
+//                BaseTools.share(this@WebViewActivity, shareText)
+//            }
             R.id.actionbar_cope// 复制链接
             -> if (!TextUtils.isEmpty(webView!!.url)) {
-                BaseTools.copy(webView!!.url)
-                Toast.makeText(this, "复制成功", Toast.LENGTH_LONG).show()
+                if(UrlInfoRepository.addOrDeleteUrl(getUrlDomainName(webView!!.url)) == ADD_SUCCEED){
+                    item.title = "从白名单中移除"
+                    Toast.makeText(this, "添加成功", Toast.LENGTH_LONG).show()
+                } else{
+                    item.title = "添加到白名单"
+                    Toast.makeText(this, "删除成功", Toast.LENGTH_LONG).show()
+                }
+
             }
-            R.id.actionbar_open// 打开链接
-            -> BaseTools.openLink(this@WebViewActivity, webView!!.url)
+//            R.id.actionbar_open// 打开链接
+//            -> BaseTools.openLink(this@WebViewActivity, webView!!.url)
             R.id.actionbar_webview_refresh// 刷新页面
             -> if (webView != null) {
                 webView!!.reload()
@@ -188,7 +201,8 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
         webView!!.webChromeClient = mWebChromeClient
         // 与js交互
         webView!!.addJavascriptInterface(ImageClickInterface(this), "injectedObject")
-        webView!!.webViewClient = MyWebViewClient(this)
+        webClient = MyWebViewClient(this)
+        webView!!.webViewClient = webClient
 
 
         webView!!.setOnLongClickListener(View.OnLongClickListener {
@@ -196,7 +210,7 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
             // 如果是图片类型或者是带有图片链接的类型
             if (hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE || hitTestResult.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
                 // 弹出保存图片的对话框
-                AlertDialog.Builder(this@WebViewActivity)
+                AlertDialog.Builder(this@BrowserActivity)
                         .setItems(arrayOf("查看大图", "保存图片到相册")) { dialog, which ->
                             val picUrl = hitTestResult.extra
                             //获取图片
@@ -232,7 +246,7 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
 
     override fun fullViewAddView(view: View) {
         val decor = window.decorView as FrameLayout
-        videoFullView = FullscreenHolder(this@WebViewActivity)
+        videoFullView = FullscreenHolder(this@BrowserActivity)
         videoFullView!!.addView(view)
         decor.addView(videoFullView)
     }
@@ -390,7 +404,7 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
         videoFullView!!.removeAllViews()
         if (webView != null) {
             val parent = webView!!.parent as ViewGroup
-            parent?.removeView(webView)
+            parent.removeView(webView)
             webView!!.removeAllViews()
             webView!!.loadDataWithBaseURL(null, "", "text/html", "utf-8", null)
             webView!!.stopLoading()
@@ -398,9 +412,62 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
             webView!!.webViewClient = null
             webView!!.destroy()
             webView = null
+            webClient = null
         }
         super.onDestroy()
     }
+
+
+    private var lastUrl: String? = null
+
+    private var addOrDeleteItem:MenuItem?=null
+
+    private fun setupLimitService() {
+
+        //防止点击穿透
+        item_limit_tips.setOnTouchListener { _, _ -> true }
+        btn_close_limit.setOnClickListener { closeLimit() }
+        webClient?.setListener {
+            lastUrl = it
+
+            if (urlIsInWhiteNameList(it)) {
+                addOrDeleteItem?.title = "从白名单中移除"
+            } else {
+                addOrDeleteItem?.title = "添加到白名单"
+                if (LimitApplication.isOnLimitation) {
+                    doLimit()
+                }
+            }
+
+
+        }
+    }
+
+    private fun urlIsInWhiteNameList(url: String): Boolean {
+        return UrlInfoRepository.whiteNameList.contains(url)
+    }
+
+
+    /**
+     *
+     */
+    private fun doLimit() {
+        item_limit_tips.visibility = View.VISIBLE
+        webView?.goBack()
+
+    }
+
+    private fun closeLimit() {
+        item_limit_tips.visibility = View.GONE
+
+        //如果goback后还是限制页面，说明就要退出webview了
+    }
+
+    fun addSiteToWhiteName(url: String) {
+        getUrlDomainName(url)
+
+    }
+
 
     companion object {
 
@@ -412,14 +479,14 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
          * @param mTitle   标题
          */
         fun loadUrl(mContext: Context, mUrl: String, mTitle: String?) {
-            val intent = Intent(mContext, WebViewActivity::class.java)
+            val intent = Intent(mContext, BrowserActivity::class.java)
             intent.putExtra("mUrl", getRealUrl(mUrl))
             intent.putExtra("mTitle", mTitle ?: "加载中...")
             mContext.startActivity(intent)
         }
 
         fun loadUrl(mContext: Context, mUrl: String) {
-            val intent = Intent(mContext, WebViewActivity::class.java)
+            val intent = Intent(mContext, BrowserActivity::class.java)
             intent.putExtra("mUrl", getRealUrl(mUrl))
             intent.putExtra("mTitle", "详情")
             mContext.startActivity(intent)
@@ -448,7 +515,7 @@ class WebViewActivity : AppCompatActivity(), IWebPageView {
 
             } else if (!url.startsWith("http") && !url.contains("www")) {
                 // 输入纯文字 或 汉字的情况
-                url = "https://m5.baidu.com/s?from=124n&word=$url"
+                url = "https://cn.bing.com/search?q=$url"
             }
             return url
         }

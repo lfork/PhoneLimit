@@ -8,9 +8,11 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.lfork.phonelimitadvanced.browser.WebViewActivity;
+import com.lfork.phonelimitadvanced.browser.BrowserActivity;
 import com.lfork.phonelimitadvanced.browser.utils.CheckNetwork;
 import com.lfork.phonelimitadvanced.browser.utils.Tools;
+
+import static com.lfork.phonelimitadvanced.utils.UrlStrToolKt.getUrlDomainName;
 
 /**
  * Created by jingbin on 2016/11/17.
@@ -22,14 +24,29 @@ import com.lfork.phonelimitadvanced.browser.utils.Tools;
  * - 唤起京东，支付宝，微信原生App
  */
 public class MyWebViewClient extends WebViewClient {
+    private static final String TAG = "MyWebViewClient";
 
     private IWebPageView mIWebPageView;
-    private WebViewActivity mActivity;
+    private BrowserActivity mActivity;
+
+    private WebClientStatusListener listener;
+
+
+    @Override
+    public void onPageCommitVisible(WebView view, String url) {
+        super.onPageCommitVisible(view, url);
+        Log.d(TAG, "当前的页面URL：" + url);
+        if(listener != null){
+            Log.d(TAG, "对应的主机：" + getUrlDomainName(url));
+            listener.urlChanged(getUrlDomainName(url));
+
+        }
+
+    }
 
     public MyWebViewClient(IWebPageView mIWebPageView) {
         this.mIWebPageView = mIWebPageView;
-        mActivity = (WebViewActivity) mIWebPageView;
-
+        mActivity = (BrowserActivity) mIWebPageView;
     }
 
     @SuppressWarnings("deprecation")
@@ -115,6 +132,14 @@ public class MyWebViewClient extends WebViewClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setListener(WebClientStatusListener listener) {
+        this.listener = listener;
+    }
+
+    interface WebClientStatusListener{
+        void urlChanged(String url);
     }
 
 }

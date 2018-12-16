@@ -25,8 +25,6 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
     private val items = ArrayList<AppInfo>(0);
 
-    private val TYPE_NORMAL = 0
-    private val TYPE_TAIL = 1
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder =
@@ -49,6 +47,8 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
             }
         }
 
+    private val TYPE_NORMAL = 0
+    private val TYPE_TAIL = 1
     override fun getItemViewType(position: Int): Int {
         return if (position < itemCount - 1) {
             TYPE_NORMAL
@@ -66,9 +66,6 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
         if (p1 != itemCount - 1) {
             holder.textView.text = items[p1].appName
-//            holder.textView.setOnClickListener {
-//                deleteItem(holder.adapterPosition)
-//            }
             val icon = items[p1].icon
             holder.imageView.setImageDrawable(icon)
             holder.item.setOnClickListener {

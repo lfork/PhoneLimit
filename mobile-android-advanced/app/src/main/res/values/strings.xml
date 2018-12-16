@@ -51,8 +51,8 @@
     <string name="action_default_apps_setting">去设置</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_browser">Browser</string>
+    <string name="title_my">My</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -65,6 +65,7 @@
     <string name="actionbar_more">更多信息</string>
     <string name="actionbar_webview_share">分享到</string>
     <string name="actionbar_webview_cope">复制链接</string>
+    <string name="actionbar_add_white_name">添加到白名单</string>
     <string name="actionbar_webview_open">浏览器打开</string>
     <string name="actionbar_webview_refresh">刷新页面</string>
     <string name="actionbar_share">分享给朋友\(^o^)/~</string>

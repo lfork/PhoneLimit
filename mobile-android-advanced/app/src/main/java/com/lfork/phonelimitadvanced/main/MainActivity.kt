@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("异常重启测试4 fragment init ${this}", "  ${LimitApplication.isOnLimitation}")
     }
 
-    lateinit var mCurrentFragment: Fragment
+    private lateinit var mCurrentFragment: Fragment
 
     private fun replaceFragment(fragment: Fragment) {
 

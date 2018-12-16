@@ -65,7 +65,11 @@
 
 
         <activity
-            android:name=".browser.WebViewActivity"
+            android:name=".browser.BrowserActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
             android:label="@string/title_activity_browser">
 
         </activity>
