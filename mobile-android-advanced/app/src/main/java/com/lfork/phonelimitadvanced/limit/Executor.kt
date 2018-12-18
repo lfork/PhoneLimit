@@ -6,6 +6,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
@@ -101,6 +102,13 @@ class Executor(var context: Context?) {
         if (LimitApplication.isFloatingWindowMode) {
 
         } else {
+
+            if (packageName == "com.android.settings"){
+                val intent = Intent(Settings.ACTION_SETTINGS)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context!!.startActivity(intent)
+            }
+
             val intent = Intent(context, MainActivity::class.java)
             intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName)
             intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
@@ -119,7 +127,6 @@ class Executor(var context: Context?) {
     private fun releaseLimitation() {
         if (LimitApplication.isRooted) {
             val launchers = LimitApplication.App.getLauncherApps()
-            Log.d("解锁测试", launchers.toString());
             launchers?.forEach {
                 RootShell.execRootCmd("pm unhide $it")
             }

@@ -174,6 +174,7 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         ws.setAppCacheEnabled(true)
         // 设置缓存模式
         ws.cacheMode = WebSettings.LOAD_DEFAULT
+
         // setDefaultZoom  api19被弃用
         // 设置此属性，可任意比例缩放。
         ws.useWideViewPort = true
@@ -188,7 +189,7 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         // 排版适应屏幕
         ws.layoutAlgorithm = WebSettings.LayoutAlgorithm.NARROW_COLUMNS
         // WebView是否新窗口打开(加了后可能打不开网页)
-        ws.setSupportMultipleWindows(true)
+        ws.setSupportMultipleWindows(false)
 
         // webview从5.0开始默认不允许混合模式,https中不能加载http资源,需要设置开启。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -17,8 +17,6 @@ object UrlInfoRepository {
     var whiteNameList = HashSet<String>()
 
     init {
-        whiteNameList.add("www.baidu.com")
-        whiteNameList.add("www.lfork.top")
         whiteNameList.add("www.cuit.edu.cn")
         whiteNameList.add("cn.bing.com")
     }
