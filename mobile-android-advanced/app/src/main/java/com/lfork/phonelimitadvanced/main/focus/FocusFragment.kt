@@ -84,12 +84,10 @@ class FocusFragment : Fragment() {
         }
 
         refreshData()
+
+//        limitBinder.setLimitStateListener(limitStateListener)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
 
     private fun refreshData() {
 
