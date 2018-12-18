@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_back"
+        android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/navigation_reload"
+        android:id="@+id/navigation_browser"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/title_browser" />
 
     <item
-        android:id="@+id/navigation_forward"
+        android:id="@+id/navigation_my"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="@string/title_my" />
 

@@ -1,6 +1,7 @@
 package com.lfork.phonelimitadvanced.main
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -21,25 +22,55 @@ class MainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_back -> {
+                R.id.navigation_home -> {
                     replaceFragment(fragments[FRAG_FOCUS]!!)
+                    mCurrentFragmentID = FRAG_FOCUS
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.navigation_reload -> {
+                R.id.navigation_browser -> {
                     replaceFragment(fragments[FRAG_BROWSER]!!)
+                    mCurrentFragmentID = FRAG_BROWSER
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.navigation_forward -> {
+                R.id.navigation_my -> {
                     replaceFragment(fragments[FRAG_MY]!!)
+                    mCurrentFragmentID = FRAG_MY
                     return@OnNavigationItemSelectedListener true
                 }
             }
             false
         }
 
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putInt("frag_id", mCurrentFragmentID)
+
+    }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        Log.d("异常重启测试 ${this}", "  ${LimitApplication.isOnLimitation}")
+        mCurrentFragmentID = savedInstanceState?.getInt("frag_id")?: FRAG_FOCUS
+        mCurrentFragment = fragments[mCurrentFragmentID]
+    }
+
+
+    override fun onAttachFragment(fragment: Fragment?) {
+        super.onAttachFragment(fragment)
+        //当前的界面的保存状态，只是重新让新的Fragment指向了原本未被销毁的fragment，它就是onAttach方法对应的Fragment对象
+        if (fragments[FRAG_FOCUS] == null && fragment is FocusFragment) {
+            fragments[FRAG_FOCUS] = fragment
+
+        } else if (fragments[FRAG_BROWSER] == null && fragment is BrowserFragment) {
+
+            fragments[FRAG_BROWSER] = fragment
+
+        } else if (fragments[FRAG_MY] == null && fragment is MyFragment) {
+
+            fragments[FRAG_MY] = fragment
+        }
+
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,14 +123,16 @@ class MainActivity : AppCompatActivity() {
         Log.d("异常重启测试4 fragment init ${this}", "  ${LimitApplication.isOnLimitation}")
     }
 
-    private lateinit var mCurrentFragment: Fragment
+    private var mCurrentFragment: Fragment? = null
+    private var mCurrentFragmentID: Int = FRAG_FOCUS
 
     private fun replaceFragment(fragment: Fragment) {
 
         supportFragmentManager.beginTransaction()
-            .hide(mCurrentFragment)
+            .hide(mCurrentFragment!!)
             .show(fragment)
             .commit()
+
         mCurrentFragment = fragment
     }
 
