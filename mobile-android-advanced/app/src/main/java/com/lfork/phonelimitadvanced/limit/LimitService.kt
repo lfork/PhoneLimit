@@ -3,6 +3,7 @@ package com.lfork.phonelimitadvanced.limit
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Binder
@@ -12,6 +13,7 @@ import android.support.v4.app.NotificationCompat
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.main.MainActivity
+import com.lfork.phonelimitadvanced.utils.getSharedPreferences
 
 /**
  * 模拟CS模式,Activity作为客户端，Service作为服务端
@@ -40,12 +42,23 @@ class LimitService : Service() {
             executor.close()
             LimitApplication.isOnLimitation = false
             listener?.onLimitFinished()
+            saveRemainTime(0)
         }
 
         override fun onRemainTimeRefreshed(remainTimeSeconds: Long) {
             listener?.remainTimeRefreshed(remainTimeSeconds)
+            saveRemainTime(remainTimeSeconds)
+
         }
     }
+
+    private fun saveRemainTime(remainTimeSeconds: Long) {
+        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+        val editor = sp.edit()
+        editor.putLong("remain_time_seconds", remainTimeSeconds)
+        editor.apply()
+    }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 

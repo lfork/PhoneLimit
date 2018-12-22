@@ -68,6 +68,7 @@ class FocusFragment : Fragment() {
             root!!.recycle_white_list.layoutManager =
                     LinearLayoutManager(context, HORIZONTAL, false)
             adapter = WhiteNameAdapter()
+            adapter.customIconOnClickListener = customIconOnClickListener
 
             root!!.recycle_white_list.adapter = adapter
         }
@@ -84,8 +85,11 @@ class FocusFragment : Fragment() {
         }
 
         refreshData()
+    }
 
-//        limitBinder.setLimitStateListener(limitStateListener)
+    override fun onDestroy() {
+        super.onDestroy()
+        adapter.onDestroy()
     }
 
 
@@ -256,7 +260,6 @@ class FocusFragment : Fragment() {
     val limitStateListener = object : LimitService.StateListener {
         override fun onLimitFinished() {
             runOnUiThread {
-                saveRemainTime(0)
                 remain_time_text.text = "限制已解除"
                 ToastUtil.showLong(context, "限制已解除")
                 unbindLimitService()
@@ -265,16 +268,14 @@ class FocusFragment : Fragment() {
 
         override fun onLimitStarted() {
             runOnUiThread {
-                ToastUtil.showLong(context, "限制已开启")
+                //ToastUtil.showLong(context, "限制已开启")
             }
         }
 
 
         override fun remainTimeRefreshed(timeSeconds: Long) {
             runOnUiThread {
-                saveRemainTime(timeSeconds)
                 if (remain_time_text != null) {
-
                     when {
                         timeSeconds > 60 * 60 -> remain_time_text.text =
                                 "解除限制剩余时间${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
@@ -297,17 +298,10 @@ class FocusFragment : Fragment() {
     }
 
     private fun startLimit(limitTimeSeconds: Long = 60L) {
-        if(LimitApplication.isOnLimitation){
-            limitStateListener.onLimitStarted()
-            return
-        }
         inputTimeMinuteCache = limitTimeSeconds
-
         if (!isPermitted()) {
             return
         }
-
-//        btn_set_launcher.visibility = View.INVISIBLE
 
         //开启之前需要把权限获取到位
         val limitIntent = Intent(context, LimitService::class.java)
@@ -334,11 +328,13 @@ class FocusFragment : Fragment() {
         }
     }
 
-    private fun saveRemainTime(remainTimeSeconds: Long) {
-        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
-        val editor = sp.edit()
-        editor.putLong("remain_time_seconds", remainTimeSeconds)
-        editor.apply()
+
+
+    var customIconOnClickListener: CustomIconOnClickListener?=null
+
+
+    fun setCustomClickListener(customIconOnClickListener: CustomIconOnClickListener){
+        this.customIconOnClickListener = customIconOnClickListener
     }
 
 }

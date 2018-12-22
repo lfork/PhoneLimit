@@ -23,64 +23,98 @@ import java.util.*
  */
 class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
+    var customIconOnClickListener:CustomIconOnClickListener?=null
+
     private val items = ArrayList<AppInfo>(0);
 
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder =
-        when (viewType) {
-
-            TYPE_TAIL -> {
-
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.main_focus_edit_recycle_item, parent, false)
-                val holder = NormalHolder(view)
-                holder
-            }
-
-            //TYPE_NORMAL
-            else -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.main_focus_recycle_item, parent, false)
-                val holder = NormalHolder(view)
-                holder
-            }
-        }
-
     private val TYPE_NORMAL = 0
+
     private val TYPE_TAIL = 1
-    override fun getItemViewType(position: Int): Int {
-        return if (position < itemCount - 1) {
-            TYPE_NORMAL
-        } else {
-            TYPE_TAIL
-        }
+
+    private val TYPE_HEAD_GENERAL = 2
+
+    private val TYPE_HEAD_BROWSER = 3
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
+//        = when (viewType)
+//        TYPE_HEAD_GENERAL -> {
+//
+//        }
+//
+//        TYPE_HEAD_BROWSER -> {
+//            val view = LayoutInflater.from(parent.context)
+//                    .inflate(R.layout.main_focus_recycle_item, parent, false)
+//            NormalHolder(view)
+//        }
+//
+//
+//        TYPE_TAIL -> {
+//            val view = LayoutInflater.from(parent.context)
+//                    .inflate(R.layout.main_focus_edit_recycle_item, parent, false)
+//            NormalHolder(view)
+//
+//        }
+//
+//        else -> {
+//            val view = LayoutInflater.from(parent.context)
+//                    .inflate(R.layout.main_focus_recycle_item, parent, false)
+//            NormalHolder(view)
+//
+//        }
+        val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.main_focus_recycle_item, parent, false)
+        return NormalHolder(view)
     }
 
+
+    override fun getItemViewType(position: Int) = when (position) {
+        0 -> TYPE_HEAD_GENERAL
+        1 -> TYPE_HEAD_BROWSER
+        itemCount - 1 -> TYPE_TAIL
+        else -> TYPE_NORMAL
+    }
+
+
     override fun getItemCount(): Int {
-        //normal + tail
-        return items.size + 1
+        return items.size + 3
     }
 
     override fun onBindViewHolder(holder: NormalHolder, p1: Int) {
-
-        if (p1 != itemCount - 1) {
-            holder.textView.text = items[p1].appName
-            val icon = items[p1].icon
-            holder.imageView.setImageDrawable(icon)
-            holder.item.setOnClickListener {
-                //跳转到编辑界面
-                it.context.startOtherApp(items[p1].packageName)
+        val context = holder.imageView.context
+        when (p1) {
+            0 -> {
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_search_black_24dp))
+                holder.textView.text = "查资料"
+                holder.item.setOnClickListener {
+                    customIconOnClickListener?.onBrowserClick()
+                }
             }
-        } else {
-            val context = holder.imageView.context
-            holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_edit_black_24dp))
-            holder.item.setOnClickListener {
-                if(!isOnLimitation){
-                    //跳转到编辑界面
-                    it.context.startActivity<WhiteNameEditActivity>()
-                } else {
-                    ToastUtil.showShort(it.context, "暂时不能编辑噢")
+            1 -> {
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_settings_black_24dp))
+                holder.textView.text = "设置"
+                holder.item.setOnClickListener {
+                    customIconOnClickListener?.onSettingsClick()
+                }
+            }
+            itemCount - 1 -> {
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_edit_black_24dp))
+                holder.textView.text = "编辑白名单"
+                holder.item.setOnClickListener {
+                    if (!isOnLimitation) {
+                        //跳转到编辑界面
+                        it.context.startActivity<WhiteNameEditActivity>()
+                    } else {
+                        ToastUtil.showShort(it.context, "暂时不能编辑噢")
+                    }
+                }
+            }
+            else -> {
+                holder.textView.text = items[p1-2].appName
+                val icon = items[p1-2].icon
+                holder.imageView.setImageDrawable(icon)
+                holder.item.setOnClickListener {
+                    it.context.startOtherApp(items[p1-2].packageName)
                 }
             }
         }
@@ -109,6 +143,10 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
         items.clear()
         itemList.sort()
         items.addAll(itemList)
+    }
+
+    fun onDestroy(){
+        customIconOnClickListener = null
     }
 
 }
