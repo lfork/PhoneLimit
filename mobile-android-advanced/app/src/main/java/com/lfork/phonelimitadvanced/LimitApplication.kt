@@ -8,6 +8,7 @@ import com.lfork.phonelimitadvanced.base.Config
 import com.lfork.phonelimitadvanced.base.thread.MyThreadFactory
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.common.db.LimitDatabase
+import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.utils.Constants.DEFAULT_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.LinuxShell
 import com.lfork.phonelimitadvanced.utils.getAppIcon
@@ -65,13 +66,14 @@ class LimitApplication : Application() {
         super.onCreate()
 
         App = this
+        isFirstOpen = isFirstOpen()
         Log.d(
             TAG,
             "BAND:" + android.os.Build.BRAND + "  MANUFACTURER:" + android.os.Build.MANUFACTURER
         )
         initThreadPool()
         initDataBase()
-        isFirstOpen = isFirstOpen()
+
 
 
     }
@@ -91,6 +93,7 @@ class LimitApplication : Application() {
 
     private fun initDataBase() {
         LimitDatabase.initDataBase(this)
+        UrlInfoRepository.initUrlData()
     }
 
 

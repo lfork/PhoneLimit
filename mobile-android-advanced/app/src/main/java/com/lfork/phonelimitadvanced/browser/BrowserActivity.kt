@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -23,8 +22,8 @@ import android.widget.Toast
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.browser.config.*
-import com.lfork.phonelimitadvanced.browser.utils.BaseTools
 import com.lfork.phonelimitadvanced.browser.utils.StatusBarUtil
+import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository.ADD_SUCCEED
 import com.lfork.phonelimitadvanced.utils.getUrlDomainName
@@ -61,23 +60,6 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
     private var mTitle: String? = null
     private var webClient: MyWebViewClient? = null
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_back -> {
-                webView?.goBack()
-                return@OnNavigationItemSelectedListener false
-            }
-            R.id.navigation_reload -> {
-                webView?.reload()
-                return@OnNavigationItemSelectedListener false
-            }
-            R.id.navigation_forward -> {
-                webView?.goForward()
-                return@OnNavigationItemSelectedListener false
-            }
-        }
-        false
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +70,7 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         webView!!.loadUrl(mUrl)
         getDataFromBrowser(intent)
         setupLimitService()
+        webview_refresh.setOnRefreshListener { webView?.reload() }
     }
 
 
@@ -137,14 +120,21 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
 //            }
             R.id.actionbar_cope// 复制链接
             -> if (!TextUtils.isEmpty(webView!!.url)) {
-                if(UrlInfoRepository.addOrDeleteUrl(getUrlDomainName(webView!!.url)) == ADD_SUCCEED){
-                    item.title = "从白名单中移除"
-                    Toast.makeText(this, "添加成功", Toast.LENGTH_LONG).show()
-                } else{
-                    item.title = "添加到白名单"
-                    Toast.makeText(this, "删除成功", Toast.LENGTH_LONG).show()
-                }
+                UrlInfoRepository.addOrDeleteUrl(getUrlDomainName(webView!!.url), object : DataCallback<String> {
+                    override fun succeed(data: String) {
+                        runOnUiThread {
+                            item.title = "从白名单中移除"
+                            Toast.makeText(this@BrowserActivity, "添加成功", Toast.LENGTH_LONG).show()
+                        }
+                    }
 
+                    override fun failed(code: Int, log: String) {
+                        runOnUiThread {
+                            item.title = "添加到白名单"
+                            Toast.makeText(this@BrowserActivity, "删除成功", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                })
             }
 //            R.id.actionbar_open// 打开链接
 //            -> BaseTools.openLink(this@WebViewActivity, webView!!.url)
@@ -421,22 +411,23 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
 
     private var lastUrl: String? = null
 
-    private var addOrDeleteItem:MenuItem?=null
+    private var addOrDeleteItem: MenuItem? = null
 
     private fun setupLimitService() {
 
         //防止点击穿透
         item_limit_tips.setOnTouchListener { _, _ -> true }
         btn_close_limit.setOnClickListener { closeLimit() }
-        webClient?.setListener {
+        webClient?.setWebLoadedListener {
             lastUrl = it
 
+            webview_refresh.isRefreshing = false
             if (urlIsInWhiteNameList(it)) {
                 addOrDeleteItem?.title = "从白名单中移除"
             } else {
                 addOrDeleteItem?.title = "添加到白名单"
                 if (LimitApplication.isOnLimitation) {
-                    doLimit()
+                    doLimit(it)
                 }
             }
 
@@ -445,16 +436,17 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
     }
 
     private fun urlIsInWhiteNameList(url: String): Boolean {
-        return UrlInfoRepository.whiteNameList.contains(url)
+        return UrlInfoRepository.contains(url)
     }
 
 
     /**
      *
      */
-    private fun doLimit() {
+    private fun doLimit(url: String) {
         item_limit_tips.visibility = View.VISIBLE
         webView?.goBack()
+        site_info.text = url
 
     }
 
@@ -510,9 +502,9 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
                 // 以"www"开头
                 url = "http://$url"
 
-            } else if (!url.startsWith("http") && (url.contains(".me") || url.contains(".com") || url.contains(".cn"))) {
+            } else if (!url.startsWith("http") && (url.contains(".me") || url.contains(".com") || url.contains(".cn")|| url.contains(".top"))) {
                 // 不以"http"开头且有后缀
-                url = "http://www.$url"
+                url = "http://$url"
 
             } else if (!url.startsWith("http") && !url.contains("www")) {
                 // 输入纯文字 或 汉字的情况

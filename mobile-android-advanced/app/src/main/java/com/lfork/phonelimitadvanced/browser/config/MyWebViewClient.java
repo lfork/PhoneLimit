@@ -134,7 +134,7 @@ public class MyWebViewClient extends WebViewClient {
         }
     }
 
-    public void setListener(WebClientStatusListener listener) {
+    public void setWebLoadedListener(WebClientStatusListener listener) {
         this.listener = listener;
     }
 

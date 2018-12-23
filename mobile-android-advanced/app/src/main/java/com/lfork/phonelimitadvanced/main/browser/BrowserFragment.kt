@@ -19,9 +19,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.browser.BrowserActivity
+import com.lfork.phonelimitadvanced.data.DataCallback
+import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfo
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.isHttpUrl
+import com.lfork.phonelimitadvanced.utils.runOnUiThread
 import kotlinx.android.synthetic.main.main_browser_frag.*
 import kotlinx.android.synthetic.main.main_browser_frag.view.*
 import kotlinx.android.synthetic.main.main_browser_url_recycle_item.view.*
@@ -53,7 +56,25 @@ class BrowserFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        adapter?.setItems(UrlInfoRepository.getWhiteNameUrls().toMutableList())
+        refreshData()
+    }
+
+    private fun refreshData(){
+        UrlInfoRepository.getWhiteNameUrls(object :DataCallback<List<UrlInfo>>{
+            override fun succeed(data: List<UrlInfo>) {
+                runOnUiThread {
+                    adapter?.setItems(data.toMutableList())
+                }
+
+            }
+
+            override fun failed(code: Int, log: String) {
+                runOnUiThread {
+                    ToastUtil.showShort(context, "未知异常,白名单获取失败")
+                }
+            }
+        })
+
     }
 
 
@@ -75,7 +96,7 @@ class BrowserFragment : Fragment() {
                     url = url.substring(url.indexOf("://") + +3)
                 }
 
-                if (UrlInfoRepository.whiteNameList.contains(url)) {
+                if (UrlInfoRepository.contains(url)) {
                     BrowserActivity.loadUrl(context!!, url, "test")
                 } else {
                     ToastUtil.showShort(context, "当前网址不在白名单当中，限制模式下无法访问")
@@ -89,7 +110,7 @@ class BrowserFragment : Fragment() {
 
     inner class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
-        private val items = ArrayList<String>(0);
+        private val items = ArrayList<UrlInfo>(0);
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
             val view = LayoutInflater.from(parent.context)
@@ -103,13 +124,13 @@ class BrowserFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: NormalHolder, p1: Int) {
-            holder.textView.text = items[p1]
+            holder.textView.text = items[p1].url
             holder.item.setOnClickListener {
-                openUrl(items[p1])
+                openUrl(items[p1].url)
             }
 
             val options = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE).placeholder(android.R.drawable.ic_menu_report_image)
-            Glide.with(context!!).load("https://"+items[p1]+"/favicon.ico").apply(options).into(holder.imageView)
+            Glide.with(context!!).load("https://"+items[p1].url+"/favicon.ico").apply(options).into(holder.imageView)
         }
 
 //    @Synchronized
@@ -131,7 +152,7 @@ class BrowserFragment : Fragment() {
             val imageView: ImageView = itemView.favicon
         }
 
-        fun setItems(itemList: MutableList<String>) {
+        fun setItems(itemList: MutableList<UrlInfo>) {
             items.clear()
             itemList.sort()
             items.addAll(itemList)

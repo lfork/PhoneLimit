@@ -36,9 +36,8 @@
 
     </android.support.v7.widget.Toolbar>
 
-
-    <WebView
-        android:id="@+id/webview_detail"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/webview_refresh"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentEnd="true"
@@ -46,7 +45,18 @@
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_tool_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/title_tool_bar" >
+
+        <WebView
+            android:id="@+id/webview_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbarSize="3dp"
+         />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
 
     <ProgressBar
         android:id="@+id/pb_progress"
@@ -58,10 +68,10 @@
         android:progress="0"
         android:progressDrawable="@drawable/process_bg"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/webview_detail"
-        app:layout_constraintEnd_toEndOf="@+id/webview_detail"
+        app:layout_constraintBottom_toBottomOf="@+id/webview_refresh"
+        app:layout_constraintEnd_toEndOf="@+id/webview_refresh"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/webview_detail"
+        app:layout_constraintTop_toTopOf="@+id/webview_refresh"
         app:layout_constraintVertical_bias="0.0" />
 
 
@@ -96,9 +106,10 @@
         android:id="@+id/item_limit_tips"
         android:layout_width="match_parent"
         android:visibility="gone"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_tool_bar"
+        app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -111,7 +122,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:text="目的站点域名:www.baidu.com"
+            android:text="www.baidu.com"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -127,7 +138,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:text="该网站当前不在白名单当中，无法访问。\n如果要访问可以在非限制模式下，将该站点添加到白名单"
+            android:text="不在白名单当中，当前无法访问。"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/site_info"
@@ -143,6 +154,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/limit_tips" />
+
+        <Button
+            android:id="@+id/btn_add_to_white_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="添加到白名单(下次生效)"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_close_limit" />
 
     </android.support.constraint.ConstraintLayout>
 

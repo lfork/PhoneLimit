@@ -59,12 +59,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initFragments() {
-
         if (focusFragment!=null) {
             return
         }
         focusFragment= FocusFragment()
-
         supportFragmentManager.beginTransaction()
             .add(R.id.main_frag, focusFragment!!, focusFragment!!.tag)
             .show(focusFragment!!)
@@ -74,11 +72,12 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun openSecondFragment(fragment: Fragment) {
-        Log.d("FragmentTest2", fragment.toString())
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.main_frag, fragment)
             .addToBackStack(null)
             .commit()
     }
+
+
 }

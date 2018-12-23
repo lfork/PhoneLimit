@@ -16,6 +16,7 @@ object AppInfoRepository {
 
     var whiteNameList = HashSet<String>()
 
+
     // 【做同步】每一次onResume都需要把数据进行同步：获取App信息列表 -> 对比 -> 删掉/或插入不存在的App
     //只插入，不删除，但是当客户端获取到icon为空时，说明该app已经被卸载 。此时就不显示这个app即可
     fun getAllAppInfo(callback: DataCallback<List<AppInfo>>) {

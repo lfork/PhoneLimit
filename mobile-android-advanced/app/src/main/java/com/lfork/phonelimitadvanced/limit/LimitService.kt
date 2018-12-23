@@ -29,6 +29,8 @@ class LimitService : Service() {
 
     private lateinit var executor: Executor
 
+    private var notification:Notification?=null
+
     private val timerListener = object : Timer.TimeListener {
 
         override fun onClosedInAdvance(remainTimeSeconds: Long) {
@@ -43,6 +45,7 @@ class LimitService : Service() {
             LimitApplication.isOnLimitation = false
             listener?.onLimitFinished()
             saveRemainTime(0)
+            clearStartTime()
         }
 
         override fun onRemainTimeRefreshed(remainTimeSeconds: Long) {
@@ -59,6 +62,24 @@ class LimitService : Service() {
         editor.apply()
     }
 
+    private fun saveStartTime(startTime: Long) {
+        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+
+        val editor = sp.edit()
+        editor.putLong("start_time", startTime)
+
+
+        editor.apply()
+    }
+
+    private fun clearStartTime() {
+        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+
+        val editor = sp.edit()
+        editor.remove("start_time")
+        editor.apply()
+    }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
@@ -69,9 +90,9 @@ class LimitService : Service() {
         }
 
         val limitTimeSeconds = intent!!.getLongExtra("limit_time", 0L);
-
         executor = Executor(this)
-        timer = Timer(limitTimeSeconds, timerListener)
+        val startTime = intent.getLongExtra("start_time", System.currentTimeMillis());
+        timer = Timer(limitTimeSeconds, timerListener, startTime)
 
         //计时器开启前需要先开启限制服务
         //需要先开executor ，因为如果时间很短，然后先开的timer，可能会导致在executor开启之前时间就结束了，然后等下
@@ -82,6 +103,7 @@ class LimitService : Service() {
         //通知用户 显示通知(开启前台服务)
         showNotification()
         listener?.onLimitStarted()
+        saveStartTime(startTime)
 
         return super.onStartCommand(intent, flags, startId)
     }
@@ -104,9 +126,9 @@ class LimitService : Service() {
             val NOTIFICATION_CHANNEL_ID = "com.lfork.phonelimit"
             val channelName = "Phone Limit"
             val chan = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                channelName,
-                NotificationManager.IMPORTANCE_NONE
+                    NOTIFICATION_CHANNEL_ID,
+                    channelName,
+                    NotificationManager.IMPORTANCE_NONE
             )
             chan.lightColor = Color.BLUE
             chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
@@ -114,25 +136,25 @@ class LimitService : Service() {
             manager.createNotificationChannel(chan)
 
             val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            val notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(R.drawable.ic_notification1)
-                .setContentTitle("限制已开启")
-                .setContentText("专心搞事情吧，不要玩儿手机了")
-                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .setContentIntent(pi)
-                .build()
+            notification = notificationBuilder.setOngoing(true)
+                    .setSmallIcon(R.drawable.ic_notification1)
+                    .setContentTitle("限制已开启")
+                    .setContentText("专心搞事情吧，不要玩儿手机了")
+                    .setPriority(NotificationManager.IMPORTANCE_MIN)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setContentIntent(pi)
+                    .build()
             startForeground(2, notification)
         } else {
 
-            val notification = NotificationCompat.Builder(this)
-                .setContentTitle("限制已开启")
-                .setContentText("专心搞事情吧，不要玩儿手机了")
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-                .setContentIntent(pi)
-                .build()
+            notification = NotificationCompat.Builder(this)
+                    .setContentTitle("限制已开启")
+                    .setContentText("专心搞事情吧，不要玩儿手机了")
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+                    .setContentIntent(pi)
+                    .build()
             startForeground(1, notification)
         }
     }

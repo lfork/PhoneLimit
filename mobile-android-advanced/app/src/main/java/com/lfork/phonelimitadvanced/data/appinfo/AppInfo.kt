@@ -5,7 +5,6 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import android.graphics.drawable.Drawable
-import org.litepal.crud.DataSupport
 
 /**
  *
@@ -13,7 +12,7 @@ import org.litepal.crud.DataSupport
  * @date 2018/12/7
  */
 @Entity(tableName = "app_info")
-data class AppInfo (
+data class AppInfo @Ignore constructor (
     @ColumnInfo(name = "app_name") var appName: String?,
     @PrimaryKey @ColumnInfo(name = "package_name") var packageName: String,
     @ColumnInfo(name = "is_in_white_name_list") var isInWhiteNameList: Boolean

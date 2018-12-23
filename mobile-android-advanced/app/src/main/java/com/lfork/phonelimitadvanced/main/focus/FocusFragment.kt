@@ -3,6 +3,7 @@ package com.lfork.phonelimitadvanced.main.focus
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.Settings
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -24,9 +25,9 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedStatAccessPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedFloatingWindowPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestFloatingWindowPermission
-import com.lfork.phonelimitadvanced.utils.PermissionManager.requestStateUsagePermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
+import com.lfork.phonelimitadvanced.widget.DialogPermission
 import kotlinx.android.synthetic.main.main_focus_frag.*
 import kotlinx.android.synthetic.main.main_focus_frag.view.*
 
@@ -38,7 +39,8 @@ class FocusFragment : Fragment() {
         const val REQUEST_USAGE_ACCESS_PERMISSION = 1
 
         /**
-         * 大于0的话说明正在开启当中，但是还没有完全开启
+         * 大于0的话说明正在开启当中，但是还没有完全开启，把数据设置为静态的，只要进程没被杀掉就不会被回收
+         * 可以做到类似onSaveState的效果
          */
         var inputTimeMinuteCache = -1L
 
@@ -52,12 +54,11 @@ class FocusFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-
         if (root == null) {
             root = inflater.inflate(R.layout.main_focus_frag, container, false)
 
@@ -92,7 +93,6 @@ class FocusFragment : Fragment() {
         adapter.onDestroy()
     }
 
-
     private fun refreshData() {
 
         AppInfoRepository.getWhiteNameApps(object : DataCallback<List<AppInfo>> {
@@ -125,9 +125,9 @@ class FocusFragment : Fragment() {
      * 暂时还不需要访问文件的权限
      */
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray
     ) {
         when (requestCode) {
             //TODO 权限申请
@@ -157,7 +157,14 @@ class FocusFragment : Fragment() {
     private fun isPermitted(): Boolean {
         //如果没有获得查看使用情况权限和 手机存在查看使用情况这个界面(Android 5.0以上)
         if (!isGrantedStatAccessPermission() && LockUtil.isNoOption(context)) {
-            requestStateUsagePermission(REQUEST_USAGE_ACCESS_PERMISSION)
+            val dialog = DialogPermission(context)
+            dialog.show()
+            dialog.setOnClickListener {
+                startActivityForResult(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS) ,REQUEST_USAGE_ACCESS_PERMISSION)
+            }
+            dialog.setOnCancelListener {
+                inputTimeMinuteCache = -1
+            }
             return false
         }
 
@@ -223,14 +230,14 @@ class FocusFragment : Fragment() {
 
     private fun initDialog() {
         dialog = AlertDialog.Builder(context!!).setTitle(R.string.tips_launcher_setting)
-            .setPositiveButton(R.string.action_default_apps_setting) { dialog, id ->
-                //去设置默认桌面
-                openDefaultAppsSetting()
-            }.setNegativeButton(R.string.cancel) { dialog, id ->
-                inputTimeMinuteCache = -1
-            }
-            .setCancelable(false)
-            .create()
+                .setPositiveButton(R.string.action_default_apps_setting) { dialog, id ->
+                    //去设置默认桌面
+                    openDefaultAppsSetting()
+                }.setNegativeButton(R.string.cancel) { dialog, id ->
+                    inputTimeMinuteCache = -1
+                }
+                .setCancelable(false)
+                .create()
     }
 
     private fun displaySetting(view: View) {
@@ -303,9 +310,15 @@ class FocusFragment : Fragment() {
             return
         }
 
+        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+        val startTime = sp.getLong("start_time", System.currentTimeMillis())
+
         //开启之前需要把权限获取到位
         val limitIntent = Intent(context, LimitService::class.java)
         limitIntent.putExtra("limit_time", limitTimeSeconds)
+        limitIntent.putExtra("start_time", startTime)
+
+
         bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
         startService(limitIntent)
         inputTimeMinuteCache = -1
@@ -323,17 +336,17 @@ class FocusFragment : Fragment() {
     private fun checkAndRecoveryLimitTask() {
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
+
         if (remainTimeSeconds > 1) {
             startLimit(remainTimeSeconds)
         }
     }
 
 
+    private var customIconOnClickListener: CustomIconOnClickListener? = null
 
-    var customIconOnClickListener: CustomIconOnClickListener?=null
 
-
-    fun setCustomClickListener(customIconOnClickListener: CustomIconOnClickListener){
+    fun setCustomClickListener(customIconOnClickListener: CustomIconOnClickListener) {
         this.customIconOnClickListener = customIconOnClickListener
     }
 
