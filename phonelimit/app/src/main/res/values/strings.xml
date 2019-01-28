@@ -1,0 +1,84 @@
+<resources>
+    <string name="app_name">PhoneLimit</string>
+    <string name="get_root_permission">Get Root Permission</string>
+    <string name="list_root_path_files">List Root Path Files</string>
+    <string name="execute_shell">Execute Shell</string>
+    <string name="tip_time">请输入时间/分钟(默认1分钟）</string>
+    <string name="start_limit">Start Limit</string>
+    <string name="close_limit">close limit</string>
+    <string name="principle_tips_root_user">
+        <font color="#DC143C
+        ">
+            <b>免责声明\n</b>
+        </font>
+        本软件是通过Root权限修改系统配置文件来达到限制手机使用的目的，所以如果您不是专业用户请不要使用次软件，以免对您的手机造成危害，\n专业用户需要满足下面2个条件\n1.手机已经ROOT 2.您会重装手机系统 \n\n
+        <b>Pro版工作原理\n</b>
+        <font color="#DC143C">冻结桌面APP+ 设置白名单软件 + 设置默认桌面\n</font>
+        其实就是限制了程序的入口。然后当软件开启限制后，请不要采用各种方法卸载本软件。不然可能会出现没有桌面的情况。所以请在限制解除后再进行关闭。\n\n<b>进阶操作\n</b>如果你最后还是发现上面的工作模式对你无效，那么您可以结合一些其他软件，比如冰箱来冻结一些其他的程序入口(应用商店，浏览器等)。\n<font
+            color="#DC143C">如果您还有电脑的话，你可以先把手机上的ADB入口关掉，这样就不会因为电脑影响到Phone Limit的运行</font>\n如果电脑也会影响您的学习或休息的话，我建议您把电脑上的网络配置文件放到云盘上面去。然后此时再开启手机的限制模式。等到手机的限制模式结束后，您就可以用手机把云盘上的网络配置文件下载下来，从而恢复电脑的联网状态。\n
+    </string>
+    <string name="principle_tips_normal_user">
+        <font color="#006600">
+            <b>✔使用说明\n</b>
+        </font>
+        软件需要的权限:\n1.默认桌面，需要您手动设置 \n2.程序使用情况查看权限\n\n第一次使用的时候需要申请一些权限，然后每次开启限制之前都需要您把这个App设置为默认桌面\n
+        <font color="#006600">
+            <b>当限制结束后，按Home键选择其他的桌面程序即可完全退出限制</b>
+        </font>
+        \n\n
+        <b>✔进阶操作\n</b>
+        如果你发现本软件的限制力度不够强,可以联系我们获取Phone Limit Pro版。\n\n
+        <b>🤝联系我们\n</b>
+        <font color="#006600">QQ:986204478</font>\n
+    </string>
+    <string name="principle_tips_huawei_user">
+        <font color="#006600">
+            <b>使用说明\n</b>
+        </font>
+        软件需要的权限:1.默认桌面(可能需要选择两次) 2.悬浮窗权限\n\n
+        <b>进阶操作\n</b>
+        如果你发现本软件的限制力度不够强,可以联系我们获取Phone Limit Pro版。\n\n
+        <b>联系方式\n</b>
+        <font color="#006600">QQ:986204478</font>\n
+    </string>
+    <string name="dialog_tip">您的系统大于等于5.0，我们需要获取 “查看应用使用情况” 权限</string>
+    <string name="set_launcher">设置默认桌面</string>
+    <string name="permission_denied_tips">请您授予相应的权限，不然程序无法正常工作</string>
+    <string name="launcher_denied_tips">【默认桌面设置中…】请您将程序设置为默认桌面来保证程序正常工作。</string>
+    <string name="floating_window_denied_tips">请您授予程序悬浮窗权限来保证程序正常工作。</string>
+    <string name="tips_launcher_setting">APP需要默认桌面的权限才能保证正常运行😁</string>
+    <string name="cancel">Cancel</string>
+    <string name="action_default_apps_setting">去设置</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_browser">Browser</string>
+    <string name="title_my">General</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="icon">icon</string>
+    <string name="title_activity_browser">BrowserActivity</string>
+    <string name="action_share">share</string>
+
+    <string name="action_update">更新</string>
+    <string name="actionbar_search">搜索</string>
+    <string name="actionbar_more">更多信息</string>
+    <string name="actionbar_webview_share">分享到</string>
+    <string name="actionbar_webview_cope">复制链接</string>
+    <string name="actionbar_add_white_name">添加到白名单</string>
+    <string name="actionbar_webview_open">浏览器打开</string>
+    <string name="actionbar_webview_refresh">刷新页面</string>
+    <string name="actionbar_share">分享给朋友\(^o^)/~</string>
+    <string name="string_hit">搜索或输入网址</string>
+    <string name="bt_open_url">打开网页</string>
+    <string name="text_baidu">百度一下</string>
+    <string name="text_movie">视频播放</string>
+    <string name="text_upload_photo">上传图片测试</string>
+    <string name="text_js">电话、短信、邮件、注入js</string>
+    <string name="js_android">js与android原生代码互调</string>
+    <string name="deeplink">DeepLink 测试</string>
+    <string name="back">后退</string>
+    <string name="refresh">刷新</string>
+    <string name="forward">前进</string>
+
+</resources>

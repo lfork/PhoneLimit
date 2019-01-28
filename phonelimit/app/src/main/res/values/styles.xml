@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/app_green_3</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="FingerprintTheme" parent="android:Theme.Dialog">
+
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+
+
+        <!-- No backgrounds, titles or window float -->
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+
+    <style name="DialogTransparent" parent="@android:style/Theme.Dialog">
+        <!-- 背景颜色及透明程度  -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--  是否有标题  -->
+        <item name="android:windowNoTitle">true</item>
+        <!--  是否浮现在activity之上  -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否模糊  -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!--全屏-->
+        <item name="android:windowFullscreen">true</item>
+        <!--activity切换动画-->
+        <!--<item appName="android:windowAnimationStyle">@style/AnimationDialogActivity</item>-->
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+    </style>
+
+    <!--titleBar样式-->
+    <style name="ToolbarStyle" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+
+</resources>
