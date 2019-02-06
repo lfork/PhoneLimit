@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.common.db
+package com.lfork.phonelimitadvanced.data.appinfo
 
 import android.arch.persistence.room.*
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo

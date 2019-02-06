@@ -6,26 +6,28 @@ import java.lang.Exception
  * 倒计时的计时器,只能使用一次。
  * Created by 98620 on 2018/12/14.
  */
-class Timer(private val timeSeconds:Long, private val listener:TimeListener,private var starTimeMillis:Long) {
+class Timer(private val timeSeconds: Long, private val listener: TimeListener, private var starTimeMillis: Long) {
 
-    private var remainTimeSeconds:Long = timeSeconds
+    private var remainTimeSeconds: Long = timeSeconds
 
-
+    /**
+     * 计时器是否已经激活
+     */
     private var isActive = false
 
     /**
      * 表示生命周期结束了，这个计时器不可用了
      */
-   var isEnd = false
+    private var isEnd = false
 
 
-    private lateinit var timerThread:Thread
+    private lateinit var timerThread: Thread
 
     /**
      * started succeed->true  , else false
      */
-    fun start():Boolean{
-        if (isEnd){
+    fun start(): Boolean {
+        if (isEnd) {
             throw TimerEndException()
         }
 
@@ -37,13 +39,13 @@ class Timer(private val timeSeconds:Long, private val listener:TimeListener,priv
         val timerTask = Runnable {
 
             try {
-                while (remainTimeSeconds > 0){
+                while (remainTimeSeconds > 0) {
                     listener.onRemainTimeRefreshed(remainTimeSeconds)
                     Thread.sleep(1000)
-                    remainTimeSeconds =  timeSeconds - (System.currentTimeMillis() - starTimeMillis) / 1000
+                    remainTimeSeconds = timeSeconds - (System.currentTimeMillis() - starTimeMillis) / 1000
                 }
                 listener.onCompleted()
-            } catch (e:Exception){
+            } catch (e: Exception) {
                 listener.onClosedInAdvance(remainTimeSeconds)
             }
 
@@ -59,11 +61,11 @@ class Timer(private val timeSeconds:Long, private val listener:TimeListener,priv
     }
 
     /**
-     * 提前关闭计时器
+     * 关闭计时器（可以提前关闭）
      */
-    fun closeInAdvance() {
+    fun close() {
 
-        if (isEnd){
+        if (isEnd) {
             throw TimerEndException()
         }
 
@@ -73,21 +75,21 @@ class Timer(private val timeSeconds:Long, private val listener:TimeListener,priv
         timerThread.interrupt()
     }
 
-    interface TimeListener{
+    interface TimeListener {
 
         /**
          * 提前被关闭
          */
-        fun onClosedInAdvance(remainTimeSeconds:Long)
+        fun onClosedInAdvance(remainTimeSeconds: Long)
 
         fun onCompleted()
 
-        fun onRemainTimeRefreshed(remainTimeSeconds:Long)
+        fun onRemainTimeRefreshed(remainTimeSeconds: Long)
 
     }
 
     class TimerEndException : Exception() {
         override val message: String?
-            get() = super.message +  "计时器声明周期已经结束了，不能再用了"
+            get() = super.message + "计时器声明周期已经结束了，不能再用了"
     }
 }

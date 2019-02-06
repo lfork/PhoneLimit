@@ -20,7 +20,7 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
  *
  * Created by 98620 on 2018/12/14.
  */
-class Executor(var context: Context?) {
+class Executor(var context: Context?, var limitTask: LimitTask?) {
 
     lateinit var executorThread: Thread
 
@@ -29,7 +29,7 @@ class Executor(var context: Context?) {
     /**
      * 只能调用一次开始
      */
-    fun start():Boolean {
+    fun start(): Boolean {
         if (isActive || context == null) {
             return false
         }
@@ -37,23 +37,7 @@ class Executor(var context: Context?) {
             isActive = true
             beforeLimitation()
             while (isActive) {
-                //获取栈顶app的包名
-                val packageName = getLauncherTopApp(
-                    context!!,
-                    context!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-                )
-
-                //判断包名打开解锁页面
-                if (!TextUtils.isEmpty(packageName)) {
-                    if (!inWhiteList(packageName)) {
-                        doLimit(packageName)
-                    }
-                }
-                try {
-                    Thread.sleep(300)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
+                limitTask?.doLimit()
             }
             releaseLimitation()
             onDestroy()
@@ -78,44 +62,20 @@ class Executor(var context: Context?) {
     /**
      * 进行最后的资源释放
      */
-    fun onDestroy(){
+    fun onDestroy() {
         context = null
+        limitTask = null
     }
 
     /**
      * 这个主要是给root用户使用的
      */
     private fun beforeLimitation() {
-        if (LimitApplication.isRooted) {
-            LimitApplication.App.getLauncherApps()?.forEach {
-                RootShell.execRootCmd("pm hide $it")
-            }
+        context?.let {
+            limitTask?.initLimit(it)
         }
     }
 
-
-    /**
-     * 执行限制操作
-     */
-    private fun doLimit(packageName: String) {
-
-        if (LimitApplication.isFloatingWindowMode) {
-
-        } else {
-
-            if (packageName == "com.android.settings"){
-                val intent = Intent(Settings.ACTION_SETTINGS)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                context!!.startActivity(intent)
-            }
-
-            val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName)
-            intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            context!!.startActivity(intent)
-        }
-    }
 
     /**
      * 结束限制：时间到了，然后可以选桌面了。
@@ -125,50 +85,8 @@ class Executor(var context: Context?) {
      * @see clearDefaultLauncherFake
      */
     private fun releaseLimitation() {
-        if (LimitApplication.isRooted) {
-            val launchers = LimitApplication.App.getLauncherApps()
-            launchers?.forEach {
-                RootShell.execRootCmd("pm unhide $it")
-            }
-        }
-
-        if (!LimitApplication.isFloatingWindowMode) {
-            context!!.clearDefaultLauncher()
-        }
+        limitTask?.closeLimit()
     }
 
-    /**
-     * 白名单
-     */
-    private fun inWhiteList(packageName: String): Boolean {
-        return AppInfoRepository.whiteNameList.contains(packageName)
-    }
 
-    private fun getLauncherTopApp(context: Context, activityManager: ActivityManager): String {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            val appTasks = activityManager.getRunningTasks(1)
-            if (null != appTasks && !appTasks.isEmpty()) {
-                return appTasks[0].topActivity.packageName
-            }
-        } else {
-            //5.0以后需要用这方法
-            val sUsageStatsManager =
-                context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-            val endTime = System.currentTimeMillis()
-            val beginTime = endTime - 10000
-            var result = ""
-            val event = UsageEvents.Event()
-            val usageEvents = sUsageStatsManager.queryEvents(beginTime, endTime)
-            while (usageEvents.hasNextEvent()) {
-                usageEvents.getNextEvent(event)
-                if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
-                    result = event.packageName
-                }
-            }
-            if (!android.text.TextUtils.isEmpty(result)) {
-                return result
-            }
-        }
-        return ""
-    }
 }

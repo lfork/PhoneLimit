@@ -4,8 +4,7 @@ import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.executeAsyncDataTask
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.isFirstOpen
 import com.lfork.phonelimitadvanced.data.DataCallback
-import com.lfork.phonelimitadvanced.common.db.AppInfoDao
-import com.lfork.phonelimitadvanced.common.db.LimitDatabase
+import com.lfork.phonelimitadvanced.data.LimitDatabase
 
 
 /**

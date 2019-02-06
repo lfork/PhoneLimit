@@ -85,7 +85,7 @@ class FocusFragment : Fragment() {
             startLimit(inputTimeMinuteCache)
         }
 
-        refreshData()
+        refreshAppInfoData()
     }
 
     override fun onDestroy() {
@@ -93,7 +93,7 @@ class FocusFragment : Fragment() {
         adapter.onDestroy()
     }
 
-    private fun refreshData() {
+    private fun refreshAppInfoData() {
 
         AppInfoRepository.getWhiteNameApps(object : DataCallback<List<AppInfo>> {
             override fun succeed(data: List<AppInfo>) {
@@ -117,8 +117,6 @@ class FocusFragment : Fragment() {
                 }
             }
         })
-
-
     }
 
     /**
@@ -280,7 +278,7 @@ class FocusFragment : Fragment() {
         }
 
 
-        override fun remainTimeRefreshed(timeSeconds: Long) {
+        override fun updateRemainTime(timeSeconds: Long) {
             runOnUiThread {
                 if (remain_time_text != null) {
                     when {
@@ -304,6 +302,10 @@ class FocusFragment : Fragment() {
         }
     }
 
+
+    /**
+     * 开始限制的入口函数
+     */
     private fun startLimit(limitTimeSeconds: Long = 60L) {
         inputTimeMinuteCache = limitTimeSeconds
         if (!isPermitted()) {
@@ -313,7 +315,7 @@ class FocusFragment : Fragment() {
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val startTime = sp.getLong("start_time", System.currentTimeMillis())
 
-        //开启之前需要把权限获取到位
+        //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
         val limitIntent = Intent(context, LimitService::class.java)
         limitIntent.putExtra("limit_time", limitTimeSeconds)
         limitIntent.putExtra("start_time", startTime)

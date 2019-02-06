@@ -48,7 +48,7 @@ class LimitService : Service() {
         }
 
         override fun onRemainTimeRefreshed(remainTimeSeconds: Long) {
-            listener?.remainTimeRefreshed(remainTimeSeconds)
+            listener?.updateRemainTime(remainTimeSeconds)
             saveRemainTime(remainTimeSeconds)
 
         }
@@ -79,7 +79,6 @@ class LimitService : Service() {
         editor.apply()
     }
 
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         //如果限制已开启，那么直接返回
@@ -89,13 +88,13 @@ class LimitService : Service() {
         }
 
         val limitTimeSeconds = intent!!.getLongExtra("limit_time", 0L);
-        executor = Executor(this)
+        executor = Executor(this,LauncherLimitTask())
         val startTime = intent.getLongExtra("start_time", System.currentTimeMillis());
         timer = Timer(limitTimeSeconds, timerListener, startTime)
 
         //计时器开启前需要先开启限制服务
-        //需要先开executor ，因为如果时间很短，然后先开的timer，可能会导致在executor开启之前时间就结束了，然后等下
-        //就会执行executor，此时就没有人能关闭executor了
+        //需要先开 executor ，因为如果时间很短，然后先开的 timer，可能会导致在 executor 开启之前时间就结束了，然后等下
+        //就会执行 executor，此时就没有人能关闭 executor 了
         if (executor.start() && timer.start()) {
             LimitApplication.isOnLimitation = true
         }
@@ -169,7 +168,7 @@ class LimitService : Service() {
 
     interface StateListener {
 
-        fun remainTimeRefreshed(timeSeconds: Long)
+        fun updateRemainTime(timeSeconds: Long)
 
         fun onLimitStarted()
 

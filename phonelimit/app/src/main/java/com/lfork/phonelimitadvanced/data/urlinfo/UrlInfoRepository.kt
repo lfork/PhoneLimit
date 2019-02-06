@@ -3,8 +3,7 @@ package com.lfork.phonelimitadvanced.data.urlinfo
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.executeAsyncDataTask
 import com.lfork.phonelimitadvanced.data.DataCallback
-import com.lfork.phonelimitadvanced.common.db.LimitDatabase
-import com.lfork.phonelimitadvanced.common.db.UrlInfoDao
+import com.lfork.phonelimitadvanced.data.LimitDatabase
 
 
 /**

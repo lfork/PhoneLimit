@@ -1,10 +1,12 @@
-package com.lfork.phonelimitadvanced.common.db
+package com.lfork.phonelimitadvanced.data
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import android.arch.persistence.room.Room
 import android.content.Context
+import com.lfork.phonelimitadvanced.data.appinfo.AppInfoDao
+import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoDao
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfo
 
 

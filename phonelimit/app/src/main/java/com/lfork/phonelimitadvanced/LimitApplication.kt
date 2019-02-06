@@ -7,7 +7,7 @@ import android.util.Log
 import com.lfork.phonelimitadvanced.base.Config
 import com.lfork.phonelimitadvanced.base.thread.MyThreadFactory
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
-import com.lfork.phonelimitadvanced.common.db.LimitDatabase
+import com.lfork.phonelimitadvanced.data.LimitDatabase
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.utils.Constants.DEFAULT_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.LinuxShell
