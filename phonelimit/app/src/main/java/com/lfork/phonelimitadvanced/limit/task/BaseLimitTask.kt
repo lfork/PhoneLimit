@@ -24,7 +24,7 @@ import com.lfork.phonelimitadvanced.utils.RootShell
  * 只做跳转不做桌面限制
  */
 
-open class SimpleLimitTask : LimitTask {
+open class BaseLimitTask : LimitTask {
 
     var mContext: Context? = null
 

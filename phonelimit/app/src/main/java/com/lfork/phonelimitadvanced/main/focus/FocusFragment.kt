@@ -299,11 +299,10 @@ class FocusFragment : Fragment() {
 
     val limitStateListener = object : LimitService.StateListener {
         override fun onLimitFinished() {
-            activity?.setSystemUIVisible(true)
             runOnUiThread {
                 remain_time_text.text = "限制已解除"
                 ToastUtil.showLong(context, "限制已解除")
-
+                activity?.setSystemUIVisible(true)
             }
         }
 
@@ -346,11 +345,10 @@ class FocusFragment : Fragment() {
     private fun startLimit(limitTimeSeconds: Long = 60L) {
         inputTimeMinuteCache = limitTimeSeconds
 
-
         if (!permissionCheck()) {
             return
         }
-        val timeInfo = LimitTaskConfig(limitTimeSeconds = limitTimeSeconds,isImmediatelyExecuted =true)
+        val timeInfo = LimitTaskConfig(limitTimeSeconds = limitTimeSeconds,isImmediatelyExecuted =true,limitModel = LimitTaskConfig.LIMIT_MODEL_ULTIMATE_LAUNCHER_FLOATING_MODEL)
 
         //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
         val limitIntent = Intent(context, LimitService::class.java)

@@ -5,14 +5,12 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import com.lfork.phonelimitadvanced.R
-import com.lfork.phonelimitadvanced.limit.LimitTask
 import com.lfork.phonelimitadvanced.main.MainHandler
 
 /**
@@ -24,21 +22,21 @@ import com.lfork.phonelimitadvanced.main.MainHandler
  * 只做悬浮窗
  *
  */
-class FloatingLimitTask : SimpleLimitTask() {
+class FloatingLimitTask : BaseLimitTask() {
 
     private var wmParams: WindowManager.LayoutParams? = null
     private var mWindowManager: WindowManager? = null
     private var mWindowView: View? = null
     private var remainTimeTV: TextView? = null
-
-    private val handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            val data = msg.data.getString("data")
-            remainTimeTV?.setText(data)
-            mWindowManager?.updateViewLayout(mWindowView, wmParams)
-        }
-    }
+//
+//    private val handler = object : Handler() {
+//        override fun handleMessage(msg: Message) {
+//            super.handleMessage(msg)
+//            val data = msg.data.getString("data")
+//            remainTimeTV?.setText(data)
+//            mWindowManager?.updateViewLayout(mWindowView, wmParams)
+//        }
+//    }
 
     override fun initLimit(context: Context) {
         super.initLimit(context)

@@ -13,8 +13,7 @@ import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
-import com.lfork.phonelimitadvanced.limit.task.FloatingLimitTask
-import com.lfork.phonelimitadvanced.limit.task.LauncherLimitTask
+import com.lfork.phonelimitadvanced.limit.task.*
 import com.lfork.phonelimitadvanced.main.MainActivity
 import java.util.*
 import java.util.concurrent.Executors
@@ -70,7 +69,7 @@ class LimitService : Service() {
 //            val limitTimeSeconds = intent.getLongExtra("limit_time", 0L);
 //            val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
 //            val startTime = sp.getLong("start_time", System.currentTimeMillis())
-            startLimitTask(taskConfig.limitTimeSeconds, taskConfig.startTime.timeInMillis)
+            startLimitTask(taskConfig)
         } else {
 //            val startTime = intent.getBundleExtra("limitTaskInfo")
             startTimedTask(taskConfig)
@@ -90,6 +89,14 @@ class LimitService : Service() {
         fun setLimitStateListener(limitStateListener: StateListener) {
             listener = limitStateListener
         }
+
+        fun closeLimitTask(){
+            this@LimitService.closeLimitTask()
+        }
+
+        fun closeTimedTask(id:Int){
+            closeTimedTask()
+        }
     }
 
 
@@ -97,16 +104,36 @@ class LimitService : Service() {
      * 现在的任务执行策略是，只执行一个任务，如果后来的任务有冲突的话，那么就会被抛弃
      */
     @Synchronized
-    private fun startLimitTask(limitTimeSeconds: Long, startTimeMillis: Long) {
+    private fun startLimitTask(taskConfig: LimitTaskConfig) {
+
         //如果限制已开启，那么直接返回
         if (LimitApplication.isOnLimitation) {
             listener?.onLimitStarted()
             Log.d("startLimitTask", "限制已开启，当前Task被丢弃")
             return
         }
+        val limitTimeSeconds: Long = taskConfig.limitTimeSeconds
 
 
-        limitTaskExecutor = LimitExecutor(this, FloatingLimitTask())
+        val startTimeMillis: Long = if (taskConfig.startTimeLong > 0) {
+            taskConfig.startTimeLong
+        } else {
+            taskConfig.startTime.timeInMillis
+        }
+
+        val limitTask: LimitTask =
+                when (taskConfig.limitModel) {
+                    LimitTaskConfig.LIMIT_MODEL_LIGHT_APP_JUMP -> BaseLimitTask()
+                    LimitTaskConfig.LIMIT_MODEL_HEAVY_FLOATING_LIMIT -> FloatingLimitTask()
+                    LimitTaskConfig.LIMIT_MODEL_HEAVY_LAUNCHER_LIMIT -> LauncherLimitTask()
+                    LimitTaskConfig.LIMIT_MODEL_ULTIMATE_LAUNCHER_FLOATING_MODEL -> UltimateFloatingLauncherLimitTask()
+                    LimitTaskConfig.LIMIT_MODEL_ROOT_MODEL -> RootLimitTask()
+                    else -> {
+                        LauncherLimitTask()
+                    }
+                }
+
+        limitTaskExecutor = LimitExecutor(this,limitTask)
 
         val timerListener = object : LimitTimer.TimeListener {
 
@@ -168,29 +195,26 @@ class LimitService : Service() {
 
         if (taskConfig.periodMillis < 0) {
             //传过来的参数是：【任务开始的时间】，【任务持续的时间】，【任务的重复周期】/不重复
-
             //Java的Date和Calendar的月份是从0开始计时的
             taskConfig.startTime.set(2019, 1, 7, 17, 3, 0)
             val delayTime = taskConfig.startTime.timeInMillis - System.currentTimeMillis()
             val task = Runnable {
                 Log.d("TimedTask", "开启成功1")
-                startLimitTask(taskConfig.limitTimeSeconds, taskConfig.startTime.timeInMillis)
+                startLimitTask(taskConfig)
             }
             scheduledThreadPoolExecutor.schedule(task, delayTime, TimeUnit.MILLISECONDS)
             Log.d("TimedTask", "初始化成功  \n限制开始时间${taskConfig.startTime.timeInMillis}\n当前系统时间${System.currentTimeMillis()} 延迟时间$delayTime ")
         } else {
             val task = Runnable {
                 Log.d("TimedTask", "开启成功2")
-                startLimitTask(taskConfig.limitTimeSeconds, taskConfig.startTime.timeInMillis)
+                startLimitTask(taskConfig)
             }
             val delayTime = taskConfig.startTime.timeInMillis - System.currentTimeMillis()
             scheduledThreadPoolExecutor.scheduleWithFixedDelay(task, delayTime, taskConfig.periodMillis, TimeUnit.MILLISECONDS)
         }
-
     }
 
     private fun closeTimedTask() {
-
     }
 
     private fun closeLimitTask() {
@@ -243,8 +267,11 @@ class LimitService : Service() {
         val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
         val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
         val startTime = sp.getLong("start_time", System.currentTimeMillis())
+
+
+        val config = LimitTaskConfig(limitTimeSeconds = remainTimeSeconds, startTimeLong = startTime)
         if (remainTimeSeconds > 1) {
-            startLimitTask(remainTimeSeconds, startTime)
+            startLimitTask(config)
         }
     }
 

@@ -11,6 +11,7 @@ import java.util.*
  */
 data class LimitTaskConfig(
         var startTime: Calendar = GregorianCalendar(),
+        var startTimeLong: Long = -1,
         var limitTimeSeconds: Long = -1,
         var periodMillis: Long = -1,
         var isImmediatelyExecuted: Boolean = false,
@@ -21,12 +22,14 @@ data class LimitTaskConfig(
 
         const val LIMIT_MODEL_HEAVY_LAUNCHER_LIMIT = 1
 
+        const val LIMIT_MODEL_HEAVY_FLOATING_LIMIT = 2
+
         /**
          * 在小米等有可以关闭应用程序的手机助手APP的机型上适用
          */
-        const val LIMIT_MODEL_ULTIMATE_LAUNCHER_FLOATING_MODEL = 2
+        const val LIMIT_MODEL_ULTIMATE_LAUNCHER_FLOATING_MODEL = 3
 
-        const val LIMIT_MODEL_ROOT_MODEL = 3
+        const val LIMIT_MODEL_ROOT_MODEL = 4
     }
 
 
