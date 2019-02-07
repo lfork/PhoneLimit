@@ -50,7 +50,7 @@ class LimitExecutor(var context: Context?, var limitTask: LimitTask?) {
     }
 
     /**
-     * 关闭Executor
+     * 从外部关闭Executor
      */
     fun close() {
         if (!isActive){

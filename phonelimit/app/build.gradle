@@ -77,6 +77,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.8.0'          //image display
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 
+    def work_version = "1.0.0-beta05"
+    implementation "android.arch.work:work-runtime:$work_version" // For Kotlin+Coroutines use work-runtime-ktx
+
 //    kapt "androidx.lifecycle:lifecycle-compiler:2.0.0-alpha1"
 //    kapt "androidx.room:room-compiler:2.0.0-alpha1"
 

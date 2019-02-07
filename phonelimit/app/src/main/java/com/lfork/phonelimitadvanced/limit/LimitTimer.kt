@@ -27,6 +27,12 @@ class LimitTimer(private val timeSeconds: Long, private val listener: TimeListen
      * started succeed->true  , else false
      */
     fun start(): Boolean {
+
+        if (starTimeMillis > System.currentTimeMillis()){
+            return false
+        }
+
+
         if (isEnd) {
             throw TimerEndException()
         }

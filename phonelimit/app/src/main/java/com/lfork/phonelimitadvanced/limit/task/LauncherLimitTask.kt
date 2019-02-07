@@ -22,9 +22,12 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
  * @author lfork@vip.qq.com
  * @date 2019/02/06 17:00
  *
- * 通过限制桌面入口的方式来实现限制功能
+ * 桌面限制+ 悬浮窗
  */
 class LauncherLimitTask : LimitTask {
+    override fun taskIsValid() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private var mContext: Context? = null
 
@@ -51,11 +54,11 @@ class LauncherLimitTask : LimitTask {
         )
 
         //判断包名打开解锁页面
-        if (!TextUtils.isEmpty(packageName)) {
-            if (AppInfoRepository.whiteNameList.contains(packageName)) {
-                return
-            }
-        } else {
+        if (TextUtils.isEmpty(packageName)) {
+            return
+        }
+
+        if (AppInfoRepository.whiteNameList.contains(packageName)) {
             return
         }
         try {
@@ -73,6 +76,10 @@ class LauncherLimitTask : LimitTask {
                 val intent = Intent(Settings.ACTION_SETTINGS)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 mContext!!.startActivity(intent)
+            }
+
+            if (AppInfoRepository.whiteNameList.contains(packageName)) {
+                return
             }
 
             val intent = Intent(mContext!!, MainActivity::class.java)

@@ -28,6 +28,7 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.requestFloatingWindo
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
 import com.lfork.phonelimitadvanced.base.widget.DialogPermission
+import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
 import kotlinx.android.synthetic.main.main_focus_frag.*
 import kotlinx.android.synthetic.main.main_focus_frag.view.*
 
@@ -160,8 +161,9 @@ class FocusFragment : Fragment() {
 
     /**
      * 开启限制前需要检查相应的权限
+     * @return false 表示权限不足
      */
-    private fun isPermitted(): Boolean {
+    private fun permissionCheck(): Boolean {
         //如果没有获得查看使用情况权限和 手机存在查看使用情况这个界面(Android 5.0以上)
         if (!isGrantedStatAccessPermission() && LockUtil.isNoOption(context)) {
             val dialog = DialogPermission(context)
@@ -231,8 +233,17 @@ class FocusFragment : Fragment() {
         }
         view.btn_set_launcher.setOnClickListener { clearDefaultLauncher() }
 
-//        view.btn_set_launcher
-//        limitBinder.getLimitService()
+        view.btn_timed_task.setOnClickListener {
+            if (!permissionCheck()) {
+                return@setOnClickListener
+            }
+            //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
+            val limitIntent = Intent(context, LimitService::class.java)
+            val timeInfo = LimitTaskConfig(limitTimeSeconds = 100,isImmediatelyExecuted =false,periodMillis = 1*60*60*1000)
+            limitIntent.putExtra("limit_task_time_info",timeInfo)
+            startService(limitIntent)
+        }
+
     }
 
     private fun initDialog() {
@@ -315,24 +326,22 @@ class FocusFragment : Fragment() {
      */
     private fun startLimit(limitTimeSeconds: Long = 60L) {
         inputTimeMinuteCache = limitTimeSeconds
-        if (!isPermitted()) {
+
+
+        if (!permissionCheck()) {
             return
         }
-
-//        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
-//        val startTime = sp.getLong("start_time", System.currentTimeMillis())
+        val timeInfo = LimitTaskConfig(limitTimeSeconds = limitTimeSeconds,isImmediatelyExecuted =true)
 
         //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
         val limitIntent = Intent(context, LimitService::class.java)
-        limitIntent.putExtra("limit_time", limitTimeSeconds)
-        limitIntent.putExtra("limit_command", LimitService.COMMAND_START_LIMIT)
+        limitIntent.putExtra("limit_task_time_info",timeInfo)
 
-//        bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
         startService(limitIntent)
         inputTimeMinuteCache = -1
     }
 
-    fun unbindLimitService() {
+    private fun unbindLimitService() {
 //        btn_set_launcher.visibility = View.VISIBLE
         if (context != null) {
             val stopIntent = Intent(context, LimitService::class.java)

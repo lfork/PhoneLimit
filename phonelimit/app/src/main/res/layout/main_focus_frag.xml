@@ -63,11 +63,26 @@
         android:textAllCaps="false"
         android:textColor="@color/white" />
 
+
+    <Button
+        android:id="@+id/btn_timed_task"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_below="@id/btn_start"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="64dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/app_green_4"
+        android:text="@string/start_timed_task"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
     <Button
         android:id="@+id/btn_set_launcher"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:layout_below="@id/btn_start"
+        android:layout_below="@id/btn_timed_task"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="6dp"
@@ -85,7 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/recycle_white_list"
-        android:layout_below="@id/btn_start"
+        android:layout_below="@id/btn_timed_task"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="32dp">
 
