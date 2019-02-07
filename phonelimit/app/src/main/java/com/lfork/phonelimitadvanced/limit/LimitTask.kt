@@ -16,9 +16,9 @@ interface LimitTask {
 
     fun closeLimit()
 
-    /**
-     * 验证任务的时间是否有效，没有的话就放弃执行
-     */
-    fun taskIsValid()
+//    /**
+//     * 验证任务的时间是否有效，没有的话就放弃执行
+//     */
+//    fun taskIsValid()
 
 }

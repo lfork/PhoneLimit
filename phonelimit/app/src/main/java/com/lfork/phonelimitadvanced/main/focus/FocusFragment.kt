@@ -1,6 +1,8 @@
 package com.lfork.phonelimitadvanced.main.focus
 
 import android.content.*
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
@@ -13,6 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
@@ -90,8 +93,11 @@ class FocusFragment : Fragment() {
         if (inputTimeMinuteCache > 0) {
             startLimit(inputTimeMinuteCache)
         }
-
         refreshAppInfoData()
+
+        if (LimitApplication.isOnLimitation){
+            activity?.setSystemUIVisible(false)
+        }
     }
 
 
@@ -148,7 +154,6 @@ class FocusFragment : Fragment() {
 //                    }
 //                }
 //            }
-
             REQUEST_USAGE_ACCESS_PERMISSION -> {
                 if (isGrantedStatAccessPermission()) {
                     startLimit()
@@ -220,6 +225,18 @@ class FocusFragment : Fragment() {
 //            requestStoragePermission(applicationContext, REQUEST_STORAGE_PERMISSION, this)
 //            return
 //        }
+
+
+        //权限申请
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (!Settings.canDrawOverlays(context)) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                intent.data = Uri.parse("package:" + context?.packageName)
+                //                            "为了更好的监督学习监督，App需要一些更高的权限，来进行更好的监督");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
         return true
     }
 
@@ -282,6 +299,7 @@ class FocusFragment : Fragment() {
 
     val limitStateListener = object : LimitService.StateListener {
         override fun onLimitFinished() {
+            activity?.setSystemUIVisible(true)
             runOnUiThread {
                 remain_time_text.text = "限制已解除"
                 ToastUtil.showLong(context, "限制已解除")
@@ -292,6 +310,7 @@ class FocusFragment : Fragment() {
         override fun onLimitStarted() {
             runOnUiThread {
                 //ToastUtil.showLong(context, "限制已开启")
+                activity?.setSystemUIVisible(false)
             }
         }
 

@@ -3,12 +3,15 @@ package com.lfork.phonelimitadvanced
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.lfork.phonelimitadvanced.base.Config
 import com.lfork.phonelimitadvanced.base.thread.MyThreadFactory
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.LimitDatabase
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
+import com.lfork.phonelimitadvanced.main.MainHandler
 import com.lfork.phonelimitadvanced.utils.Constants.DEFAULT_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.LinuxShell
 import com.lfork.phonelimitadvanced.utils.getAppIcon
@@ -63,6 +66,19 @@ class LimitApplication : Application() {
             appFixedThreadPool?.execute(r)
         }
 
+        var mHandler = Handler(Looper.getMainLooper()) {
+            Log.d("mHandler", "ee")
+            false
+        }
+
+
+
+//        void workerThread() {
+//            // And this is how you call it from the worker thread:
+//            Message message = mHandler.obtainMessage(command, parameter);
+//            message.sendToTarget();
+//        }
+
     }
 
 
@@ -77,8 +93,7 @@ class LimitApplication : Application() {
         )
         initThreadPool()
         initDataBase()
-
-
+        MainHandler.getInstance()
 
     }
 

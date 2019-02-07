@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private var focusFragment:FocusFragment?= null
 
 
+
     private val mOnNavigationItemSelectedListener =object : CustomIconOnClickListener {
         override fun onBrowserClick() {
             openSecondFragment(BrowserFragment())

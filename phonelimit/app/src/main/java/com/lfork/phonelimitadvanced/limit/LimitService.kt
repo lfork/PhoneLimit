@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.limit.task.FloatingLimitTask
 import com.lfork.phonelimitadvanced.limit.task.LauncherLimitTask
 import com.lfork.phonelimitadvanced.main.MainActivity
 import java.util.*
@@ -105,7 +106,7 @@ class LimitService : Service() {
         }
 
 
-        limitTaskExecutor = LimitExecutor(this, LauncherLimitTask())
+        limitTaskExecutor = LimitExecutor(this, FloatingLimitTask())
 
         val timerListener = object : LimitTimer.TimeListener {
 
