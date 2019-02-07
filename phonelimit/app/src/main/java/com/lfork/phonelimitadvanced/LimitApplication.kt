@@ -26,6 +26,10 @@ import java.util.concurrent.TimeUnit
  */
 class LimitApplication : Application() {
 
+
+    /**
+     * 全局变量
+     */
     companion object {
         val TAG = "LimitApplication"
 
@@ -35,12 +39,13 @@ class LimitApplication : Application() {
 
         var isOnLimitation = false
 
+        var isDoingTimedTask = false
+
         var isFirstOpen = false
 
         lateinit var App: LimitApplication
 
         private var latestLauncherAppInfo: List<String>? = null
-
 
         private var appInfoList = Collections.synchronizedList(ArrayList<AppInfo>());
 

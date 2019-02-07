@@ -27,7 +27,7 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.isGrantedFloatingWin
 import com.lfork.phonelimitadvanced.utils.PermissionManager.requestFloatingWindowPermission
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
-import com.lfork.phonelimitadvanced.widget.DialogPermission
+import com.lfork.phonelimitadvanced.base.widget.DialogPermission
 import kotlinx.android.synthetic.main.main_focus_frag.*
 import kotlinx.android.synthetic.main.main_focus_frag.view.*
 
@@ -64,7 +64,7 @@ class FocusFragment : Fragment() {
 
             initDialog()
             registerListener(root!!)
-            checkAndRecoveryLimitTask()
+//            checkAndRecoveryLimitTask()
             displaySetting(root!!)
             root!!.recycle_white_list.layoutManager =
                     LinearLayoutManager(context, HORIZONTAL, false)
@@ -72,6 +72,11 @@ class FocusFragment : Fragment() {
             adapter.customIconOnClickListener = customIconOnClickListener
 
             root!!.recycle_white_list.adapter = adapter
+
+            val limitIntent = Intent(context, LimitService::class.java)
+
+            bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
+            startService(limitIntent)
         }
 
         return root
@@ -88,13 +93,17 @@ class FocusFragment : Fragment() {
         refreshAppInfoData()
     }
 
+
+    /**
+     * 主动退出才能完全关闭服务
+     */
     override fun onDestroy() {
         super.onDestroy()
         adapter.onDestroy()
+        unbindLimitService()
     }
 
     private fun refreshAppInfoData() {
-
         AppInfoRepository.getWhiteNameApps(object : DataCallback<List<AppInfo>> {
             override fun succeed(data: List<AppInfo>) {
                 if (context != null) {
@@ -251,8 +260,6 @@ class FocusFragment : Fragment() {
                 else -> view.tips_normal.visibility = View.VISIBLE
             }
         }
-
-
         //button显示设置 如果是7.0 以上的系统就跳转到设置界面让用户手动设置默认程序【主流用户】
         //如果是定制系统 就跳转到设置界面即可。  就不主动在当前的界面手动设置默认桌面了。
 
@@ -267,7 +274,7 @@ class FocusFragment : Fragment() {
             runOnUiThread {
                 remain_time_text.text = "限制已解除"
                 ToastUtil.showLong(context, "限制已解除")
-                unbindLimitService()
+
             }
         }
 
@@ -312,16 +319,15 @@ class FocusFragment : Fragment() {
             return
         }
 
-        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
-        val startTime = sp.getLong("start_time", System.currentTimeMillis())
+//        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+//        val startTime = sp.getLong("start_time", System.currentTimeMillis())
 
         //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
         val limitIntent = Intent(context, LimitService::class.java)
         limitIntent.putExtra("limit_time", limitTimeSeconds)
-        limitIntent.putExtra("start_time", startTime)
+        limitIntent.putExtra("limit_command", LimitService.COMMAND_START_LIMIT)
 
-
-        bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
+//        bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
         startService(limitIntent)
         inputTimeMinuteCache = -1
     }
@@ -335,14 +341,14 @@ class FocusFragment : Fragment() {
         }
     }
 
-    private fun checkAndRecoveryLimitTask() {
-        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
-        val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
-
-        if (remainTimeSeconds > 1) {
-            startLimit(remainTimeSeconds)
-        }
-    }
+//    private fun checkAndRecoveryLimitTask() {
+//        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+//        val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
+//
+//        if (remainTimeSeconds > 1) {
+//            startLimit(remainTimeSeconds)
+//        }
+//    }
 
 
     private var customIconOnClickListener: CustomIconOnClickListener? = null

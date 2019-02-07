@@ -16,7 +16,7 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import com.lfork.phonelimitadvanced.main.focus.FakeHomeActivity
 import com.lfork.phonelimitadvanced.utils.LinuxShell.execCommand
-import com.lfork.phonelimitadvanced.widget.DialogPermission
+import com.lfork.phonelimitadvanced.base.widget.DialogPermission
 import java.io.DataOutputStream
 import java.util.ArrayList
 

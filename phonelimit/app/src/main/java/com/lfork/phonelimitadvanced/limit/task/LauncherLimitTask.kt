@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.limit
+package com.lfork.phonelimitadvanced.limit.task
 
 import android.app.ActivityManager
 import android.app.usage.UsageEvents
@@ -11,6 +11,8 @@ import android.text.TextUtils
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.base.AppConstants
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
+import com.lfork.phonelimitadvanced.limit.LimitTask
+import com.lfork.phonelimitadvanced.utils.RootShell
 import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
 
@@ -22,9 +24,9 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
  *
  * 通过限制桌面入口的方式来实现限制功能
  */
-class LauncherLimitTask:LimitTask {
+class LauncherLimitTask : LimitTask {
 
-    var mContext :Context? = null
+    private var mContext: Context? = null
 
     override fun initLimit(context: Context) {
         if (LimitApplication.isRooted) {
@@ -38,7 +40,7 @@ class LauncherLimitTask:LimitTask {
 
     override fun doLimit() {
 
-        if (mContext == null){
+        if (mContext == null) {
             return
         }
 
@@ -51,9 +53,9 @@ class LauncherLimitTask:LimitTask {
         //判断包名打开解锁页面
         if (!TextUtils.isEmpty(packageName)) {
             if (AppInfoRepository.whiteNameList.contains(packageName)) {
-               return
+                return
             }
-        } else{
+        } else {
             return
         }
         try {
@@ -67,7 +69,7 @@ class LauncherLimitTask:LimitTask {
 
         } else {
 
-            if (packageName == "com.android.settings"){
+            if (packageName == "com.android.settings") {
                 val intent = Intent(Settings.ACTION_SETTINGS)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 mContext!!.startActivity(intent)
@@ -90,9 +92,9 @@ class LauncherLimitTask:LimitTask {
             }
         }
 
-        if (!LimitApplication.isFloatingWindowMode) {
-            mContext!!.clearDefaultLauncher()
-        }
+//        if (!LimitApplication.isFloatingWindowMode) {
+        mContext!!.clearDefaultLauncher()
+//        }
 
         mContext = null
     }

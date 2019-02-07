@@ -5,7 +5,6 @@ package com.lfork.phonelimitadvanced.data
  */
 interface DataCallback<T> {
 
-
     fun succeed(data:T)
 
     fun failed(code:Int,log:String)

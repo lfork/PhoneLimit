@@ -20,7 +20,7 @@ import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
  *
  * Created by 98620 on 2018/12/14.
  */
-class Executor(var context: Context?, var limitTask: LimitTask?) {
+class LimitExecutor(var context: Context?, var limitTask: LimitTask?) {
 
     lateinit var executorThread: Thread
 
@@ -53,6 +53,9 @@ class Executor(var context: Context?, var limitTask: LimitTask?) {
      * 关闭Executor
      */
     fun close() {
+        if (!isActive){
+            return
+        }
         isActive = false
 
         //尽快结束线程
