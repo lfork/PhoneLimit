@@ -161,10 +161,7 @@ public class LinuxShell {
 			}
 			os.writeBytes(COMMAND_EXIT);
 			os.flush();
- 
- 
-			result = process.waitFor();
-			// get command result
+
 			if (isNeedResultMsg) {
 				successMsg = new StringBuilder();
 				errorMsg = new StringBuilder();
@@ -172,6 +169,24 @@ public class LinuxShell {
 						process.getInputStream()));
 				errorResult = new BufferedReader(new InputStreamReader(
 						process.getErrorStream()));
+				String s;
+				while ((s = successResult.readLine()) != null) {
+					successMsg.append(s).append('\n');
+				}
+				while ((s = errorResult.readLine()) != null) {
+					errorMsg.append(s).append('\n');
+				}
+			}
+
+			result = process.waitFor();
+			// get command result
+			if (isNeedResultMsg) {
+//				successMsg = new StringBuilder();
+//				errorMsg = new StringBuilder();
+//				successResult = new BufferedReader(new InputStreamReader(
+//						process.getInputStream()));
+//				errorResult = new BufferedReader(new InputStreamReader(
+//						process.getErrorStream()));
 				String s;
 				while ((s = successResult.readLine()) != null) {
 					successMsg.append(s).append('\n');
