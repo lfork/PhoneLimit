@@ -13,6 +13,7 @@ import com.lfork.phonelimitadvanced.base.AppConstants
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.limit.LimitTask
 import com.lfork.phonelimitadvanced.main.MainActivity
+import com.lfork.phonelimitadvanced.utils.Constants.SPECIAL_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.RootShell
 
 /**
@@ -66,7 +67,7 @@ open class BaseLimitTask : LimitTask {
             mContext!!.startActivity(intent)
         }
 
-        if (AppInfoRepository.whiteNameList.contains(packageName)) {
+        if (AppInfoRepository.whiteNameList.contains(packageName) || SPECIAL_WHITE_NAME_LIST.contains(packageName)) {
             return
         }
 
