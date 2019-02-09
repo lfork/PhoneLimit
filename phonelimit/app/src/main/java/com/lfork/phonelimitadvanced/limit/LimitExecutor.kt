@@ -1,20 +1,8 @@
 package com.lfork.phonelimitadvanced.limit
 
-import android.app.ActivityManager
-import android.app.usage.UsageEvents
-import android.app.usage.UsageStatsManager
 import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import android.text.TextUtils
-import android.util.Log
-import com.lfork.phonelimitadvanced.LimitApplication
-import com.lfork.phonelimitadvanced.base.AppConstants
-import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
-import com.lfork.phonelimitadvanced.main.MainActivity
-import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
-import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncherFake
+import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncher
+import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncherFake
 
 /**
  *

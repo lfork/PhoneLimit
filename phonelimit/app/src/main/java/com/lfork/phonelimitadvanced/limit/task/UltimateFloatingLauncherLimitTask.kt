@@ -2,7 +2,7 @@ package com.lfork.phonelimitadvanced.limit.task
 
 import android.content.Context
 import com.lfork.phonelimitadvanced.limit.LimitTask
-import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
+import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncher
 
 /**
  * Created by L.Fork

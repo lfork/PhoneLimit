@@ -1,0 +1,211 @@
+package com.lfork.phonelimitadvanced.base.widget
+
+import android.animation.AnimatorSet
+import android.content.Context
+import android.util.Log
+import android.view.View
+import android.widget.*
+import com.hjq.toast.ToastUtils
+import com.lfork.phonelimitadvanced.LimitApplication
+
+import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_FLOATING
+import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_LIGHT
+import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ROOT
+import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ULTIMATE
+import com.lfork.phonelimitadvanced.permission.PermissionCheckerAndRequester
+import com.lfork.phonelimitadvanced.permission.PermissionManager
+import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
+import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedFloatingWindowPermission
+import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
+import kotlinx.android.synthetic.main.dialog_limit_model_select.*
+
+/**
+ * Created by xian on 2017/2/28.
+ */
+
+class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
+
+    private lateinit var modelArray: Array<String>
+    private lateinit var modelTipsArray: Array<String>
+    private var itemPosition = 0
+    var permissionCheckerAndRequester: PermissionCheckerAndRequester? = null
+
+    override fun setWidthScale(): Float {
+        return 0.85f
+    }
+
+    override fun setEnterAnim(): AnimatorSet? {
+        return null
+    }
+
+    override fun setExitAnim(): AnimatorSet? {
+        return null
+    }
+
+   private val btnDefaultModelListener = {
+        if (modelPermissionCheck(itemPosition)) {
+            tv_default_model.text = "当前模式：${modelArray[itemPosition]}"
+            LimitApplication.defaultLimitModel = itemPosition
+            limitModelUpdateListener?.updateLimitModel(modelArray[itemPosition])
+            ToastUtils.show("设置成功，当前模式为：${modelArray[itemPosition]}")
+            dismiss()
+        } else {
+            ToastUtils.show("权限不足，请设置相应的权限")
+        }
+    }
+
+    private val itemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+        }
+
+        override fun onItemSelected(
+            parent: AdapterView<*>?,
+            view: View?,
+            position: Int,
+            id: Long
+        ) {
+            itemPosition = position
+            modelUiSetting(itemPosition)
+//                tv_default_model.text = modelArray[position]
+            tv_model_tips.text = modelTipsArray[position]
+
+        }
+    }
+
+    override fun init() {
+        itemPosition = LimitApplication.defaultLimitModel
+        modelArray = context.resources.getStringArray(R.array.limit_model_array)
+        modelTipsArray = context.resources.getStringArray(R.array.limit_model_tips_array)
+        btn_set_default_model.setOnClickListener {
+            btnDefaultModelListener.invoke() }
+
+        btn_close.setOnClickListener { dismiss() }
+
+        val spinner = sp_model_select
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        val adapter = ArrayAdapter.createFromResource(
+            context,
+            R.array.limit_model_array, android.R.layout.simple_spinner_item
+        )
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Apply the adapter to the spinner
+        spinner.adapter = adapter
+        spinner.setSelection(itemPosition)
+        modelUiSetting(itemPosition)
+        tv_default_model.text = "当前模式：${modelArray[itemPosition]}"
+        tv_model_tips.text = modelTipsArray[itemPosition]
+
+        spinner.onItemSelectedListener = itemSelectedListener
+
+        layout_usage_permission.setOnClickListener {
+            permissionCheckerAndRequester?.requestUsagePermission()
+
+        }
+
+        layout_floating_permission.setOnClickListener {
+            permissionCheckerAndRequester?.requestFloatingPermission()
+
+        }
+
+        layout_launcher_permission.setOnClickListener {
+            permissionCheckerAndRequester?.requestLauncherPermission()
+
+        }
+
+        layout_root_permission.setOnClickListener {
+            permissionCheckerAndRequester?.requestRootPermission()
+
+        }
+
+    }
+
+
+    fun modelUiSetting(model: Int) {
+        layout_floating_permission.visibility = View.GONE
+        layout_launcher_permission.visibility = View.GONE
+        layout_root_permission.visibility = View.GONE
+
+        when (model) {
+            LIMIT_MODEL_LIGHT -> {
+            }
+            LIMIT_MODEL_FLOATING -> {
+                layout_floating_permission.visibility = View.VISIBLE
+            }
+            LIMIT_MODEL_ULTIMATE -> {
+                layout_floating_permission.visibility = View.VISIBLE
+                layout_launcher_permission.visibility = View.VISIBLE
+            }
+            LIMIT_MODEL_ROOT -> {
+                layout_root_permission.visibility = View.VISIBLE
+            }
+        }
+
+        if (context.isGrantedStatAccessPermission()) {
+            iv_usage_permission_check.setImageResource(R.drawable.ic_check_24dp)
+        } else {
+            iv_usage_permission_check.setImageResource(R.drawable.ic_red_close_24dp)
+        }
+
+
+        if (context.isGrantedFloatingWindowPermission()) {
+            iv_floating_permission_check.setImageResource(R.drawable.ic_check_24dp)
+        } else {
+            iv_floating_permission_check.setImageResource(R.drawable.ic_red_close_24dp)
+        }
+
+        if (context.isDefaultLauncher()) {
+            iv_launcher_permission_check.setImageResource(R.drawable.ic_check_24dp)
+        } else {
+            iv_launcher_permission_check.setImageResource(R.drawable.ic_red_close_24dp)
+        }
+
+        if (LimitApplication.isRooted) {
+            iv_root_permission_check.setImageResource(R.drawable.ic_check_24dp)
+        } else {
+            iv_root_permission_check.setImageResource(R.drawable.ic_red_close_24dp)
+        }
+    }
+
+
+    override fun getContentViewId(): Int {
+        return R.layout.dialog_limit_model_select
+    }
+
+
+    private fun modelPermissionCheck(model: Int): Boolean {
+        when (model) {
+            LIMIT_MODEL_LIGHT -> {
+                return context.isGrantedStatAccessPermission()
+            }
+            LIMIT_MODEL_FLOATING -> {
+
+                return context.isGrantedStatAccessPermission() && context.isGrantedFloatingWindowPermission()
+
+            }
+            LIMIT_MODEL_ULTIMATE -> {
+                return context.isGrantedStatAccessPermission() && context.isGrantedFloatingWindowPermission() && context.isDefaultLauncher()
+            }
+            LIMIT_MODEL_ROOT -> {
+                return context.isGrantedStatAccessPermission() && PermissionManager.isRooted()
+            }
+        }
+
+        return false
+    }
+
+    var limitModelUpdateListener: LimitModelUpdateListener? = null
+
+
+    interface LimitModelUpdateListener {
+        fun updateLimitModel(model: String)
+    }
+
+
+    override fun dismiss() {
+        super.dismiss()
+        limitModelUpdateListener = null
+        permissionCheckerAndRequester = null
+    }
+}

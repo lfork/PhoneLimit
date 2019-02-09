@@ -6,6 +6,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/app_green_3</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!-- Navigation Bar -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <!--<item name="android:windowTranslucentNavigation">false</item>-->
+        <item name="android:navigationBarColor">@color/app_green_5</item>
+
+        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 
     <style name="FingerprintTheme" parent="android:Theme.Dialog">
@@ -21,7 +28,7 @@
     </style>
 
 
-    <style name="DialogTransparent" parent="@android:style/Theme.Dialog">
+    <style name="DialogTransparent">
         <!-- 背景颜色及透明程度  -->
         <item name="android:windowBackground">@android:color/transparent</item>
         <!--  是否有标题  -->
@@ -43,5 +50,14 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="marquee_text">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <!--<item name="android:textSize">36sp</item>-->
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
 
 </resources>

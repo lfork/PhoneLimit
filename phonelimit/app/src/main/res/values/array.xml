@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="limit_model_array">
+        <item>专注模式</item>     <!-- 轻度限制-->
+        <item>强力模式</item>     <!-- 悬浮窗模式  正常状态下无法关闭限制-->
+        <item>终极模式</item>     <!-- 悬浮窗模式+桌面模式  【在部分设备上不可用】  能避免某些特殊的办法来关闭限制-->
+        <item>ROOT模式</item>     <!-- 非专业用户不要尝试关闭限制，否则可能会对您的手机造成损害，需要重装系统才能恢复-->
+    </string-array>
+
+    <string-array name="limit_model_tips_array">
+        <item>@string/limit_model_tips_normal</item>
+        <item>@string/limit_model_tips_floating</item>
+        <item>@string/limit_model_tips_floating_and_launcher</item>
+        <item>@string/limit_model_tips_root</item>
+    </string-array>
+</resources>

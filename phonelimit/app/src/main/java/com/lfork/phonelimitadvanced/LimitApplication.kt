@@ -6,11 +6,13 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.base.Config
 import com.lfork.phonelimitadvanced.base.thread.MyThreadFactory
+import com.lfork.phonelimitadvanced.data.*
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
-import com.lfork.phonelimitadvanced.data.LimitDatabase
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
+import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
 import com.lfork.phonelimitadvanced.main.MainHandler
 import com.lfork.phonelimitadvanced.utils.Constants.DEFAULT_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.LinuxShell
@@ -36,17 +38,39 @@ class LimitApplication : Application() {
     companion object {
         val TAG = "LimitApplication"
 
-        var isFloatingWindowMode = false
 
         var isRooted = false
+            get() {
+                return App.getRootStatus()
+            }
+            set(value) {
+                field = value
+                App.saveRootStatus(field)
+            }
 
         var isOnLimitation = false
 
         var isDoingTimedTask = false
 
         var isFirstOpen = false
-
         lateinit var App: LimitApplication
+
+        var defaultLimitModel = LimitTaskConfig.LIMIT_MODEL_LIGHT
+            get() {
+//                if (::App.isInitialized) {
+                field = App.getDefaultLimitModel()
+//                }
+
+
+                return field
+            }
+            set(value) {
+//                if (::App.isInitialized) {
+                App.saveDefaultLimitModel(value)
+//                }
+                field = value
+            }
+
 
         private var latestLauncherAppInfo: List<String>? = null
 
@@ -72,7 +96,6 @@ class LimitApplication : Application() {
         }
 
 
-
 //        void workerThread() {
 //            // And this is how you call it from the worker thread:
 //            Message message = mHandler.obtainMessage(command, parameter);
@@ -81,11 +104,10 @@ class LimitApplication : Application() {
 
     }
 
-
     override fun onCreate() {
         super.onCreate()
-
         App = this
+        initConfig()
         isFirstOpen = isFirstOpen()
         Log.d(
             TAG,
@@ -94,8 +116,14 @@ class LimitApplication : Application() {
         initThreadPool()
         initDataBase()
         MainHandler.getInstance()
-
+        ToastUtils.init(this)
     }
+
+
+    private fun initConfig() {
+        defaultLimitModel = getDefaultLimitModel()
+    }
+
 
     private fun initThreadPool() {
         val namedThreadFactory = MyThreadFactory("异步任务线程池")
@@ -117,11 +145,9 @@ class LimitApplication : Application() {
 
 
     fun getOrInitAllAppsInfo(): MutableList<AppInfo>? {
-
         if (appInfoList.size > 1) {
             return appInfoList
         }
-
         // 桌面应用的启动在INTENT中需要包含ACTION_MAIN 和CATEGORY_HOME.
         val intent = Intent()
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
@@ -158,7 +184,6 @@ class LimitApplication : Application() {
         }
 
 
-
         return appInfoList
 
     }
@@ -168,27 +193,11 @@ class LimitApplication : Application() {
         if (latestLauncherAppInfo != null) {
             return latestLauncherAppInfo
         }
-
         if (isRooted) {
+            val tempData = getSpLauncherApps()
 
-            val tempSet = getSharedPreferences(
-                "LimitStatus",
-                Context.MODE_PRIVATE
-            ).getStringSet("launchers", null)
-
-
-            if (tempSet != null) {
-                val tempArray = ArrayList<String>()
-                tempSet.iterator().forEach {
-                    tempArray.add(it)
-                }
-                Log.d(
-                    TAG,
-                    "Activities $tempArray"
-                )
-
-                latestLauncherAppInfo = tempArray
-
+            if (tempData != null) {
+                latestLauncherAppInfo = tempData
             } else {
                 val resultStr = StringBuffer()
 
@@ -196,7 +205,6 @@ class LimitApplication : Application() {
                     " pm list package | grep -E 'home|launcher|miuilite'",
                     true
                 )
-
                 resultStr.append(result.successMsg)
 
                 var launchers = result.successMsg.replace("package:", "").split('\n')
@@ -207,26 +215,12 @@ class LimitApplication : Application() {
                     "Activities $launchers"
                 )
                 latestLauncherAppInfo = launchers
-
-                getSharedPreferences("LimitStatus", Context.MODE_PRIVATE).edit()
-                    .putStringSet("launchers", launchers.toSet()).apply()
-
+                saveLauncherApps(launchers)
             }
 
         }
 
         return latestLauncherAppInfo;
-    }
-
-    private fun isFirstOpen(): Boolean {
-        val setting = getSharedPreferences("env", Context.MODE_PRIVATE)
-        val isFirst = setting.getBoolean("FIRST", true)
-        return if (isFirst) {
-            setting.edit().putBoolean("FIRST", false).apply()
-            true
-        } else {
-            false
-        }
     }
 
 

@@ -1,8 +1,9 @@
 package com.lfork.phonelimitadvanced.main.focus
 
-import android.content.*
-import android.net.Uri
-import android.os.Build
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
@@ -10,32 +11,36 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.base.widget.UsagePermissionDialog
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.limit.LimitService
+import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedFloatingWindowPermission
+import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
 import com.lfork.phonelimitadvanced.permission.PermissionManager.requestFloatingWindowPermission
-import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
-import com.lfork.phonelimitadvanced.base.widget.UsagePermissionDialog
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
+import kotlinx.android.synthetic.main.item_window_floating.*
+import kotlinx.android.synthetic.main.item_window_floating.view.*
+import android.support.v7.widget.LinearSnapHelper
+import com.lfork.phonelimitadvanced.base.widget.FloatingPermissionDialog
+import com.lfork.phonelimitadvanced.main.MainActivity
+import com.lfork.phonelimitadvanced.permission.PermissionCheckerAndRequester
 import com.lfork.phonelimitadvanced.permission.PermissionManager
-import kotlinx.android.synthetic.main.main_focus_frag.*
-import kotlinx.android.synthetic.main.main_focus_frag.view.*
 
-class FocusFragment : Fragment() {
+
+class FocusFragment2 : Fragment(),
+    PermissionCheckerAndRequester {
+
 
     companion object {
         const val REQUEST_STORAGE_PERMISSION = 0
@@ -58,24 +63,26 @@ class FocusFragment : Fragment() {
 
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         if (root == null) {
-            root = inflater.inflate(R.layout.main_focus_frag, container, false)
+            root = inflater.inflate(R.layout.main_focus_frag_v2, container, false)
 
             initDialog()
             registerListener(root!!)
 //            checkAndRecoveryLimitTask()
-            displaySetting(root!!)
+            //displaySetting(root!!)
             root!!.recycle_white_list.layoutManager =
                     LinearLayoutManager(context, HORIZONTAL, false)
             adapter = WhiteNameAdapter()
             adapter.customIconOnClickListener = customIconOnClickListener
 
             root!!.recycle_white_list.adapter = adapter
+
+            LinearSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
 
             val limitIntent = Intent(context, LimitService::class.java)
 
@@ -95,9 +102,16 @@ class FocusFragment : Fragment() {
         }
         refreshAppInfoData()
 
-        if (LimitApplication.isOnLimitation){
-            activity?.setSystemUIVisible(false)
+        if (LimitApplication.isOnLimitation) {
+            (activity as MainActivity?)?.hideOtherUI()
+        } else {
+            (activity as MainActivity?)?.showOtherUI()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        (activity as MainActivity?)?.hideOtherUI()
     }
 
 
@@ -111,26 +125,15 @@ class FocusFragment : Fragment() {
     }
 
 
-
     /**
      * 暂时还不需要访问文件的权限
      */
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         when (requestCode) {
-            //TODO 权限申请
-//            REQUEST_STORAGE_PERMISSION -> {
-//                if (isGrantedStoragePermission(applicationContext)) {
-//                    if (!TextUtils.isEmpty(editText.text.toString())) {
-//                        initTimer(editText.text.toString().toLong())
-//                    } else {
-//                        initTimer()
-//                    }
-//                }
-//            }
             REQUEST_USAGE_ACCESS_PERMISSION -> {
                 if (isGrantedStatAccessPermission()) {
                     startLimit()
@@ -166,131 +169,157 @@ class FocusFragment : Fragment() {
             }
         })
     }
+
     /**
      * 开启限制前需要检查相应的权限
      * @return false 表示权限不足
      */
     private fun permissionCheck(): Boolean {
         //如果没有获得查看使用情况权限和 手机存在查看使用情况这个界面(Android 5.0以上)
+
+        if (!requestUsagePermission()) {
+            return false
+        }
+
+        //悬浮窗权限
+        if (LimitApplication.defaultLimitModel == LimitTaskConfig.LIMIT_MODEL_FLOATING) {
+            if (!requestFloatingPermission()) {
+                return false
+            }
+        }
+
+
+        //默认桌面权限
+
+        if (LimitApplication.defaultLimitModel in arrayOf(
+                LimitTaskConfig.LIMIT_MODEL_ROOT,
+                LimitTaskConfig.LIMIT_MODEL_ULTIMATE
+            )
+        ) {
+            if (!requestLauncherPermission()){
+                return false
+            }
+
+        }
+
+
+
+
+        if (LimitApplication.defaultLimitModel == LimitTaskConfig.LIMIT_MODEL_ROOT) {
+
+           if(!requestRootPermission()){
+               requestRootPermission()
+           }
+        }
+
+        return true
+    }
+
+
+    override fun requestUsagePermission(): Boolean {
         if (!isGrantedStatAccessPermission() && LockUtil.isNoOption(context)) {
             val dialog = UsagePermissionDialog(context)
-            dialog.show()
+
             dialog.setOnClickListener {
-                startActivityForResult(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS) ,REQUEST_USAGE_ACCESS_PERMISSION)
+                startActivityForResult(
+                    Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS),
+                    REQUEST_USAGE_ACCESS_PERMISSION
+                )
             }
             dialog.setOnCancelListener {
                 inputTimeMinuteCache = -1
             }
+            dialog.show()
+
             return false
         }
 
-        //如果是华为手机 就申请悬浮窗的权限 否则就申请默认桌面(如果有root权限还要把其他的桌面unhide掉)
-        if (DeviceHelper.isHuawei()) {
-            if (!isGrantedFloatingWindowPermission()) {
+        return true
+    }
+
+    override fun requestFloatingPermission(): Boolean {
+
+        if (!isGrantedFloatingWindowPermission()) {
+            val dialog = FloatingPermissionDialog(context)
+            dialog.setOnClickListener {
                 requestFloatingWindowPermission()
-                //TODO result
-                if (!isGrantedFloatingWindowPermission()) {
-                    ToastUtil.showLong(context, getString(R.string.floating_window_denied_tips))
-                    return false
-                }
             }
-        } else {
-            if (!isDefaultLauncher()) {
-
-                if (!dialog.isShowing) {
-                    dialog.show()
-                }
-                if (!isDefaultLauncher()) {
-                    ToastUtil.showLong(context, getString(R.string.launcher_denied_tips))
-                    return false
-                }
-            }
-
-            if (PermissionManager.isRooted()) {
-                if (!PermissionManager.isGrantedRootPermission()) {
-                    PermissionManager.requestRootPermission(activity!!.packageCodePath)
-
-                    if (!PermissionManager.isGrantedRootPermission()) {
-                        ToastUtil.showShort(context, getString(R.string.permission_denied_tips))
-                        return false
-                    }
-                }
-                LimitApplication.isRooted = true
-//                App.getLauncherApps()
-            } else {
-                Log.d(LimitApplication.TAG, "看来是没有ROOT")
-            }
-        }
-        //        if (!PermissionManager.isGrantedStoragePermission(applicationContext)) {
-//            ToastUtil.showShort(this, "请给与程序需要的权限")
-//            requestStoragePermission(applicationContext, REQUEST_STORAGE_PERMISSION, this)
-//            return
-//        }
-
-
-        //权限申请
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (!Settings.canDrawOverlays(context)) {
-                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                intent.data = Uri.parse("package:" + context?.packageName)
-                //                            "为了更好的监督学习监督，App需要一些更高的权限，来进行更好的监督");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
+            dialog.setOnCancelListener { inputTimeMinuteCache = -1 }
+            dialog.show()
+            return false
         }
         return true
     }
 
+    override fun requestLauncherPermission(): Boolean {
+        if (!isDefaultLauncher()) {
+
+            if (!dialog.isShowing) {
+                dialog.show()
+            }
+            if (!isDefaultLauncher()) {
+                ToastUtil.showLong(context, getString(R.string.launcher_denied_tips))
+                return false
+            }
+        }
+
+        return true
+    }
+
+    override fun requestRootPermission(): Boolean {
+        if (PermissionManager.isRooted()) {
+            if (!PermissionManager.isGrantedRootPermission()) {
+                PermissionManager.requestRootPermission(activity!!.packageCodePath)
+
+                if (!PermissionManager.isGrantedRootPermission()) {
+                    ToastUtil.showShort(context, getString(R.string.permission_denied_tips))
+                    LimitApplication.isRooted = false
+                    return false
+                }
+            }
+            LimitApplication.isRooted = true
+        } else {
+            LimitApplication.isRooted = false
+            Log.d(LimitApplication.TAG, "看来是没有ROOT")
+            return false
+        }
+
+        return true
+    }
+
     private fun registerListener(view: View) {
-        view.btn_start.setOnClickListener {
-            if (!TextUtils.isEmpty(editText.text.toString())) {
-                startLimit(editText.text.toString().toLong() * 60)
-            } else {
-                startLimit()
-            }
+        view.btn_start_remain_time_text.setOnClickListener {
+            startLimit()
         }
-        view.btn_set_launcher.setOnClickListener { clearDefaultLauncher() }
-
-        view.btn_timed_task.setOnClickListener {
-            if (!permissionCheck()) {
-                return@setOnClickListener
-            }
-            //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
-            val limitIntent = Intent(context, LimitService::class.java)
-            val timeInfo = LimitTaskConfig(limitTimeSeconds = 100,isImmediatelyExecuted =false,periodMillis = 1*60*60*1000)
-            limitIntent.putExtra("limit_task_time_info",timeInfo)
-            startService(limitIntent)
-        }
-
     }
 
     private fun initDialog() {
         dialog = AlertDialog.Builder(context!!).setTitle(R.string.tips_launcher_setting)
-                .setPositiveButton(R.string.action_default_apps_setting) { dialog, id ->
-                    //去设置默认桌面
-                    openDefaultAppsSetting()
-                }.setNegativeButton(R.string.cancel) { dialog, id ->
-                    inputTimeMinuteCache = -1
-                }
-                .setCancelable(false)
-                .create()
+            .setPositiveButton(R.string.action_default_apps_setting) { dialog, id ->
+                //去设置默认桌面
+                openDefaultAppsSetting()
+            }.setNegativeButton(R.string.cancel) { dialog, id ->
+                inputTimeMinuteCache = -1
+            }
+            .setCancelable(false)
+            .create()
     }
 
     private fun displaySetting(view: View) {
 
         //tips设置
-        if (DeviceHelper.isHuawei()) {
-            view.tips_huawei.visibility = View.VISIBLE
-        } else {
-//            btn_set_launcher.visibility = View.VISIBLE
-            when {
-//                android.os.Build.BRAND == "OnePlus" -> view.tips_normal.visibility = View.VISIBLE
-                PermissionManager.isRooted() -> view.tips_root.visibility = View.VISIBLE
-                else -> view.tips_normal.visibility = View.VISIBLE
-            }
-        }
-        //button显示设置 如果是7.0 以上的系统就跳转到设置界面让用户手动设置默认程序【主流用户】
-        //如果是定制系统 就跳转到设置界面即可。  就不主动在当前的界面手动设置默认桌面了。
+//        if (DeviceHelper.isHuawei()) {
+//            view.tips_huawei.visibility = View.VISIBLE
+//        } else {
+////            btn_set_launcher.visibility = View.VISIBLE
+//            when {
+////                android.os.Build.BRAND == "OnePlus" -> view.tips_normal.visibility = View.VISIBLE
+//                PermissionManager.isRooted() -> view.tips_root.visibility = View.VISIBLE
+//                else -> view.tips_normal.visibility = View.VISIBLE
+//            }
+//        }
+//        //button显示设置 如果是7.0 以上的系统就跳转到设置界面让用户手动设置默认程序【主流用户】
+//        //如果是定制系统 就跳转到设置界面即可。  就不主动在当前的界面手动设置默认桌面了。
 
 
     }
@@ -301,28 +330,30 @@ class FocusFragment : Fragment() {
     val limitStateListener = object : LimitService.StateListener {
         override fun onLimitFinished() {
             runOnUiThread {
-                remain_time_text.text = "限制已解除"
+                btn_start_remain_time_text.text = "Start"
+//                tips.text = "限制已解除"
                 ToastUtil.showLong(context, "限制已解除")
-                activity?.setSystemUIVisible(true)
+                (activity as MainActivity?)?.showOtherUI()
             }
         }
 
         override fun onLimitStarted() {
             runOnUiThread {
                 //ToastUtil.showLong(context, "限制已开启")
-                activity?.setSystemUIVisible(false)
+                (activity as MainActivity?)?.hideOtherUI()
             }
         }
 
 
         override fun updateRemainTime(timeSeconds: Long) {
             runOnUiThread {
-                if (remain_time_text != null) {
+                if (btn_start_remain_time_text != null) {
                     when {
-                        timeSeconds > 60 * 60 -> remain_time_text.text =
-                                "解除限制剩余时间${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
-                        timeSeconds > 60 -> remain_time_text.text = "剩余时间${timeSeconds / 60}分${timeSeconds % 60}秒"
-                        else -> remain_time_text.text = "剩余时间${timeSeconds}秒"
+                        timeSeconds > 60 * 60 -> btn_start_remain_time_text.text =
+                                "${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
+                        timeSeconds > 60 -> btn_start_remain_time_text.text =
+                                "${timeSeconds / 60}分${timeSeconds % 60}秒"
+                        else -> btn_start_remain_time_text.text = "${timeSeconds}秒"
                     }
                 }
             }
@@ -343,22 +374,22 @@ class FocusFragment : Fragment() {
     /**
      * 开始限制的入口函数
      */
-    private fun startLimit(limitTimeSeconds: Long = 60L) {
+    @Synchronized
+    private fun startLimit(limitTimeSeconds: Long = 15L) {
         inputTimeMinuteCache = limitTimeSeconds
 
         if (!permissionCheck()) {
             return
         }
-        val timeInfo = LimitTaskConfig().apply {
+        val taskInfo = LimitTaskConfig().apply {
             this.limitTimeSeconds = limitTimeSeconds
-            isImmediatelyExecuted =true
-            limitModel = LimitTaskConfig.LIMIT_MODEL_ROOT
-
+            isImmediatelyExecuted = true
+            limitModel = LimitApplication.defaultLimitModel
         }
 
         //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
         val limitIntent = Intent(context, LimitService::class.java)
-        limitIntent.putExtra("limit_task_time_info",timeInfo)
+        limitIntent.putExtra("limit_task_time_info", taskInfo)
         startService(limitIntent)
         inputTimeMinuteCache = -1
     }

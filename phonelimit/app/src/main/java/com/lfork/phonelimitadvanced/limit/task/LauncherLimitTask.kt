@@ -1,6 +1,6 @@
 package com.lfork.phonelimitadvanced.limit.task
 
-import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncher
+import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncher
 
 /**
  * Created by L.Fork

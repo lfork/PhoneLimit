@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/limit_model"
+        android:orderInCategory="100"
+        android:title="专注模式"
+        app:showAsAction="always" />
+
+    <!--专注模式、加强模式、终极模式、ROOT模式-->
+
+    <item
+        android:id="@+id/timed_task"
+        android:orderInCategory="100"
+        android:title="定时任务"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/settings"
+        android:orderInCategory="100"
+        android:title="设置"
+        app:showAsAction="never" />
+</menu>

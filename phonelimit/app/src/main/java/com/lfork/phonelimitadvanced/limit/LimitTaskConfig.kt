@@ -15,7 +15,7 @@ data class LimitTaskConfig(
         var limitTimeSeconds: Long = -1,
         var periodMillis: Long = -1,
         var isImmediatelyExecuted: Boolean = false,
-        var limitModel:Int = LimitTaskConfig.LIMIT_MODEL_HEAVY1
+        var limitModel:Int = LimitTaskConfig.LIMIT_MODEL_LIGHT
 ):Serializable{
     companion object {
 
@@ -23,18 +23,18 @@ data class LimitTaskConfig(
         const val LIMIT_MODEL_LIGHT = 0
 
         //_LAUNCHER_LIMIT
-        const val LIMIT_MODEL_HEAVY1 = 1
+//        const val LIMIT_MODEL_LAUNCHER = 1
 
         //_FLOATING_LIMIT
-        const val LIMIT_MODEL_HEAVY2 = 2
+        const val LIMIT_MODEL_FLOATING = 1
 
         /**
          * 在小米等有可以关闭应用程序的手机助手APP的机型上适用
          * _LAUNCHER_FLOATING_MODEL
          */
-        const val LIMIT_MODEL_ULTIMATE = 3
+        const val LIMIT_MODEL_ULTIMATE = 2
 
-        const val LIMIT_MODEL_ROOT = 4
+        const val LIMIT_MODEL_ROOT = 3
     }
 
 

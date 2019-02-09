@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.utils
+package com.lfork.phonelimitadvanced.permission
 
 import android.Manifest
 import android.app.Activity
@@ -16,7 +16,7 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import com.lfork.phonelimitadvanced.main.focus.FakeHomeActivity
 import com.lfork.phonelimitadvanced.utils.LinuxShell.execCommand
-import com.lfork.phonelimitadvanced.base.widget.DialogPermission
+import com.lfork.phonelimitadvanced.base.widget.UsagePermissionDialog
 import java.io.DataOutputStream
 import java.util.ArrayList
 
@@ -90,7 +90,10 @@ object PermissionManager{
     }
 
     fun requestStoragePermission(context: Context, requestCode: Int, activity: Activity) {
-        if (!isGrantedStoragePermission(context)) {
+        if (!isGrantedStoragePermission(
+                context
+            )
+        ) {
             ActivityCompat.requestPermissions(
                 activity,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
@@ -254,7 +257,7 @@ object PermissionManager{
 
 
     fun Activity.requestStateUsagePermission(requestCode: Int) {
-        val dialog = DialogPermission(this)
+        val dialog = UsagePermissionDialog(this)
         dialog.show()
         dialog.setOnClickListener {
             startActivityForResult(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS) ,requestCode)

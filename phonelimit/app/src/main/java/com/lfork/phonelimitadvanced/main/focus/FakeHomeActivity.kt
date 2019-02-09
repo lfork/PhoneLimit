@@ -3,7 +3,6 @@ package com.lfork.phonelimitadvanced.main.focus
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.lfork.phonelimitadvanced.R
-import com.lfork.phonelimitadvanced.utils.PermissionManager.clearDefaultLauncherFake
 
 class FakeHomeActivity : AppCompatActivity() {
 

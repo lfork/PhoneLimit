@@ -74,7 +74,7 @@ class FloatingLimitTask : BaseLimitTask() {
 
     private fun initView() {
         mWindowView = LayoutInflater.from(mContext).inflate(R.layout.item_window_floating, null)
-        remainTimeTV = mWindowView?.findViewById(R.id.remainTime)
+        remainTimeTV = mWindowView?.findViewById(R.id.remain_time_text)
     }
 
     var viewIsAdded = false

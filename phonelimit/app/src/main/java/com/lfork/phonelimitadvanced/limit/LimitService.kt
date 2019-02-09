@@ -13,9 +13,9 @@ import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.data.*
 import com.lfork.phonelimitadvanced.limit.task.*
 import com.lfork.phonelimitadvanced.main.MainActivity
-import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -123,11 +123,10 @@ class LimitService : Service() {
 
         val limitTask: LimitTask =
                 when (taskConfig.limitModel) {
-                    LimitTaskConfig.LIMIT_MODEL_LIGHT_APP_JUMP -> BaseLimitTask()
-                    LimitTaskConfig.LIMIT_MODEL_HEAVY_FLOATING_LIMIT -> FloatingLimitTask()
-                    LimitTaskConfig.LIMIT_MODEL_HEAVY_LAUNCHER_LIMIT -> LauncherLimitTask()
-                    LimitTaskConfig.LIMIT_MODEL_ULTIMATE_LAUNCHER_FLOATING_MODEL -> UltimateFloatingLauncherLimitTask()
-                    LimitTaskConfig.LIMIT_MODEL_ROOT_MODEL -> RootLimitTask()
+                    LimitTaskConfig.LIMIT_MODEL_LIGHT -> BaseLimitTask()
+                    LimitTaskConfig.LIMIT_MODEL_FLOATING -> FloatingLimitTask()
+                    LimitTaskConfig.LIMIT_MODEL_ULTIMATE -> UltimateFloatingLauncherLimitTask()
+                    LimitTaskConfig.LIMIT_MODEL_ROOT -> RootLimitTask()
                     else -> {
                         LauncherLimitTask()
                     }
@@ -264,10 +263,8 @@ class LimitService : Service() {
     }
 
     private fun checkAndRecoveryLimitTask() {
-        val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
-        val remainTimeSeconds = sp.getLong("remain_time_seconds", 0)
-        val startTime = sp.getLong("start_time", System.currentTimeMillis())
-
+        val remainTimeSeconds = getRemainTime()
+        val startTime = getStartTime()
 
         val config = LimitTaskConfig(limitTimeSeconds = remainTimeSeconds, startTimeLong = startTime)
         if (remainTimeSeconds > 1) {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
+import com.lfork.phonelimitadvanced.limit.LimitModelType
 import java.util.ArrayList
 
 /**
@@ -13,6 +14,21 @@ import java.util.ArrayList
  * @date 2019/02/07 11:14
  */
 
+
+fun Context.saveRootStatus(isRooted: Boolean) {
+    getSharedPreferences("env", Context.MODE_PRIVATE)
+        .edit()
+        .putBoolean("isRooted", isRooted)
+        .apply()
+}
+
+
+fun Context.getRootStatus() = getSharedPreferences("env", Context.MODE_PRIVATE).getBoolean(
+    "isRooted",
+    false
+)
+
+
 fun Context.saveRemainTime(remainTimeSeconds: Long) {
     val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
     val editor = sp.edit()
@@ -20,12 +36,40 @@ fun Context.saveRemainTime(remainTimeSeconds: Long) {
     editor.apply()
 }
 
+
+fun Context.getRemainTime() = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE).getLong(
+    "remain_time_seconds",
+    0
+)
+
 fun Context.saveStartTime(startTime: Long) {
-    val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
-    val editor = sp.edit()
-    editor.putLong("start_time", startTime)
-    editor.apply()
+    getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+        .edit()
+        .putLong("start_time", startTime)
+        .apply()
 }
+
+fun Context.getStartTime() = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE).getLong(
+    "start_time",
+    0
+)
+
+
+fun Context.saveDefaultLimitModel(@LimitModelType limitModel: Int) {
+    getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+        .edit()
+        .putInt("limit_model", limitModel)
+        .apply()
+}
+
+
+fun Context.getDefaultLimitModel() =
+    getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+        .getInt(
+            "limit_model",
+            0
+        )
+
 
 fun Context.clearStartTime() {
     val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
