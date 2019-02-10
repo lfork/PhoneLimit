@@ -16,7 +16,9 @@ import com.lfork.phonelimitadvanced.utils.setupToolBar
 import kotlinx.android.synthetic.main.main2_act.*
 import android.view.View
 import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
+import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
 import com.lfork.phonelimitadvanced.utils.setSystemUIVisible
+import com.lfork.phonelimitadvanced.utils.startActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -67,6 +69,10 @@ class MainActivity : AppCompatActivity() {
 
     var limitModelSelectionDialog: LimitModelSelectDialog? = null
 
+    override fun onResume() {
+        super.onResume()
+        limitModelSelectionDialog?.onResume()
+    }
 
     fun showLimitModelSelectionDialog() {
         limitModelSelectionDialog = LimitModelSelectDialog(this)
@@ -77,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                 limitModelMenuItem?.title = model
             }
         }
-        limitModelSelectionDialog?.permissionCheckerAndRequester = focusFragment
+//        limitModelSelectionDialog?.permissionCheckerAndRequester = focusFragment
     }
 
 
@@ -94,6 +100,7 @@ class MainActivity : AppCompatActivity() {
                 showLimitModelSelectionDialog()
             }
             R.id.timed_task -> {
+                startActivity<TimedTaskActivity>()
             }
             R.id.settings -> {
             }

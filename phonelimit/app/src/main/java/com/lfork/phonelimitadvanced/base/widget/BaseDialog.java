@@ -134,4 +134,8 @@ public abstract class BaseDialog extends Dialog {
 
     //设置布局id
     protected abstract int getContentViewId();
+
+    public void onResume(){
+
+    }
 }

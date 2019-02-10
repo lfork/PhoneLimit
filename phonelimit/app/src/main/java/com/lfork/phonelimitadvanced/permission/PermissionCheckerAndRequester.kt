@@ -7,7 +7,7 @@ package com.lfork.phonelimitadvanced.permission
  * @date 2019/02/09 10:57
  */
 interface PermissionCheckerAndRequester {
-    fun requestUsagePermission(): Boolean
+//    fun requestUsagePermission(): Boolean
 
     fun requestFloatingPermission():Boolean
 

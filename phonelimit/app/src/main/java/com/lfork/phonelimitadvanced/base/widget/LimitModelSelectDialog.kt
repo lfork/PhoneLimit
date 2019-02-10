@@ -2,7 +2,6 @@ package com.lfork.phonelimitadvanced.base.widget
 
 import android.animation.AnimatorSet
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.widget.*
 import com.hjq.toast.ToastUtils
@@ -13,8 +12,7 @@ import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_
 import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_LIGHT
 import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ROOT
 import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ULTIMATE
-import com.lfork.phonelimitadvanced.permission.PermissionCheckerAndRequester
-import com.lfork.phonelimitadvanced.permission.PermissionManager
+import com.lfork.phonelimitadvanced.permission.*
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedFloatingWindowPermission
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
@@ -29,7 +27,7 @@ class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
     private lateinit var modelArray: Array<String>
     private lateinit var modelTipsArray: Array<String>
     private var itemPosition = 0
-    var permissionCheckerAndRequester: PermissionCheckerAndRequester? = null
+//    var permissionCheckerAndRequester: PermissionCheckerAndRequester? = null
 
     override fun setWidthScale(): Float {
         return 0.85f
@@ -66,7 +64,7 @@ class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
             id: Long
         ) {
             itemPosition = position
-            modelUiSetting(itemPosition)
+            permissionCheckUISettings(itemPosition)
 //                tv_default_model.text = modelArray[position]
             tv_model_tips.text = modelTipsArray[position]
 
@@ -93,36 +91,36 @@ class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
         // Apply the adapter to the spinner
         spinner.adapter = adapter
         spinner.setSelection(itemPosition)
-        modelUiSetting(itemPosition)
+        permissionCheckUISettings(itemPosition)
         tv_default_model.text = "当前模式：${modelArray[itemPosition]}"
         tv_model_tips.text = modelTipsArray[itemPosition]
 
         spinner.onItemSelectedListener = itemSelectedListener
 
         layout_usage_permission.setOnClickListener {
-            permissionCheckerAndRequester?.requestUsagePermission()
+           context.checkAndRequestUsagePermission()
 
         }
 
         layout_floating_permission.setOnClickListener {
-            permissionCheckerAndRequester?.requestFloatingPermission()
+            context.requestFloatingPermission()
 
         }
 
         layout_launcher_permission.setOnClickListener {
-            permissionCheckerAndRequester?.requestLauncherPermission()
+            context.requestLauncherPermission()
 
         }
 
         layout_root_permission.setOnClickListener {
-            permissionCheckerAndRequester?.requestRootPermission()
+            context.requestRootPermission()
 
         }
 
     }
 
 
-    fun modelUiSetting(model: Int) {
+    fun permissionCheckUISettings(model: Int) {
         layout_floating_permission.visibility = View.GONE
         layout_launcher_permission.visibility = View.GONE
         layout_root_permission.visibility = View.GONE
@@ -206,6 +204,11 @@ class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
     override fun dismiss() {
         super.dismiss()
         limitModelUpdateListener = null
-        permissionCheckerAndRequester = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        permissionCheckUISettings(itemPosition)
     }
 }
