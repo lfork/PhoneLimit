@@ -5,7 +5,7 @@ import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.defaultLimitModel
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.isRooted
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ROOT
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_ROOT
 import com.lfork.phonelimitadvanced.utils.RootShell
 
 /**

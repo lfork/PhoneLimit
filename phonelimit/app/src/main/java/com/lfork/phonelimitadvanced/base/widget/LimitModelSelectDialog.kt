@@ -8,14 +8,15 @@ import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.LimitApplication
 
 import com.lfork.phonelimitadvanced.R
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_FLOATING
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_LIGHT
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ROOT
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ULTIMATE
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_FLOATING
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_LIGHT
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_ROOT
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_ULTIMATE
 import com.lfork.phonelimitadvanced.permission.*
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedFloatingWindowPermission
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
+import com.lfork.phonelimitadvanced.permission.PermissionManager.modelPermissionCheck
 import kotlinx.android.synthetic.main.dialog_limit_model_select.*
 
 /**
@@ -42,7 +43,7 @@ class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
     }
 
    private val btnDefaultModelListener = {
-        if (modelPermissionCheck(itemPosition)) {
+        if (modelPermissionCheck(context,itemPosition)) {
             tv_default_model.text = "当前模式：${modelArray[itemPosition]}"
             LimitApplication.defaultLimitModel = itemPosition
             limitModelUpdateListener?.updateLimitModel(modelArray[itemPosition])
@@ -172,26 +173,7 @@ class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
     }
 
 
-    private fun modelPermissionCheck(model: Int): Boolean {
-        when (model) {
-            LIMIT_MODEL_LIGHT -> {
-                return context.isGrantedStatAccessPermission()
-            }
-            LIMIT_MODEL_FLOATING -> {
 
-                return context.isGrantedStatAccessPermission() && context.isGrantedFloatingWindowPermission()
-
-            }
-            LIMIT_MODEL_ULTIMATE -> {
-                return context.isGrantedStatAccessPermission() && context.isGrantedFloatingWindowPermission() && context.isDefaultLauncher()
-            }
-            LIMIT_MODEL_ROOT -> {
-                return context.isGrantedStatAccessPermission() && PermissionManager.isRooted()
-            }
-        }
-
-        return false
-    }
 
     var limitModelUpdateListener: LimitModelUpdateListener? = null
 

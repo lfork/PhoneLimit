@@ -11,24 +11,49 @@ import android.view.ViewGroup
 import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
-import com.lfork.phonelimitadvanced.data.limittask.LimitTaskRepository
+import com.lfork.phonelimitadvanced.data.DataCallback
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfigRepository
 import com.lfork.phonelimitadvanced.limit.LimitService
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
+import com.lfork.phonelimitadvanced.utils.ToastUtil
 import kotlinx.android.synthetic.main.item_timed_task.view.*
 import kotlinx.android.synthetic.main.timed_task_setting_act.*
 import java.util.*
 
 
-class TimedTaskActivity : AppCompatActivity() {
+class TimedTaskActivity : AppCompatActivity(), LimitApplication.LimitSwitchListener {
+    override fun onStartLimit() {
+        finish()
+    }
+
+    override fun onCloseLimit() {
+        finish()
+    }
 
     lateinit var tasksAdapter: TaskConfigAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (!LimitService.timedTaskCheckFlag) {
+            ToastUtils.show("数据正在初始化中...")
+            finish()
+        }
+
         setContentView(R.layout.timed_task_setting_act)
 
         btn_add_task.setOnClickListener {
-            showAddTaskDialog()
+            if (TaskConfigRepository.cacheTasks == null) {
+                ToastUtils.show("数据正在初始化中...")
+            } else {
+                if (TaskConfigRepository.cacheTasks!!.size >= 5) {
+                    ToastUtils.show("最多添加5个任务")
+                } else {
+                    showAddTaskDialog()
+                }
+            }
+
+
         }
 
         recycle_timed_tasks.layoutManager = LinearLayoutManager(
@@ -39,6 +64,7 @@ class TimedTaskActivity : AppCompatActivity() {
         tasksAdapter = TaskConfigAdapter(this)
         recycle_timed_tasks.adapter = tasksAdapter
 
+
     }
 
     var tempDialog: TimedTaskAddOrEditDialog? = null
@@ -47,7 +73,13 @@ class TimedTaskActivity : AppCompatActivity() {
         super.onResume()
         tempDialog?.onResume()
         refreshTasks()
+        LimitApplication.registerSwitchListener(this)
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LimitApplication.unregisterSwitchListener(this)
     }
 
 
@@ -59,34 +91,41 @@ class TimedTaskActivity : AppCompatActivity() {
 
     private val timedTaskAddedListener =
         object : TimedTaskAddOrEditDialog.TimedTaskEditCompletedListener {
-            override fun onCompleted(taskConfig: LimitTaskConfig) {
-                LimitTaskRepository.addTask(taskConfig)
-                refreshTasks()
-                LimitService.commitTimedTask(this@TimedTaskActivity, taskConfig)
+            override fun onCompleted(taskConfig: TaskConfig) {
+
+                LimitApplication.executeAsyncDataTask {
+                    TaskConfigRepository.addTask(taskConfig)
+                    val data = TaskConfigRepository.getTasks()
+                    runOnUiThread {
+                        tasksAdapter.refreshItems(data)
+                        LimitService.commitTimedTask(this@TimedTaskActivity, taskConfig)
+                    }
+                }
+
+
             }
         }
 
 
     private val timedTaskUpdateCompletedListener =
         object : TimedTaskAddOrEditDialog.TimedTaskEditCompletedListener {
-            override fun onCompleted(taskConfig: LimitTaskConfig) {
+            override fun onCompleted(taskConfig: TaskConfig) {
                 if (LimitService.cancelTimedTask(taskConfig.id)) {
                     LimitService.commitTimedTask(this@TimedTaskActivity, taskConfig)
                     LimitApplication.executeAsyncDataTask {
                         //等任务添加
                         Thread.sleep(100)
-                        runOnUiThread {
-                            if (LimitService.timedTaskController.containsKey(taskConfig.id)) {
-                                ToastUtils.show("修改成功")
-                                LimitTaskRepository.updateLimitTask(taskConfig)
-                                refreshTasks()
-                            } else {
-                                ToastUtils.show("修改失败")
-                            }
+                        if (LimitService.timedTaskController.containsKey(taskConfig.id)) {
+                            TaskConfigRepository.updateLimitTask(taskConfig)
+                            refreshTasks()
+                            ToastUtils.show("修改成功")
+                        } else {
+                            ToastUtils.show("修改失败")
                         }
-
                     }
 
+                } else {
+                    ToastUtils.show("任务已经或者马上开始执行，修改失败")
                 }
 
             }
@@ -102,7 +141,12 @@ class TimedTaskActivity : AppCompatActivity() {
 
 
     private fun refreshTasks() {
-        tasksAdapter.setItems(LimitTaskRepository.getTasks())
+        LimitApplication.executeAsyncDataTask {
+            val data = TaskConfigRepository.getTasks()
+            runOnUiThread {
+                tasksAdapter.refreshItems(data)
+            }
+        }
     }
 
 
@@ -113,7 +157,7 @@ class TimedTaskActivity : AppCompatActivity() {
     inner class TaskConfigAdapter(var context: AppCompatActivity?) :
         RecyclerView.Adapter<TaskConfigAdapter.NormalHolder>() {
 
-        private val items = ArrayList<LimitTaskConfig>(0);
+        private val items = ArrayList<TaskConfig>(0);
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
             val view = LayoutInflater.from(parent.context)
@@ -135,7 +179,7 @@ class TimedTaskActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: NormalHolder, p1: Int) {
             val view = holder.itemView
             val item = items[p1]
-            view.tv_limit_time.text = (item.limitTimeSeconds / 60).toString()
+            view.tv_limit_time.text = item.getLimitTimeStr()
 
             view.tv_start_time.text = item.getStarTimeStr()
             view.tv_cycle_model.text = cycleModelArray[item.cycleModel]
@@ -151,14 +195,32 @@ class TimedTaskActivity : AppCompatActivity() {
 
             view.btn_edit.setOnClickListener {
                 showEditTaskDialog(item)
-
             }
             view.btn_close.setOnClickListener {
                 //点击后，checked的状态就直接变了
                 if (!view.btn_close.isChecked) {
                     if (LimitService.cancelTimedTask(item.id)) {
-                        view.tv_status.text = "已关闭"
+                        item.isActive = false
+                        TaskConfigRepository.updateLimitTask(item, object : DataCallback<String> {
+                            override fun succeed(data: String) {
+                                runOnUiThread {
+                                    ToastUtils.show("关闭成功")
+                                    view.tv_status.text = "已关闭"
+                                }
+                            }
+
+                            override fun failed(code: Int, log: String) {
+                                runOnUiThread {
+                                    item.isActive = true
+                                    ToastUtils.show("关闭失败")
+                                    view.btn_close.isChecked = !view.btn_close.isChecked
+                                }
+                            }
+                        })
+
+
                     } else {
+                        item.isActive = true
                         ToastUtils.show("关闭失败")
                         view.btn_close.isChecked = !view.btn_close.isChecked
                     }
@@ -167,32 +229,51 @@ class TimedTaskActivity : AppCompatActivity() {
                     LimitApplication.executeAsyncDataTask {
                         //等任务添加
                         Thread.sleep(100)
-                        runOnUiThread {
-                            if (LimitService.timedTaskController.containsKey(item.id)) {
+                        item.isActive = true
+                        if (TaskConfigRepository.updateLimitTask(item) > 0 && LimitService.timedTaskController.containsKey(
+                                item.id
+                            )
+                        ) {
+                            runOnUiThread {
+                                ToastUtils.show("激活成功")
                                 view.tv_status.text = "已激活"
-                            } else {
+                            }
+
+                        } else {
+                            runOnUiThread {
+                                item.isActive = false
                                 ToastUtils.show("激活失败")
                                 view.btn_close.isChecked = !view.btn_close.isChecked
                             }
-                        }
 
+                        }
                     }
 
                 }
             }
             view.btn_delete.setOnClickListener {
-                if (LimitService.cancelTimedTask(item.id)) {
-                    LimitTaskRepository.deleteTask(item)
+                if (LimitService.cancelTimedTask(item.id) || !item.isActive) {
+                    LimitApplication.executeAsyncDataTask {
+                        TaskConfigRepository.deleteTask(item)
+                    }
                     deleteItem(p1)
                 } else {
-                    ToastUtils.show("删除失败")
+                    //可能是任务已经在运行了，所以删除失败
+                    if (LimitService.taskIsRunning(item.id)) {
+                        ToastUtils.show("限制任务已开始，暂时无法删除")
+                    } else if (LimitService.taskIsDone(item.id)) {
+                        ToastUtils.show("任务已完成，删除失败")
+                    } else {
+                        ToastUtils.show("删除失败")
+                    }
+
                 }
             }
 
         }
 
 
-        private fun showEditTaskDialog(taskConfig: LimitTaskConfig) {
+        private fun showEditTaskDialog(taskConfig: TaskConfig) {
             tempDialog = TimedTaskAddOrEditDialog(context!!)
             tempDialog?.taskConfig = taskConfig
             tempDialog?.supportFragmentManager = context?.supportFragmentManager
@@ -212,7 +293,7 @@ class TimedTaskActivity : AppCompatActivity() {
 
         inner class NormalHolder(itemView: View) : RecyclerView.ViewHolder(itemView) //{
 
-        fun setItems(itemList: MutableList<LimitTaskConfig>) {
+        fun refreshItems(itemList: MutableList<TaskConfig>) {
             items.clear()
             items.addAll(itemList)
             notifyDataSetChanged()

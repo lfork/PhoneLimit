@@ -17,6 +17,7 @@ import android.util.Log
 import com.lfork.phonelimitadvanced.main.focus.FakeHomeActivity
 import com.lfork.phonelimitadvanced.utils.LinuxShell.execCommand
 import com.lfork.phonelimitadvanced.base.widget.UsagePermissionDialog
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
 import java.io.DataOutputStream
 import java.util.ArrayList
 
@@ -304,5 +305,26 @@ object PermissionManager{
             }
         }
         return packageNames
+    }
+
+
+    fun modelPermissionCheck(context:Context,model: Int): Boolean {
+        when (model) {
+            TaskConfig.LIMIT_MODEL_LIGHT -> {
+                return context.isGrantedStatAccessPermission()
+            }
+            TaskConfig.LIMIT_MODEL_FLOATING -> {
+                return context.isGrantedStatAccessPermission() && context.isGrantedFloatingWindowPermission()
+
+            }
+            TaskConfig.LIMIT_MODEL_ULTIMATE -> {
+                return context.isGrantedStatAccessPermission() && context.isGrantedFloatingWindowPermission() && context.isDefaultLauncher()
+            }
+            TaskConfig.LIMIT_MODEL_ROOT -> {
+                return context.isGrantedStatAccessPermission() && PermissionManager.isRooted()
+            }
+        }
+
+        return false
     }
 }

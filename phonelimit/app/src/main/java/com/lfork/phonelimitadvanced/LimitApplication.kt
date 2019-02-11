@@ -1,7 +1,6 @@
 package com.lfork.phonelimitadvanced
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
@@ -12,7 +11,7 @@ import com.lfork.phonelimitadvanced.base.thread.MyThreadFactory
 import com.lfork.phonelimitadvanced.data.*
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
 import com.lfork.phonelimitadvanced.main.MainHandler
 import com.lfork.phonelimitadvanced.utils.Constants.DEFAULT_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.LinuxShell
@@ -23,6 +22,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 /**
@@ -49,13 +50,38 @@ class LimitApplication : Application() {
             }
 
         var isOnLimitation = false
+        set(value) {
+            field = value
+            if (field){
+                limitSwitchListeners.forEach {
+                    it.onStartLimit()
+                }
+            } else{
+                limitSwitchListeners.forEach {
+                    it.onCloseLimit()
+                }
+            }
 
-        var isDoingTimedTask = false
+        }
+
+        var isTimedTaskRunning = false
+
+
+        private val limitSwitchListeners = ArrayList<LimitSwitchListener>()
+
+        fun registerSwitchListener(limitSwitchListener: LimitSwitchListener){
+            limitSwitchListeners.add(limitSwitchListener)
+        }
+
+        fun unregisterSwitchListener(limitSwitchListener: LimitSwitchListener){
+            limitSwitchListeners.remove(limitSwitchListener)
+        }
+
 
         var isFirstOpen = false
         lateinit var App: LimitApplication
 
-        var defaultLimitModel = LimitTaskConfig.LIMIT_MODEL_LIGHT
+        var defaultLimitModel = TaskConfig.LIMIT_MODEL_LIGHT
             get() {
 //                if (::App.isInitialized) {
                 field = App.getDefaultLimitModel()
@@ -94,14 +120,18 @@ class LimitApplication : Application() {
             Log.d("mHandler", "ee")
             false
         }
+    }
 
 
-//        void workerThread() {
-//            // And this is how you call it from the worker thread:
-//            Message message = mHandler.obtainMessage(command, parameter);
-//            message.sendToTarget();
-//        }
 
+
+    /**
+     *
+     */
+    interface LimitSwitchListener {
+        fun onStartLimit()
+
+        fun onCloseLimit()
     }
 
     override fun onCreate() {
@@ -142,7 +172,6 @@ class LimitApplication : Application() {
         LimitDatabase.initDataBase(this)
         UrlInfoRepository.initUrlData()
     }
-
 
     fun getOrInitAllAppsInfo(): MutableList<AppInfo>? {
         if (appInfoList.size > 1) {

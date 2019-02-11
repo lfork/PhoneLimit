@@ -10,12 +10,16 @@ import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.*
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.CYCLE_MODEL_NO_CYCLE
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfigRepository
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.CYCLE_MODEL_NO_CYCLE
 import com.lfork.phonelimitadvanced.limit.task.*
 import com.lfork.phonelimitadvanced.main.MainActivity
+import com.lfork.phonelimitadvanced.permission.PermissionManager
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -38,16 +42,13 @@ class LimitService : Service() {
 
     private lateinit var timedTaskExecutor: LimitExecutor
 
-
-
     private var notification: Notification? = null
-
 
     override fun onCreate() {
         super.onCreate()
         //判断是否有未执行完的任务->继续执行限制任务  把判断剩余限制任务的逻辑放到服务里面
         checkAndRecoveryLimitTask()
-
+        checkTimedLimitTask()
         //判断是否有定时服务->开启定时服务的监听
 
         //通知用户 显示通知(开启前台服务)
@@ -65,7 +66,7 @@ class LimitService : Service() {
 //        val commandType = intent.getIntExtra("command_type", 0)
 
 //        if (commandType == COMMAND_COMMIT_TASK ){
-        val taskConfig = intent.getSerializableExtra("limit_task_time_info") as LimitTaskConfig?
+        val taskConfig = intent.getSerializableExtra("limit_task_time_info") as TaskConfig?
 
         if (taskConfig == null) {
             Log.e("onStartCommand", "taskTimeInfo 不能为空")
@@ -102,7 +103,7 @@ class LimitService : Service() {
             this@LimitService.closeLimitTask()
         }
 
-        fun closeTimedTask(id: UUID) {
+        fun closeTimedTask(id: String) {
         }
     }
 
@@ -110,7 +111,7 @@ class LimitService : Service() {
      * 现在的任务执行策略是，只执行一个任务，如果后来的任务有冲突的话，那么就会被抛弃
      */
     @Synchronized
-    private fun startLimitTask(taskConfig: LimitTaskConfig) {
+    private fun startLimitTask(taskConfig: TaskConfig) {
 
         //如果限制已开启，那么直接返回
         if (LimitApplication.isOnLimitation) {
@@ -120,18 +121,12 @@ class LimitService : Service() {
         val limitTimeSeconds: Long = taskConfig.limitTimeSeconds
 
 
-//        val startTimeMillis: Long = if (taskConfig.startTimeLongMillis > 0) {
-//            taskConfig.startTimeLongMillis
-//        } else {
-//
-//        }
-
         val limitTask: LimitTask =
             when (taskConfig.limitModel) {
-                LimitTaskConfig.LIMIT_MODEL_LIGHT -> BaseLimitTask()
-                LimitTaskConfig.LIMIT_MODEL_FLOATING -> FloatingLimitTask()
-                LimitTaskConfig.LIMIT_MODEL_ULTIMATE -> UltimateFloatingLauncherLimitTask()
-                LimitTaskConfig.LIMIT_MODEL_ROOT -> RootLimitTask()
+                TaskConfig.LIMIT_MODEL_LIGHT -> BaseLimitTask()
+                TaskConfig.LIMIT_MODEL_FLOATING -> FloatingLimitTask()
+                TaskConfig.LIMIT_MODEL_ULTIMATE -> UltimateFloatingLauncherLimitTask()
+                TaskConfig.LIMIT_MODEL_ROOT -> RootLimitTask()
                 else -> {
                     LauncherLimitTask()
                 }
@@ -162,7 +157,14 @@ class LimitService : Service() {
             }
         }
 
-        limitTimer = LimitTimer(limitTimeSeconds, timerListener, taskConfig.startTime.timeInMillis)
+        val startTime = if (taskConfig.startTimeMillisForUnfinishedTask > 0) {
+            taskConfig.startTimeMillisForUnfinishedTask
+        } else {
+            System.currentTimeMillis()
+        }
+
+        limitTimer = LimitTimer(limitTimeSeconds, timerListener, startTime)
+
 
         //计时器开启前需要先开启限制服务
         //需要先开 limitTaskExecutor ，因为如果时间很短，然后先开的 limitTimer，可能会导致在 limitTaskExecutor 开启之前时间就结束了，然后等下
@@ -173,13 +175,14 @@ class LimitService : Service() {
         }
 
         if (!limitTimer.start()) {
+            limitTaskExecutor.close()
             Log.e("startLimit", "限制任务开启失败:limitTimer启动失败")
             return
         }
 
         LimitApplication.isOnLimitation = true
         listener?.onLimitStarted()
-        saveStartTime(taskConfig.startTime.timeInMillis)
+        saveStartTime(startTime)
 
     }
 
@@ -191,44 +194,56 @@ class LimitService : Service() {
      *
      * 任务队列：时间有效性检查，如果有任务被延迟，那么当执行这个任务的时候，如果这个任务
      */
-    private fun startTimedTask(taskConfig: LimitTaskConfig) {
+    private fun startTimedTask(taskConfig: TaskConfig) {
 
         if (taskConfig.limitTimeSeconds < 0) {
             return
         }
+
+        val task = Runnable {
+            //TODO 权限检查，如果权限不足，就把权限不足的状态写入数据库。然后再toast一下。在任务列表的界面就直接提示权限不足
+            if (PermissionManager.modelPermissionCheck(this@LimitService, taskConfig.limitModel)) {
+                timedTaskController.remove(taskConfig.id)
+                if (timedTaskController.isEmpty()){
+                    LimitApplication.isTimedTaskRunning = false
+                }
+                startLimitTask(taskConfig)
+                if (taskConfig.cycleModel == TaskConfig.CYCLE_MODEL_NO_CYCLE){
+                    taskConfig.isActive = false
+                }
+                TaskConfigRepository.updateLimitTask(taskConfig)
+            } else {
+                ToastUtils.show(taskConfig.tips)
+            }
+
+        }
+
+        val currentTime = GregorianCalendar()
+        val startTime = taskConfig.getStartTimeMillisForTimedTask()
+        val delayTime = startTime - currentTime.timeInMillis
+        Log.d("延迟时间测试", "当前时间${currentTime.timeInMillis},任务开始时间${startTime} ")
 
 
         if (taskConfig.cycleModel == CYCLE_MODEL_NO_CYCLE) {
             //传过来的参数是：【任务开始的时间】，【任务持续的时间】，【任务的重复周期】/不重复
             //Java的Date和Calendar的月份是从0开始计时的
 //            taskConfig.startTime.set(2019, 1, 7, 17, 3, 0)
-            val delayTime = taskConfig.startTime.timeInMillis - System.currentTimeMillis()
-            val task = Runnable {
-                Log.d("TimedTask", "开启成功1")
-                startLimitTask(taskConfig)
-            }
+
             val controller =
                 scheduledThreadPoolExecutor.schedule(task, delayTime, TimeUnit.MILLISECONDS)
-            Log.d(
-                "TimedTask",
-                "初始化成功  \n限制开始时间${taskConfig.startTime.timeInMillis}\n当前系统时间${System.currentTimeMillis()} 延迟时间$delayTime "
-            )
+
             timedTaskController[taskConfig.id] = controller
         } else {
 
             val cycleTime = when (taskConfig.cycleModel) {
-                LimitTaskConfig.CYCLE_MODEL_DAILY -> 24 * 60 * 60 * 1000L
-                LimitTaskConfig.CYCLE_MODEL_WEEKLY -> 7 * 24 * 60 * 60 * 1000L
+                TaskConfig.CYCLE_MODEL_DAILY -> 24 * 60 * 60 * 1000L
+                TaskConfig.CYCLE_MODEL_WEEKLY -> 7 * 24 * 60 * 60 * 1000L
                 else -> {
                     24 * 60 * 60 * 1000L
                 }
             }
 
-            val task = Runnable {
-                Log.d("TimedTask", "开启成功2")
-                startLimitTask(taskConfig)
-            }
-            val delayTime = taskConfig.startTime.timeInMillis - System.currentTimeMillis()
+            //如果任务之间的时间有冲突，那么会依次执行
             val controller = scheduledThreadPoolExecutor.scheduleWithFixedDelay(
                 task,
                 delayTime,
@@ -237,9 +252,13 @@ class LimitService : Service() {
             )
             timedTaskController[taskConfig.id] = controller
         }
-    }
 
-    private fun closeTimedTask(taskConfig: LimitTaskConfig) {
+        Log.d(
+            "TimedTask",
+            "初始化成功  \n限制开始时间${Date(startTime)}\n当前系统时间${Date()} 延迟时间$delayTime "
+        )
+
+        LimitApplication.isTimedTaskRunning = true
     }
 
     private fun closeLimitTask() {
@@ -269,7 +288,7 @@ class LimitService : Service() {
             notification = notificationBuilder.setOngoing(true)
                 .setSmallIcon(R.drawable.ic_notification1)
                 .setContentTitle("PhoneLimit 运行中")
-                .setContentText("在未开启限制的状态下可以随时关闭PhoneLimit")
+                .setContentText("在程序空闲状态下，按返回键可随时退出")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setContentIntent(pi)
@@ -292,15 +311,32 @@ class LimitService : Service() {
         val remainTimeSeconds = getRemainTime()
         val startTimeMillis = getStartTime()
 
-        val config = LimitTaskConfig().apply {
+        val config = TaskConfig().apply {
             limitTimeSeconds = remainTimeSeconds
-            startTime.timeInMillis = startTimeMillis
+            isImmediatelyExecuted = true
+            startTimeMillisForUnfinishedTask = startTimeMillis
+//            startTime.timeInMillis = startTimeMillis
         }
         if (remainTimeSeconds > 1) {
             startLimitTask(config)
         }
     }
 
+    private fun checkTimedLimitTask() {
+        if (timedTaskCheckFlag) {
+            return
+        }
+        timedTaskCheckFlag = true
+        LimitApplication.executeAsyncDataTask {
+            val tasks = TaskConfigRepository.getTasks()
+            tasks.forEach {
+                if (it.isActive){
+                    commitTimedTask(this@LimitService, it)
+                    LimitApplication.isTimedTaskRunning = true
+                }
+            }
+        }
+    }
 
     interface StateListener {
 
@@ -313,14 +349,12 @@ class LimitService : Service() {
 
     companion object {
         private val scheduledThreadPoolExecutor = Executors.newScheduledThreadPool(5)
-       val timedTaskController = HashMap<UUID, ScheduledFuture<*>?>()
+        val timedTaskController = HashMap<String, ScheduledFuture<*>?>()
 
-
-        const val COMMAND_COMMIT_TASK = 0
-        const val COMMAND_CANCEL_TASK = 1
+        var timedTaskCheckFlag = false
 
         fun startLimit(context: Context, limitTimeSeconds: Long) {
-            val taskInfo = LimitTaskConfig().apply {
+            val taskInfo = TaskConfig().apply {
                 this.limitTimeSeconds = limitTimeSeconds
                 isImmediatelyExecuted = true
                 limitModel = LimitApplication.defaultLimitModel
@@ -332,7 +366,7 @@ class LimitService : Service() {
             context.startService(limitIntent)
         }
 
-        fun commitTimedTask(context: Context, taskConfig: LimitTaskConfig) {
+        fun commitTimedTask(context: Context, taskConfig: TaskConfig) {
             //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
             val limitIntent = Intent(context, LimitService::class.java)
             limitIntent.putExtra("limit_task_time_info", taskConfig)
@@ -340,17 +374,30 @@ class LimitService : Service() {
         }
 
 
-        fun cancelTimedTask(id:UUID):Boolean{
+        fun cancelTimedTask(id: String): Boolean {
             val control = timedTaskController[id]
-            if (control == null){
+            if (control == null) {
                 return false
             }
-            if (control.cancel(false)){
+            if (control.cancel(false)) {
                 timedTaskController.remove(id)
-                return  true
+                if (timedTaskController.isEmpty()){
+                    LimitApplication.isTimedTaskRunning = false
+                }
+                return true
             }
 
             return false
+        }
+
+
+        fun taskIsRunning(id: String): Boolean {
+            val control = timedTaskController[id]
+            return control?.isDone == false && !control.isCancelled
+        }
+
+        fun taskIsDone(id: String): Boolean {
+            return timedTaskController[id]?.isDone == true
         }
 
         /**
@@ -359,13 +406,6 @@ class LimitService : Service() {
         fun timedTaskCheck() {
 
         }
-
-//        fun cancelTimedTask(context: Context,taskConfig: LimitTaskConfig) {
-//            //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
-//            val limitIntent = Intent(context, LimitService::class.java)
-//            limitIntent.putExtra("limit_task_time_info", taskConfig)
-//            context.startService(limitIntent)
-//        }
 
     }
 }

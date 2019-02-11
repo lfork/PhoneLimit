@@ -13,22 +13,23 @@ import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.widget.BaseDialog
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_FLOATING
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_LIGHT
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ROOT
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig.Companion.LIMIT_MODEL_ULTIMATE
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_FLOATING
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_LIGHT
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_ROOT
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_ULTIMATE
 import com.lfork.phonelimitadvanced.permission.*
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedFloatingWindowPermission
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
+import com.lfork.phonelimitadvanced.permission.PermissionManager.modelPermissionCheck
 import kotlinx.android.synthetic.main.dialog_add_or_edit_task_config.*
 import java.util.*
 
 
 class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
 
-//    private var modelArray: Array<String> =
+    //    private var modelArray: Array<String> =
 //        context.resources.getStringArray(R.array.limit_model_array)
 //
 //    private var modelCycleArray: Array<String> =
@@ -46,7 +47,8 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
 
 
     var supportFragmentManager: FragmentManager? = null
-    var taskConfig: LimitTaskConfig = LimitTaskConfig()
+    var taskConfig: TaskConfig =
+        TaskConfig()
         @SuppressLint("SetTextI18n")
         set(value) {
             field = value
@@ -71,56 +73,22 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
     @SuppressLint("SetTextI18n")
     override fun init() {
 
+        btn_finish_task.setOnClickListener {
 
-        btn_update_task.setOnClickListener {
-
-            if (!modelPermissionCheck(limitModelItemPosition)){
+            if (!modelPermissionCheck(context, limitModelItemPosition)) {
                 ToastUtils.show("权限不足，请授予相应的权限")
                 return@setOnClickListener
             }
 
-
-
             taskConfig.apply {
-
-                val currentTime = GregorianCalendar()
-//                val cHour = currentTime.get(Calendar.HOUR_OF_DAY)
-//                val cMinute = currentTime.get(Calendar.MINUTE)
-//                val cMillis = currentTime.timeInMillis
-
                 val startTimeText = tv_input_time.text.toString()
-                val hour = startTimeText.substring(0, startTimeText.indexOf(':')).toInt()
-                val minute = startTimeText.substring(startTimeText.indexOf(':') + 1).toInt()
-                val calendar = GregorianCalendar()
-                startTime.set(
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DATE),
-                    hour,
-                    minute,
-                    0
-                )
-
-                if (limitCycleItemPosition == LimitTaskConfig.CYCLE_MODEL_DAILY
-                    || limitModelItemPosition == LimitTaskConfig.CYCLE_MODEL_NO_CYCLE
-                ) {
-                    if (startTime.timeInMillis > currentTime.timeInMillis) {
-                        //今天
-                        startTime.timeInMillis
-                    } else {
-                        //明天
-                        startTime.timeInMillis += 24 * 60 * 60 * 1000
-                    }
-                } else {
-                    //第一天是sunday
-                    startTime.set(Calendar.DAY_OF_WEEK, 6)
-                }
-
-
+                startTimeHourOfDay = startTimeText.substring(0, startTimeText.indexOf(':')).toInt()
+                startTimeMinute = startTimeText.substring(startTimeText.indexOf(':') + 1).toInt()
                 val focusTimeText = et_focus_time.text.toString()
 
                 if (!TextUtils.isEmpty(focusTimeText)) {
-                    limitTimeSeconds = focusTimeText.toLong() * 60
+//                    limitTimeSeconds = focusTimeText.toLong() * 60
+                    limitTimeSeconds = focusTimeText.toLong()
                 }
                 isImmediatelyExecuted = false
                 limitModel = limitModelItemPosition
@@ -129,7 +97,7 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
 
             }
             timedTaskEditCompletedListener?.onCompleted(taskConfig)
-           dismiss()
+            dismiss()
         }
 
         btn_close.setOnClickListener { dismiss() }
@@ -157,13 +125,13 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
 
         taskConfig.let {
             et_focus_time.setText("${it.limitTimeSeconds / 60}")
-            tv_input_time.text =it.getStarTimeStr()
+            tv_input_time.text = it.getStarTimeStr()
             limitCycleItemPosition = it.cycleModel
             limitModelItemPosition = it.limitModel
-
         }
 
     }
+
 
     private fun setupLimitModelSpinner() {
         val spinner = sp_model_select
@@ -231,8 +199,6 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
             ) {
 
 
-
-
                 limitCycleItemPosition = position
             }
         }
@@ -241,7 +207,7 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
     var timedTaskEditCompletedListener: TimedTaskEditCompletedListener? = null
 
     interface TimedTaskEditCompletedListener {
-        fun onCompleted(taskConfig: LimitTaskConfig)
+        fun onCompleted(taskConfig: TaskConfig)
     }
 
 
@@ -253,28 +219,6 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
     override fun dismiss() {
         super.dismiss()
         supportFragmentManager = null
-    }
-
-
-    private fun modelPermissionCheck(model: Int): Boolean {
-        when (model) {
-            LimitTaskConfig.LIMIT_MODEL_LIGHT -> {
-                return context.isGrantedStatAccessPermission()
-            }
-            LimitTaskConfig.LIMIT_MODEL_FLOATING -> {
-
-                return context.isGrantedStatAccessPermission() && context.isGrantedFloatingWindowPermission()
-
-            }
-            LimitTaskConfig.LIMIT_MODEL_ULTIMATE -> {
-                return context.isGrantedStatAccessPermission() && context.isGrantedFloatingWindowPermission() && context.isDefaultLauncher()
-            }
-            LimitTaskConfig.LIMIT_MODEL_ROOT -> {
-                return context.isGrantedStatAccessPermission() && PermissionManager.isRooted()
-            }
-        }
-
-        return false
     }
 
 

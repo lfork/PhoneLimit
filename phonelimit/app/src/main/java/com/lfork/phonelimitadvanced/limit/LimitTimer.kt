@@ -6,9 +6,9 @@ import java.lang.Exception
  * 倒计时的计时器,只能使用一次。
  * Created by 98620 on 2018/12/14.
  */
-class LimitTimer(private val timeSeconds: Long, private val listener: TimeListener, private var starTimeMillis: Long) {
+class LimitTimer(private val limitTimeSeconds: Long, private val listener: TimeListener, private var startTimeMillis: Long) {
 
-    private var remainTimeSeconds: Long = timeSeconds
+    private var remainTimeSeconds: Long = limitTimeSeconds
 
     /**
      * 计时器是否已经激活
@@ -28,7 +28,7 @@ class LimitTimer(private val timeSeconds: Long, private val listener: TimeListen
      */
     fun start(): Boolean {
 
-        if (starTimeMillis > System.currentTimeMillis()){
+        if (startTimeMillis > System.currentTimeMillis()){
             return false
         }
 
@@ -48,7 +48,9 @@ class LimitTimer(private val timeSeconds: Long, private val listener: TimeListen
                 while (remainTimeSeconds > 0) {
                     listener.onRemainTimeRefreshed(remainTimeSeconds)
                     Thread.sleep(1000)
-                    remainTimeSeconds = timeSeconds - (System.currentTimeMillis() - starTimeMillis) / 1000
+
+                    //限制总时间 - (从限制开始的时间起，已经过去的时间)
+                    remainTimeSeconds = limitTimeSeconds - (System.currentTimeMillis() - startTimeMillis) / 1000
                 }
                 listener.onCompleted()
             } catch (e: Exception) {

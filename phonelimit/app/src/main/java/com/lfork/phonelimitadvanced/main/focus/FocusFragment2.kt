@@ -22,7 +22,7 @@ import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.limit.LimitService
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
 import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
 import com.lfork.phonelimitadvanced.permission.checkAndRequestUsagePermission
@@ -178,7 +178,7 @@ class FocusFragment2 : Fragment(){
         }
 
         //悬浮窗权限
-        if (LimitApplication.defaultLimitModel == LimitTaskConfig.LIMIT_MODEL_FLOATING) {
+        if (LimitApplication.defaultLimitModel == TaskConfig.LIMIT_MODEL_FLOATING) {
             if (!requestFloatingPermission()) {
                 return false
             }
@@ -188,8 +188,8 @@ class FocusFragment2 : Fragment(){
         //默认桌面权限
 
         if (LimitApplication.defaultLimitModel in arrayOf(
-                LimitTaskConfig.LIMIT_MODEL_ROOT,
-                LimitTaskConfig.LIMIT_MODEL_ULTIMATE
+                TaskConfig.LIMIT_MODEL_ROOT,
+                TaskConfig.LIMIT_MODEL_ULTIMATE
             )
         ) {
             if (!requestLauncherPermission()) {
@@ -201,7 +201,7 @@ class FocusFragment2 : Fragment(){
 
 
 
-        if (LimitApplication.defaultLimitModel == LimitTaskConfig.LIMIT_MODEL_ROOT) {
+        if (LimitApplication.defaultLimitModel == TaskConfig.LIMIT_MODEL_ROOT) {
 
             if (!requestRootPermission()) {
                 return false
@@ -280,6 +280,9 @@ class FocusFragment2 : Fragment(){
                         else -> btn_start_remain_time_text.text = "${timeSeconds}秒"
                     }
                 }
+
+                //ToastUtil.showLong(context, "限制已开启")
+                (activity as MainActivity?)?.hideOtherUI()
             }
         }
     }

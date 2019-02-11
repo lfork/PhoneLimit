@@ -1,5 +1,6 @@
 package com.lfork.phonelimitadvanced.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +17,7 @@ import com.lfork.phonelimitadvanced.utils.setupToolBar
 import kotlinx.android.synthetic.main.main2_act.*
 import android.view.View
 import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
+import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
 import com.lfork.phonelimitadvanced.utils.setSystemUIVisible
 import com.lfork.phonelimitadvanced.utils.startActivity
@@ -122,8 +124,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (!LimitApplication.isOnLimitation || !focusFragment!!.isVisible) {
+//        if (!LimitApplication.isOnLimitation || !focusFragment!!.isVisible) {
+//            super.onBackPressed()
+//        }
+        if (LimitApplication.isOnLimitation ) {
+            return
+        }
+
+        //碎片之间的返回
+        if (!focusFragment!!.isVisible ) {
             super.onBackPressed()
+            return
+        }
+//                ||  || !
+
+        if (LimitApplication.isTimedTaskRunning && !isDefaultLauncher()){
+            val  homeIntent =Intent(Intent.ACTION_MAIN);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            homeIntent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(homeIntent);
+            return
         }
     }
 

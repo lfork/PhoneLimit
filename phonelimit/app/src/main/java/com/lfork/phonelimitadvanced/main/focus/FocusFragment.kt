@@ -30,7 +30,7 @@ import com.lfork.phonelimitadvanced.permission.PermissionManager.requestFloating
 import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
 import com.lfork.phonelimitadvanced.base.widget.UsagePermissionDialog
-import com.lfork.phonelimitadvanced.limit.LimitTaskConfig
+import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
 import com.lfork.phonelimitadvanced.permission.PermissionManager
 import kotlinx.android.synthetic.main.main_focus_frag.*
 import kotlinx.android.synthetic.main.main_focus_frag.view.*
@@ -257,7 +257,8 @@ class FocusFragment : Fragment() {
             }
             //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
             val limitIntent = Intent(context, LimitService::class.java)
-            val taskInfo = LimitTaskConfig(limitTimeSeconds = 100)
+            val taskInfo =
+                TaskConfig(limitTimeSeconds = 100)
             limitIntent.putExtra("limit_task_time_info",taskInfo)
             startService(limitIntent)
         }
@@ -349,10 +350,10 @@ class FocusFragment : Fragment() {
         if (!permissionCheck()) {
             return
         }
-        val timeInfo = LimitTaskConfig().apply {
+        val timeInfo = TaskConfig().apply {
             this.limitTimeSeconds = limitTimeSeconds
             isImmediatelyExecuted =true
-            limitModel = LimitTaskConfig.LIMIT_MODEL_ROOT
+            limitModel = TaskConfig.LIMIT_MODEL_ROOT
 
         }
 
