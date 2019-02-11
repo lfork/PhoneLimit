@@ -1,5 +1,6 @@
 package com.lfork.phonelimitadvanced.main.focus
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -7,6 +8,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
@@ -15,27 +17,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.base.adapter.WhiteNameAdapter
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.limit.LimitService
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
 import com.lfork.phonelimitadvanced.main.MainActivity
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
-import com.lfork.phonelimitadvanced.permission.checkAndRequestUsagePermission
-import com.lfork.phonelimitadvanced.permission.requestFloatingPermission
-import com.lfork.phonelimitadvanced.permission.requestLauncherPermission
-import com.lfork.phonelimitadvanced.permission.requestRootPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedStatAccessPermission
+import com.lfork.phonelimitadvanced.base.permission.checkAndRequestUsagePermission
+import com.lfork.phonelimitadvanced.base.permission.requestFloatingPermission
+import com.lfork.phonelimitadvanced.base.permission.requestLauncherPermission
+import com.lfork.phonelimitadvanced.base.permission.requestRootPermission
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
 import kotlinx.android.synthetic.main.item_window_floating.*
 import kotlinx.android.synthetic.main.item_window_floating.view.*
 
 
-class FocusFragment2 : Fragment(){
+class FocusFragment2 : Fragment() {
 
 
     companion object {
@@ -49,6 +53,7 @@ class FocusFragment2 : Fragment(){
          */
         private var inputTimeMinuteCache = -1L
 
+        var remainTimeCache:String = ""
     }
 
 //    lateinit var dialog: AlertDialog
@@ -67,18 +72,12 @@ class FocusFragment2 : Fragment(){
         if (root == null) {
             root = inflater.inflate(R.layout.main_focus_frag_v2, container, false)
 
+
 //            initDialog()
             registerListener(root!!)
 //            checkAndRecoveryLimitTask()
             //displaySetting(root!!)
-            root!!.recycle_white_list.layoutManager =
-                    LinearLayoutManager(context, HORIZONTAL, false)
-            adapter = WhiteNameAdapter()
-            adapter.customIconOnClickListener = customIconOnClickListener
-
-            root!!.recycle_white_list.adapter = adapter
-
-            LinearSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
+            setupRecyclerView()
 
             val limitIntent = Intent(context, LimitService::class.java)
 
@@ -87,6 +86,17 @@ class FocusFragment2 : Fragment(){
         }
 
         return root
+    }
+
+    private fun setupRecyclerView() {
+        root!!.recycle_white_list.layoutManager =
+                LinearLayoutManager(context, HORIZONTAL, false)
+        adapter = WhiteNameAdapter()
+        adapter.customIconOnClickListener = customIconOnClickListener
+
+        root!!.recycle_white_list.adapter = adapter
+
+        LinearSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
     }
 
 
@@ -213,9 +223,14 @@ class FocusFragment2 : Fragment(){
 
 
     private fun registerListener(view: View) {
+
+        if (remainTimeCache.isNotEmpty()){
+            view.btn_start_remain_time_text.text = ""
+        }
+
         view.btn_start_remain_time_text.setOnClickListener {
 
-            if (LimitApplication.isOnLimitation){
+            if (LimitApplication.isOnLimitation) {
                 return@setOnClickListener
             }
 
@@ -227,7 +242,7 @@ class FocusFragment2 : Fragment(){
                 inputType = EditorInfo.TYPE_CLASS_NUMBER
             }
 
-            et.hint = "默认为一个番茄钟:25分钟"
+            et.hint = "25分钟"
 
             AlertDialog.Builder(context!!).setTitle("输入限制时间(单位：分钟)")
                 .setView(et)
@@ -235,12 +250,17 @@ class FocusFragment2 : Fragment(){
                 .setPositiveButton(
                     "确定"
                 ) { dialog, which ->
+
                     val input = et.text.toString()
                     if (input == "") {
                         startLimit()
                     } else {
-                        startLimit(limitTimeSeconds =input.toLong()*60)
+                        startLimit(limitTimeSeconds = input.toLong() * 60)
+                        val imm =
+                            context!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
+
                 }
                 .setNegativeButton("取消", null)
                 .show()
@@ -259,6 +279,8 @@ class FocusFragment2 : Fragment(){
                 ToastUtil.showLong(context, "限制已解除")
                 (activity as MainActivity?)?.showOtherUI()
             }
+
+            remainTimeCache = ""
         }
 
         override fun onLimitStarted() {
@@ -272,13 +294,15 @@ class FocusFragment2 : Fragment(){
         override fun updateRemainTime(timeSeconds: Long) {
             runOnUiThread {
                 if (btn_start_remain_time_text != null) {
-                    when {
-                        timeSeconds > 60 * 60 -> btn_start_remain_time_text.text =
+                    remainTimeCache =  when {
+                        timeSeconds > 60 * 60 ->
                                 "${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
-                        timeSeconds > 60 -> btn_start_remain_time_text.text =
+                        timeSeconds > 60 ->
                                 "${timeSeconds / 60}分${timeSeconds % 60}秒"
-                        else -> btn_start_remain_time_text.text = "${timeSeconds}秒"
+                        else ->  "${timeSeconds}秒"
                     }
+
+                    btn_start_remain_time_text.text = remainTimeCache
                 }
 
                 //ToastUtil.showLong(context, "限制已开启")
@@ -327,5 +351,6 @@ class FocusFragment2 : Fragment(){
     fun setCustomClickListener(customIconOnClickListener: CustomIconOnClickListener) {
         this.customIconOnClickListener = customIconOnClickListener
     }
+
 
 }

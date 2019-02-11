@@ -12,12 +12,12 @@ import com.lfork.phonelimitadvanced.main.browser.BrowserFragment
 import com.lfork.phonelimitadvanced.main.focus.CustomIconOnClickListener
 import com.lfork.phonelimitadvanced.main.focus.FocusFragment2
 import com.lfork.phonelimitadvanced.main.my.MyFragment
-import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncherFake
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefaultLauncherFake
 import com.lfork.phonelimitadvanced.utils.setupToolBar
 import kotlinx.android.synthetic.main.main2_act.*
 import android.view.View
 import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
 import com.lfork.phonelimitadvanced.utils.setSystemUIVisible
 import com.lfork.phonelimitadvanced.utils.startActivity
@@ -126,10 +126,6 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
 //        if (!LimitApplication.isOnLimitation || !focusFragment!!.isVisible) {
 //            super.onBackPressed()
-//        }
-        if (LimitApplication.isOnLimitation ) {
-            return
-        }
 
         //碎片之间的返回
         if (!focusFragment!!.isVisible ) {
@@ -137,6 +133,12 @@ class MainActivity : AppCompatActivity() {
             return
         }
 //                ||  || !
+//        }
+        if (LimitApplication.isOnLimitation ) {
+            return
+        }
+
+
 
         if (LimitApplication.isTimedTaskRunning && !isDefaultLauncher()){
             val  homeIntent =Intent(Intent.ACTION_MAIN);
@@ -175,11 +177,11 @@ class MainActivity : AppCompatActivity() {
 
     fun hideOtherUI() {
         hideToolBar()
-        setSystemUIVisible(false)
+//        setSystemUIVisible(false)
     }
 
     fun hideToolBar(){
-        toolbar.visibility = View.GONE
+        toolbar.visibility = View.INVISIBLE
     }
 
     fun showToolBar(){
@@ -189,7 +191,7 @@ class MainActivity : AppCompatActivity() {
 
     fun showOtherUI() {
         showToolBar()
-        setSystemUIVisible(true)
+//        setSystemUIVisible(true)
     }
 
 

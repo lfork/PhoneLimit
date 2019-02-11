@@ -12,7 +12,10 @@ interface LimitTask {
 
     fun initLimit(context: Context)
 
-    fun doLimit()
+    /**
+     * @return true表示限制执行成功 ，false表示不限制
+     */
+    fun doLimit():Boolean
 
     fun closeLimit()
 

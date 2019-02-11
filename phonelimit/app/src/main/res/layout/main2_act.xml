@@ -8,6 +8,19 @@
     android:background="@color/app_green_3"
     tools:context=".main.MainActivity">
 
+
+
+    <FrameLayout
+        android:id="@+id/main_frag"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_above="@id/navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -20,27 +33,5 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <FrameLayout
-        android:id="@+id/main_frag"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_above="@id/navigation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <!--<android.support.design.widget.BottomNavigationView-->
-        <!--android:id="@+id/navigation"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:background="?android:attr/windowBackground"-->
-        <!--android:visibility="gone"-->
-        <!--tools:visibility="visible"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:menu="@menu/navigation" />-->
 
 </android.support.constraint.ConstraintLayout>

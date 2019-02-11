@@ -2,7 +2,7 @@ package com.lfork.phonelimitadvanced.limit.task
 
 import android.content.Context
 import com.lfork.phonelimitadvanced.limit.LimitTask
-import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncher
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefaultLauncher
 
 /**
  * Created by L.Fork
@@ -20,8 +20,8 @@ class UltimateFloatingLauncherLimitTask:LimitTask {
         floatingLimitTask.initLimit(context)
     }
 
-    override fun doLimit() {
-        floatingLimitTask.doLimit()
+    override fun doLimit() :Boolean{
+        return floatingLimitTask.doLimit()
     }
 
     private var mContext: Context? = null

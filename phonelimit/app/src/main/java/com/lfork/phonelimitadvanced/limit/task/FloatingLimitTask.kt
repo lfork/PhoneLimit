@@ -1,16 +1,17 @@
 package com.lfork.phonelimitadvanced.limit.task
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
-import android.os.Handler
-import android.os.Message
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.base.AppConstants
+import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.main.MainHandler
 
 /**
@@ -27,24 +28,18 @@ class FloatingLimitTask : BaseLimitTask() {
     private var wmParams: WindowManager.LayoutParams? = null
     private var mWindowManager: WindowManager? = null
     private var mWindowView: View? = null
-    private var remainTimeTV: TextView? = null
-//
-//    private val handler = object : Handler() {
-//        override fun handleMessage(msg: Message) {
-//            super.handleMessage(msg)
-//            val data = msg.data.getString("data")
-//            remainTimeTV?.setText(data)
-//            mWindowManager?.updateViewLayout(mWindowView, wmParams)
-//        }
-//    }
+    private var tips: TextView? = null
+
+
 
     override fun initLimit(context: Context) {
         super.initLimit(context)
         mContext = context
         initWindowParams()
         initView()
-//        addWindowView()
     }
+
+
 
     private fun initWindowParams() {
         if (mContext == null) {
@@ -65,7 +60,8 @@ class FloatingLimitTask : BaseLimitTask() {
             it.format = PixelFormat.TRANSLUCENT
             // 更多falgs:https://developer.android.com/reference/android/view/WindowManager.LayoutParams.html#FLAG_NOT_FOCUSABLE
             //wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-            it.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            it.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
             it.gravity = Gravity.START or Gravity.TOP
             it.width = WindowManager.LayoutParams.MATCH_PARENT
             it.height = WindowManager.LayoutParams.MATCH_PARENT
@@ -73,8 +69,13 @@ class FloatingLimitTask : BaseLimitTask() {
     }
 
     private fun initView() {
-        mWindowView = LayoutInflater.from(mContext).inflate(R.layout.item_window_floating, null)
-        remainTimeTV = mWindowView?.findViewById(R.id.remain_time_text)
+        mWindowView = LayoutInflater.from(mContext).inflate(R.layout.item_window_tips, null)
+        tips = mWindowView?.findViewById(R.id.tv_windows_tips)
+        tips?.setOnClickListener {
+            val intent = Intent(mContext!!, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            mContext!!.startActivity(intent)
+        }
     }
 
     var viewIsAdded = false
@@ -93,18 +94,34 @@ class FloatingLimitTask : BaseLimitTask() {
 
     private fun removeWindow() {
         MainHandler.getInstance().post {
-            mWindowManager?.removeView(mWindowView)
+            if (viewIsAdded) {
+                if (mWindowView!!.isAttachedToWindow){
+                    mWindowManager?.removeView(mWindowView)
+                    viewIsAdded = false
+                }
+            }
         }
     }
 
-    override fun doLimit() {
-        addWindowView()
-        super.doLimit()
+    override fun doLimit(): Boolean {
+
+        if (super.doLimit()) {
+            if (!mWindowView!!.isAttachedToWindow){
+                addWindowView()
+            }
+            return true
+        } else {
+            removeWindow()
+            return false
+        }
+
     }
 
     override fun closeLimit() {
         removeWindow()
         mContext = null
     }
+
+
 
 }

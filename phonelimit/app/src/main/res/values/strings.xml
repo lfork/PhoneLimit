@@ -106,6 +106,7 @@
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="start_timed_task">Start Timed task</string>
+    <string name="tips_1">请暂时远离手机，自律将帮您走得更远。\n返回中……</string>
 
     <!--<string-array name="planets_array">-->
     <!--<item>Mercury</item>-->

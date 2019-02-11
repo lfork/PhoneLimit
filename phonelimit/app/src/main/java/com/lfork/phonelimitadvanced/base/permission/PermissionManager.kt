@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.permission
+package com.lfork.phonelimitadvanced.base.permission
 
 import android.Manifest
 import android.app.Activity

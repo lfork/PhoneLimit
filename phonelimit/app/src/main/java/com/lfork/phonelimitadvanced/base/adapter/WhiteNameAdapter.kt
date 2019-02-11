@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.main.focus
+package com.lfork.phonelimitadvanced.base.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -9,6 +9,7 @@ import android.widget.ImageView
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.isOnLimitation
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
+import com.lfork.phonelimitadvanced.main.focus.CustomIconOnClickListener
 import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.startActivity
 import com.lfork.phonelimitadvanced.utils.startOtherApp
@@ -23,7 +24,7 @@ import java.util.*
  */
 class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
-    var customIconOnClickListener:CustomIconOnClickListener?=null
+    var customIconOnClickListener: CustomIconOnClickListener?=null
 
     private val items = ArrayList<AppInfo>(0);
 

@@ -18,20 +18,21 @@ import android.view.ViewGroup
 
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.base.adapter.WhiteNameAdapter
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.limit.LimitService
 import com.lfork.phonelimitadvanced.utils.*
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedFloatingWindowPermission
-import com.lfork.phonelimitadvanced.permission.PermissionManager.requestFloatingWindowPermission
-import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncher
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedStatAccessPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedFloatingWindowPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.requestFloatingWindowPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefaultLauncher
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
 import com.lfork.phonelimitadvanced.base.widget.UsagePermissionDialog
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
-import com.lfork.phonelimitadvanced.permission.PermissionManager
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager
 import kotlinx.android.synthetic.main.main_focus_frag.*
 import kotlinx.android.synthetic.main.main_focus_frag.view.*
 

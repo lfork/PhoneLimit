@@ -1,8 +1,8 @@
 package com.lfork.phonelimitadvanced.limit
 
 import android.content.Context
-import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncher
-import com.lfork.phonelimitadvanced.permission.PermissionManager.clearDefaultLauncherFake
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefaultLauncher
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefaultLauncherFake
 
 /**
  *

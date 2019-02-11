@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.permission
+package com.lfork.phonelimitadvanced.base.permission
 
 /**
  * Created by L.Fork

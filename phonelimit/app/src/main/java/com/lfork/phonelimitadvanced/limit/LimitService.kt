@@ -19,7 +19,7 @@ import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfigRepository
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.CYCLE_MODEL_NO_CYCLE
 import com.lfork.phonelimitadvanced.limit.task.*
 import com.lfork.phonelimitadvanced.main.MainActivity
-import com.lfork.phonelimitadvanced.permission.PermissionManager
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture

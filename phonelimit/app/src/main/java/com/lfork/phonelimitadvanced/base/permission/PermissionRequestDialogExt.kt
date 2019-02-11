@@ -1,21 +1,19 @@
-package com.lfork.phonelimitadvanced.permission
+package com.lfork.phonelimitadvanced.base.permission
 
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.widget.FloatingPermissionDialog
 import com.lfork.phonelimitadvanced.base.widget.UsagePermissionDialog
-import com.lfork.phonelimitadvanced.main.focus.FocusFragment2
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedFloatingWindowPermission
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
-import com.lfork.phonelimitadvanced.permission.PermissionManager.requestFloatingWindowPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedFloatingWindowPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedStatAccessPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.requestFloatingWindowPermission
 import com.lfork.phonelimitadvanced.utils.LockUtil
 import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.openDefaultAppsSetting

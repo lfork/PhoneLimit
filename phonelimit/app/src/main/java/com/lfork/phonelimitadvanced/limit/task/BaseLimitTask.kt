@@ -34,10 +34,10 @@ open class BaseLimitTask : LimitTask {
         mContext = context
     }
 
-    override fun doLimit() {
+    override fun doLimit() :Boolean{
 
         if (mContext == null) {
-            return
+            return false
         }
 
         //获取栈顶app的包名
@@ -48,11 +48,11 @@ open class BaseLimitTask : LimitTask {
 
         //判断包名打开解锁页面
         if (TextUtils.isEmpty(packageName)) {
-            return
+            return false
         }
 
         if (AppInfoRepository.whiteNameList.contains(packageName)) {
-            return
+            return false
         }
         try {
             Thread.sleep(300)
@@ -68,7 +68,7 @@ open class BaseLimitTask : LimitTask {
         }
 
         if (AppInfoRepository.whiteNameList.contains(packageName) || SPECIAL_WHITE_NAME_LIST.contains(packageName)) {
-            return
+            return false
         }
 
         val intent = Intent(mContext!!, MainActivity::class.java)
@@ -76,6 +76,7 @@ open class BaseLimitTask : LimitTask {
         intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         mContext!!.startActivity(intent)
+        return true
     }
 
 

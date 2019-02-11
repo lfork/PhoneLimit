@@ -12,11 +12,11 @@ import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_M
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_LIGHT
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_ROOT
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.LIMIT_MODEL_ULTIMATE
-import com.lfork.phonelimitadvanced.permission.*
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedStatAccessPermission
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isGrantedFloatingWindowPermission
-import com.lfork.phonelimitadvanced.permission.PermissionManager.isDefaultLauncher
-import com.lfork.phonelimitadvanced.permission.PermissionManager.modelPermissionCheck
+import com.lfork.phonelimitadvanced.base.permission.*
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedStatAccessPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedFloatingWindowPermission
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
+import com.lfork.phonelimitadvanced.base.permission.PermissionManager.modelPermissionCheck
 import kotlinx.android.synthetic.main.dialog_limit_model_select.*
 
 /**
