@@ -1,7 +1,6 @@
 package com.lfork.phonelimitadvanced.main
 
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -12,7 +11,7 @@ import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.main.browser.BrowserFragment
 import com.lfork.phonelimitadvanced.main.focus.CustomIconOnClickListener
 import com.lfork.phonelimitadvanced.main.focus.FocusFragment2
-import com.lfork.phonelimitadvanced.main.my.MyFragment
+import com.lfork.phonelimitadvanced.main.settings.SettingsFragment
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefaultLauncherFake
 import com.lfork.phonelimitadvanced.utils.setupToolBar
 import kotlinx.android.synthetic.main.main2_act.*
@@ -35,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onSettingsClick() {
-            openSecondFragment(MyFragment())
+            openSecondFragment(SettingsFragment())
         }
     }
 
@@ -53,19 +52,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main2_act)
         setupToolBar(toolbar, "Phone Limit")
         initFragments()
-
-
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//        }
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            val w = window // in Activity's onCreate() for instance
-//            w.setFlags(
-//                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-//                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-//            )
-//        }
     }
 
 
@@ -80,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         limitModelSelectionDialog?.onResume()
     }
 
-    fun showLimitModelSelectionDialog() {
+    private fun showLimitModelSelectionDialog() {
         limitModelSelectionDialog = LimitModelSelectDialog(this)
         limitModelSelectionDialog?.show()
 
@@ -90,7 +76,6 @@ class MainActivity : AppCompatActivity() {
                         limitModelMenuItem?.title = model
                     }
                 }
-//        limitModelSelectionDialog?.permissionCheckerAndRequester = focusFragment
     }
 
 
@@ -111,6 +96,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity<TimedTaskActivity>()
             }
             R.id.settings -> {
+                openSecondFragment(SettingsFragment())
             }
         }
         return super.onOptionsItemSelected(item)
@@ -130,21 +116,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-//        if (!LimitApplication.isOnLimitation || !focusFragment!!.isVisible) {
-//            super.onBackPressed()
 
         //碎片之间的返回
         if (!focusFragment!!.isVisible) {
             super.onBackPressed()
             return
         }
-//                ||  || !
-//        }
+
         if (LimitApplication.isOnLimitation) {
             return
         }
-
-
 
         if (LimitApplication.isTimedTaskRunning && !isDefaultLauncher()) {
             val homeIntent = Intent(Intent.ACTION_MAIN);
@@ -153,6 +134,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(homeIntent);
             return
         }
+        super.onBackPressed()
     }
 
     private fun initFragments() {

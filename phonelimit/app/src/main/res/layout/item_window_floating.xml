@@ -57,8 +57,6 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:background="@color/app_green_5"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
         android:paddingBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

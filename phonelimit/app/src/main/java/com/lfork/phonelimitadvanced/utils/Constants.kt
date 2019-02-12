@@ -13,7 +13,7 @@ object Constants {
 
     const val MANUFACTURE_ONEPLUS = "ONEPLUS";
 
-    val DEFAULT_WHITE_NAME_LIST = arrayOf("dialer","calculator","mms","contacts","incallui") //"camera","calendar","photos",,"contacts"
+    val DEFAULT_WHITE_NAME_LIST = arrayOf("dialer","mms") //"camera","calendar","photos",,"contacts"
 
     val SPECIAL_WHITE_NAME_LIST = arrayOf("com.android.incallui")
 }

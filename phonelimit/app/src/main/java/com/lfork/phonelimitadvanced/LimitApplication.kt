@@ -12,7 +12,6 @@ import com.lfork.phonelimitadvanced.data.*
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
-import com.lfork.phonelimitadvanced.main.MainHandler
 import com.lfork.phonelimitadvanced.utils.Constants.DEFAULT_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.LinuxShell
 import com.lfork.phonelimitadvanced.utils.getAppIcon
@@ -24,7 +23,6 @@ import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 /**

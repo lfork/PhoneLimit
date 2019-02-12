@@ -17,7 +17,7 @@ import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.AppConstants
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.main.MainActivity
-import com.lfork.phonelimitadvanced.main.MainHandler
+import com.lfork.phonelimitadvanced.MainHandler
 import com.lfork.phonelimitadvanced.utils.Constants
 
 

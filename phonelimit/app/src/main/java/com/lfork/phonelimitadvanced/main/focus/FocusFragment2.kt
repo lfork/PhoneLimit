@@ -8,7 +8,6 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
@@ -21,7 +20,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
-import com.lfork.phonelimitadvanced.base.adapter.WhiteNameAdapter
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
@@ -53,7 +51,7 @@ class FocusFragment2 : Fragment() {
          */
         private var inputTimeMinuteCache = -1L
 
-        var remainTimeCache:String = ""
+        var remainTimeCache: String = ""
     }
 
 //    lateinit var dialog: AlertDialog
@@ -71,14 +69,8 @@ class FocusFragment2 : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         if (root == null) {
             root = inflater.inflate(R.layout.main_focus_frag_v2, container, false)
-
-
-//            initDialog()
             registerListener(root!!)
-//            checkAndRecoveryLimitTask()
-            //displaySetting(root!!)
             setupRecyclerView()
-
             val limitIntent = Intent(context, LimitService::class.java)
 
             bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
@@ -188,7 +180,11 @@ class FocusFragment2 : Fragment() {
         }
 
         //悬浮窗权限
-        if (LimitApplication.defaultLimitModel == TaskConfig.LIMIT_MODEL_FLOATING) {
+        if (LimitApplication.defaultLimitModel in arrayOf(
+                TaskConfig.LIMIT_MODEL_FLOATING,
+                TaskConfig.LIMIT_MODEL_ULTIMATE
+            )
+        ) {
             if (!requestFloatingPermission()) {
                 return false
             }
@@ -196,9 +192,8 @@ class FocusFragment2 : Fragment() {
 
 
         //默认桌面权限
-
         if (LimitApplication.defaultLimitModel in arrayOf(
-                TaskConfig.LIMIT_MODEL_ROOT,
+//                TaskConfig.LIMIT_MODEL_ROOT,
                 TaskConfig.LIMIT_MODEL_ULTIMATE
             )
         ) {
@@ -212,7 +207,6 @@ class FocusFragment2 : Fragment() {
 
 
         if (LimitApplication.defaultLimitModel == TaskConfig.LIMIT_MODEL_ROOT) {
-
             if (!requestRootPermission()) {
                 return false
             }
@@ -224,7 +218,7 @@ class FocusFragment2 : Fragment() {
 
     private fun registerListener(view: View) {
 
-        if (remainTimeCache.isNotEmpty()){
+        if (remainTimeCache.isNotEmpty()) {
             view.btn_start_remain_time_text.text = ""
         }
 
@@ -294,12 +288,12 @@ class FocusFragment2 : Fragment() {
         override fun updateRemainTime(timeSeconds: Long) {
             runOnUiThread {
                 if (btn_start_remain_time_text != null) {
-                    remainTimeCache =  when {
+                    remainTimeCache = when {
                         timeSeconds > 60 * 60 ->
-                                "${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
+                            "${timeSeconds / 3600}小时${(timeSeconds % 3600) / 60}分${timeSeconds % 60}秒"
                         timeSeconds > 60 ->
-                                "${timeSeconds / 60}分${timeSeconds % 60}秒"
-                        else ->  "${timeSeconds}秒"
+                            "${timeSeconds / 60}分${timeSeconds % 60}秒"
+                        else -> "${timeSeconds}秒"
                     }
 
                     btn_start_remain_time_text.text = remainTimeCache

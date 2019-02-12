@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.main.my
+package com.lfork.phonelimitadvanced.main.settings
 
 import android.arch.lifecycle.ViewModel;
 

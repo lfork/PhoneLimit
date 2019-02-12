@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hjq.toast.ToastUtils
+import com.lfork.phonelimitadvanced.LimitActivity
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.DataCallback
@@ -21,14 +22,8 @@ import kotlinx.android.synthetic.main.timed_task_setting_act.*
 import java.util.*
 
 
-class TimedTaskActivity : AppCompatActivity(), LimitApplication.LimitSwitchListener {
-    override fun onStartLimit() {
-        finish()
-    }
+class TimedTaskActivity : LimitActivity(){
 
-    override fun onCloseLimit() {
-        finish()
-    }
 
     lateinit var tasksAdapter: TaskConfigAdapter
 
@@ -73,14 +68,8 @@ class TimedTaskActivity : AppCompatActivity(), LimitApplication.LimitSwitchListe
         super.onResume()
         tempDialog?.onResume()
         refreshTasks()
-        LimitApplication.registerSwitchListener(this)
-
     }
 
-    override fun onPause() {
-        super.onPause()
-        LimitApplication.unregisterSwitchListener(this)
-    }
 
 
     override fun onDestroy() {

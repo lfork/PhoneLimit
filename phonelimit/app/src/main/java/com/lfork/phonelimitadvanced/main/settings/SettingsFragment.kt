@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.main.my
+package com.lfork.phonelimitadvanced.main.settings
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -9,10 +9,10 @@ import android.view.ViewGroup
 
 import com.lfork.phonelimitadvanced.R
 
-class MyFragment : Fragment() {
+class SettingsFragment : Fragment() {
 
     companion object {
-        fun newInstance() = MyFragment()
+        fun newInstance() = SettingsFragment()
     }
 
     private lateinit var viewModel: MyViewModel

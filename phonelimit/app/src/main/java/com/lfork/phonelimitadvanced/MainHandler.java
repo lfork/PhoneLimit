@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.main;
+package com.lfork.phonelimitadvanced;
 
 import android.os.Handler;
 import android.os.Looper;

@@ -18,7 +18,6 @@ import android.view.ViewGroup
 
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
-import com.lfork.phonelimitadvanced.base.adapter.WhiteNameAdapter
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
