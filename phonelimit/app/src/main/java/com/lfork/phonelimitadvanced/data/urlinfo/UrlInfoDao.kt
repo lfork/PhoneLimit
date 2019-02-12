@@ -6,7 +6,7 @@ import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfo
 @Dao
 interface UrlInfoDao {
     @Query("SELECT * FROM url_info where is_active=1")
-    fun getAllAchievedUrl(): List<UrlInfo>
+    fun getAllActiveUrl(): List<UrlInfo>
 
     @Query("SELECT * FROM url_info where url=:url")
     fun getUrlInfo(url:String): UrlInfo?
@@ -23,7 +23,5 @@ interface UrlInfoDao {
 //    @Query("delete from url_info  WHERE url=:url")
     @Delete
     fun delete(urlInfo: UrlInfo)
-
-
 
 }

@@ -19,13 +19,13 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.browser.config.*
 import com.lfork.phonelimitadvanced.browser.utils.StatusBarUtil
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
-import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository.ADD_SUCCEED
 import com.lfork.phonelimitadvanced.utils.getUrlDomainName
 import kotlinx.android.synthetic.main.browser_act.*
 
@@ -69,7 +69,7 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         initWebView()
         webView!!.loadUrl(mUrl)
         getDataFromBrowser(intent)
-        setupLimitService()
+        setupLimitView()
         webview_refresh.setOnRefreshListener { webView?.reload() }
     }
 
@@ -94,7 +94,8 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         setSupportActionBar(mTitleToolBar)
         val actionBar = supportActionBar
         actionBar?.setDisplayShowTitleEnabled(false)
-        mTitleToolBar!!.overflowIcon = ContextCompat.getDrawable(this, R.drawable.ic_more_vert_white_24dp)
+        mTitleToolBar!!.overflowIcon =
+                ContextCompat.getDrawable(this, R.drawable.ic_more_vert_white_24dp)
         tvGunTitle!!.postDelayed({ tvGunTitle!!.isSelected = true }, 1900)
         setTitle(mTitle)
     }
@@ -113,31 +114,37 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
             } else {
                 finish()
             }
-//            R.id.actionbar_share// 分享到
-//            -> {
-//                val shareText = webView!!.title + webView!!.url
-//                BaseTools.share(this@WebViewActivity, shareText)
-//            }
-            R.id.actionbar_cope// 复制链接
+            R.id.actionbar_cope
             -> if (!TextUtils.isEmpty(webView!!.url)) {
-                UrlInfoRepository.addOrDeleteUrl(getUrlDomainName(webView!!.url), object : DataCallback<String> {
-                    override fun succeed(data: String) {
-                        runOnUiThread {
-                            item.title = "从白名单中移除"
-                            Toast.makeText(this@BrowserActivity, "添加成功", Toast.LENGTH_LONG).show()
-                        }
-                    }
+                UrlInfoRepository.addOrDeleteUrl(
+                    getUrlDomainName(webView!!.url),
+                    object : DataCallback<String> {
+                        override fun succeed(data: String) {
+                            runOnUiThread {
+                                if (data == "添加成功") {
+                                    item.title = "从白名单中移除"
+                                    Toast.makeText(this@BrowserActivity, data, Toast.LENGTH_LONG)
+                                        .show()
+                                } else if (data == "删除成功") {
+                                    item.title = "添加到白名单"
+                                    Toast.makeText(this@BrowserActivity, data, Toast.LENGTH_LONG)
+                                        .show()
+                                    if (LimitApplication.isOnLimitation) {
+                                        //重新加载页面
+                                        resetWebBrowser()
+                                    }
+                                }
 
-                    override fun failed(code: Int, log: String) {
-                        runOnUiThread {
-                            item.title = "添加到白名单"
-                            Toast.makeText(this@BrowserActivity, "删除成功", Toast.LENGTH_LONG).show()
+                            }
                         }
-                    }
-                })
+
+                        override fun failed(code: Int, log: String) {
+                            runOnUiThread {
+                                ToastUtils.show("error$code $log ")
+                            }
+                        }
+                    })
             }
-//            R.id.actionbar_open// 打开链接
-//            -> BaseTools.openLink(this@WebViewActivity, webView!!.url)
             R.id.actionbar_webview_refresh// 刷新页面
             -> if (webView != null) {
                 webView!!.reload()
@@ -147,6 +154,7 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         }
         return super.onOptionsItemSelected(item)
     }
+
 
     @SuppressLint("SetJavaScriptEnabled", "AddJavascriptInterface")
     private fun initWebView() {
@@ -181,6 +189,8 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         // WebView是否新窗口打开(加了后可能打不开网页)
         ws.setSupportMultipleWindows(false)
 
+        ws.userAgentString
+
         // webview从5.0开始默认不允许混合模式,https中不能加载http资源,需要设置开启。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ws.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
@@ -202,20 +212,20 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
             if (hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE || hitTestResult.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
                 // 弹出保存图片的对话框
                 AlertDialog.Builder(this@BrowserActivity)
-                        .setItems(arrayOf("查看大图", "保存图片到相册")) { dialog, which ->
-                            val picUrl = hitTestResult.extra
-                            //获取图片
-                            Log.e("picUrl", picUrl)
-                            when (which) {
-                                0 -> {
-                                }
-                                1 -> {
-                                }
-                                else -> {
-                                }
+                    .setItems(arrayOf("查看大图", "保存图片到相册")) { dialog, which ->
+                        val picUrl = hitTestResult.extra
+                        //获取图片
+                        Log.e("picUrl", picUrl)
+                        when (which) {
+                            0 -> {
+                            }
+                            1 -> {
+                            }
+                            else -> {
                             }
                         }
-                        .show()
+                    }
+                    .show()
                 return@OnLongClickListener true
             }
             false
@@ -223,83 +233,11 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
 
     }
 
-    override fun hindProgressBar() {
-        mProgressBar!!.visibility = View.GONE
-    }
-
-    override fun showWebView() {
-        webView!!.visibility = View.VISIBLE
-    }
-
-    override fun hindWebView() {
-        webView!!.visibility = View.INVISIBLE
-    }
-
-    override fun fullViewAddView(view: View) {
-        val decor = window.decorView as FrameLayout
-        videoFullView = FullscreenHolder(this@BrowserActivity)
-        videoFullView!!.addView(view)
-        decor.addView(videoFullView)
-    }
-
-    override fun showVideoFullView() {
-        videoFullView!!.visibility = View.VISIBLE
-    }
-
-    override fun hindVideoFullView() {
-        videoFullView!!.visibility = View.GONE
-    }
-
-    override fun startProgress(newProgress: Int) {
-        mProgressBar!!.visibility = View.VISIBLE
-        mProgressBar!!.progress = newProgress
-        if (newProgress == 100) {
-            mProgressBar!!.visibility = View.GONE
-        }
-    }
-
-    fun setTitle(mTitle: String?) {
-        tvGunTitle!!.text = mTitle
-    }
-
-    /**
-     * android与js交互：
-     * 前端嵌入js代码：不能加重复的节点，不然会覆盖
-     */
-    override fun addImageClickListener() {
-        // 这段js函数的功能就是，遍历所有的img节点，并添加onclick函数，函数的功能是在图片点击的时候调用本地java接口并传递url过去
-        // 如要点击一张图片在弹出的页面查看所有的图片集合,则获取的值应该是个图片数组
-        webView!!.loadUrl("javascript:(function(){" +
-                "var objs = document.getElementsByTagName(\"img\");" +
-                "for(var i=0;i<objs.length;i++)" +
-                "{" +
-                //  "objs[i].onclick=function(){alert(this.getAttribute(\"has_link\"));}" +
-                "objs[i].onclick=function(){window.injectedObject.imageClick(this.getAttribute(\"src\"),this.getAttribute(\"has_link\"));}" +
-                "}" +
-                "})()")
-
-        // 遍历所有的<li>节点,将节点里的属性传递过去(属性自定义,用于页面跳转)
-        webView!!.loadUrl("javascript:(function(){" +
-                "var objs =document.getElementsByTagName(\"li\");" +
-                "for(var i=0;i<objs.length;i++)" +
-                "{" +
-                "objs[i].onclick=function(){" +
-                "window.injectedObject.textClick(this.getAttribute(\"type\"),this.getAttribute(\"item_pk\"));}" +
-                "}" +
-                "})()")
-
-        /**传应用内的数据给html，方便html处理 */
-        // 无参数调用
-        webView!!.loadUrl("javascript:javacalljs()")
-        // 传递参数调用
-        webView!!.loadUrl("javascript:javacalljswithargs('" + "android传入到网页里的数据，有参" + "')")
-
-    }
 
     /**
      * 全屏时按返加键执行退出全屏方法
      */
-    fun hideCustomView() {
+    private fun hideCustomView() {
         mWebChromeClient!!.onHideCustomView()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
@@ -413,16 +351,17 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
 
     private var addOrDeleteItem: MenuItem? = null
 
-    private fun setupLimitService() {
+    private fun setupLimitView() {
 
         //防止点击穿透
         item_limit_tips.setOnTouchListener { _, _ -> true }
         btn_close_limit.setOnClickListener { closeLimit() }
         webClient?.setWebLoadedListener {
             lastUrl = it
-
             webview_refresh.isRefreshing = false
-            if (urlIsInWhiteNameList(it)) {
+            if (it == "https://cn.bing.com" || it == "www.bing.com") {
+                addOrDeleteItem?.title = ""
+            } else if (urlIsInWhiteNameList(it)) {
                 addOrDeleteItem?.title = "从白名单中移除"
             } else {
                 addOrDeleteItem?.title = "添加到白名单"
@@ -432,6 +371,21 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
             }
 
 
+        }
+
+        btn_add_to_white_name.setOnClickListener {
+
+            val callback = object : DataCallback<String> {
+                override fun succeed(data: String) {
+                    closeLimit()
+                    ToastUtils.show("添加成功")
+                }
+
+                override fun failed(code: Int, log: String) {
+                    ToastUtils.show("$log ")
+                }
+            }
+            UrlInfoRepository.addNextUrl(site_info.text.toString(), callback)
         }
     }
 
@@ -447,20 +401,102 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         item_limit_tips.visibility = View.VISIBLE
         webView?.goBack()
         site_info.text = url
-
     }
 
     private fun closeLimit() {
-        item_limit_tips.visibility = View.GONE
+        runOnUiThread {
+            item_limit_tips.visibility = View.GONE
+            //如果goback后还是限制页面，说明就要退出webview了
+        }
 
-        //如果goback后还是限制页面，说明就要退出webview了
     }
 
     fun addSiteToWhiteName(url: String) {
         getUrlDomainName(url)
-
     }
 
+    private fun resetWebBrowser() {
+        webView?.clearHistory(); // 清除
+        webView?.loadUrl("https://cn.bing.com"); // 你要回到的那个首页的URL
+    }
+
+
+    override fun hindProgressBar() {
+        mProgressBar!!.visibility = View.GONE
+    }
+
+    override fun showWebView() {
+        webView!!.visibility = View.VISIBLE
+    }
+
+    override fun hindWebView() {
+        webView!!.visibility = View.INVISIBLE
+    }
+
+    override fun fullViewAddView(view: View) {
+        val decor = window.decorView as FrameLayout
+        videoFullView = FullscreenHolder(this@BrowserActivity)
+        videoFullView!!.addView(view)
+        decor.addView(videoFullView)
+    }
+
+    override fun showVideoFullView() {
+        videoFullView!!.visibility = View.VISIBLE
+    }
+
+    override fun hindVideoFullView() {
+        videoFullView!!.visibility = View.GONE
+    }
+
+    override fun startProgress(newProgress: Int) {
+        mProgressBar!!.visibility = View.VISIBLE
+        mProgressBar!!.progress = newProgress
+        if (newProgress == 100) {
+            mProgressBar!!.visibility = View.GONE
+        }
+    }
+
+    fun setTitle(mTitle: String?) {
+        tvGunTitle!!.text = mTitle
+    }
+
+    /**
+     * android与js交互：
+     * 前端嵌入js代码：不能加重复的节点，不然会覆盖
+     */
+    override fun addImageClickListener() {
+        // 这段js函数的功能就是，遍历所有的img节点，并添加onclick函数，函数的功能是在图片点击的时候调用本地java接口并传递url过去
+        // 如要点击一张图片在弹出的页面查看所有的图片集合,则获取的值应该是个图片数组
+        webView!!.loadUrl(
+            "javascript:(function(){" +
+                    "var objs = document.getElementsByTagName(\"img\");" +
+                    "for(var i=0;i<objs.length;i++)" +
+                    "{" +
+                    //  "objs[i].onclick=function(){alert(this.getAttribute(\"has_link\"));}" +
+                    "objs[i].onclick=function(){window.injectedObject.imageClick(this.getAttribute(\"src\"),this.getAttribute(\"has_link\"));}" +
+                    "}" +
+                    "})()"
+        )
+
+        // 遍历所有的<li>节点,将节点里的属性传递过去(属性自定义,用于页面跳转)
+        webView!!.loadUrl(
+            "javascript:(function(){" +
+                    "var objs =document.getElementsByTagName(\"li\");" +
+                    "for(var i=0;i<objs.length;i++)" +
+                    "{" +
+                    "objs[i].onclick=function(){" +
+                    "window.injectedObject.textClick(this.getAttribute(\"type\"),this.getAttribute(\"item_pk\"));}" +
+                    "}" +
+                    "})()"
+        )
+
+        /**传应用内的数据给html，方便html处理 */
+        // 无参数调用
+        webView!!.loadUrl("javascript:javacalljs()")
+        // 传递参数调用
+        webView!!.loadUrl("javascript:javacalljswithargs('" + "android传入到网页里的数据，有参" + "')")
+
+    }
 
     companion object {
 
@@ -486,10 +522,10 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
         }
 
         /**
-         * 打开网页
+         * 对URL进行处理
          */
-        private fun getRealUrl(url: String): String {
-            var url = url
+        private fun getRealUrl(_url: String): String {
+            var url = _url
             if (TextUtils.isEmpty(url)) {
                 // 空url
                 url = "https://github.com/lfork"
@@ -502,7 +538,10 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
                 // 以"www"开头
                 url = "http://$url"
 
-            } else if (!url.startsWith("http") && (url.contains(".me") || url.contains(".com") || url.contains(".cn")|| url.contains(".top"))) {
+            } else if (!url.startsWith("http") && (url.contains(".me") || url.contains(".com") || url.contains(
+                    ".cn"
+                ) || url.contains(".top"))
+            ) {
                 // 不以"http"开头且有后缀
                 url = "http://$url"
 

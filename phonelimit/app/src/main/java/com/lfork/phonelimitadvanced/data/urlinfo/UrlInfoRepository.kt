@@ -17,7 +17,7 @@ object UrlInfoRepository {
 
     fun initUrlData() {
         executeAsyncDataTask {
-            if (mUrlInfoDao.getAllAchievedUrl().isEmpty()) {
+            if (mUrlInfoDao.getAllActiveUrl().isEmpty()) {
                 mUrlInfoDao.insert(UrlInfo("www.cuit.edu.cn", "成都信息工程大学"))
                 mUrlInfoDao.insert(UrlInfo("cn.bing.com", "必应"))
             }
@@ -29,7 +29,7 @@ object UrlInfoRepository {
 
        executeAsyncDataTask {
             whiteNameListCache.clear()
-            whiteNameListCache.addAll(mUrlInfoDao.getAllAchievedUrl())
+            whiteNameListCache.addAll(mUrlInfoDao.getAllActiveUrl())
             callback.succeed(whiteNameListCache)
         }
 
@@ -71,10 +71,10 @@ object UrlInfoRepository {
     /**
      * 激活由 {@see addNextUrl}添加的URL
      */
-    fun activeUrl(url: String, callback: DataCallback<String>) {
+    fun activeUrl(callback: DataCallback<String>?=null) {
         LimitApplication.executeAsyncDataTask {
             mUrlInfoDao.activeUrls()
-            callback.succeed("激活成功")
+            callback?.succeed("激活成功")
         }
     }
 
