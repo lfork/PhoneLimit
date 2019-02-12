@@ -1,6 +1,7 @@
 package com.lfork.phonelimitadvanced.main
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -18,8 +19,8 @@ import kotlinx.android.synthetic.main.main2_act.*
 import android.view.View
 import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
+import com.lfork.phonelimitadvanced.limit.task.FloatingLimitTask
 import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
-import com.lfork.phonelimitadvanced.utils.setSystemUIVisible
 import com.lfork.phonelimitadvanced.utils.startActivity
 
 
@@ -53,6 +54,8 @@ class MainActivity : AppCompatActivity() {
         setupToolBar(toolbar, "Phone Limit")
         initFragments()
 
+
+
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 //        }
 //
@@ -73,6 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        FloatingLimitTask.isOnRecentApps = false
         limitModelSelectionDialog?.onResume()
     }
 
@@ -80,11 +84,12 @@ class MainActivity : AppCompatActivity() {
         limitModelSelectionDialog = LimitModelSelectDialog(this)
         limitModelSelectionDialog?.show()
 
-        limitModelSelectionDialog?.limitModelUpdateListener = object :LimitModelSelectDialog.LimitModelUpdateListener{
-            override fun updateLimitModel(model: String) {
-                limitModelMenuItem?.title = model
-            }
-        }
+        limitModelSelectionDialog?.limitModelUpdateListener =
+                object : LimitModelSelectDialog.LimitModelUpdateListener {
+                    override fun updateLimitModel(model: String) {
+                        limitModelMenuItem?.title = model
+                    }
+                }
 //        limitModelSelectionDialog?.permissionCheckerAndRequester = focusFragment
     }
 
@@ -92,7 +97,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.limit_menu, menu)
         limitModelMenuItem = menu?.findItem(R.id.limit_model)
-        limitModelMenuItem?.title = resources.getStringArray(R.array.limit_model_array)[LimitApplication.defaultLimitModel]
+        limitModelMenuItem?.title =
+                resources.getStringArray(R.array.limit_model_array)[LimitApplication.defaultLimitModel]
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -128,20 +134,20 @@ class MainActivity : AppCompatActivity() {
 //            super.onBackPressed()
 
         //碎片之间的返回
-        if (!focusFragment!!.isVisible ) {
+        if (!focusFragment!!.isVisible) {
             super.onBackPressed()
             return
         }
 //                ||  || !
 //        }
-        if (LimitApplication.isOnLimitation ) {
+        if (LimitApplication.isOnLimitation) {
             return
         }
 
 
 
-        if (LimitApplication.isTimedTaskRunning && !isDefaultLauncher()){
-            val  homeIntent =Intent(Intent.ACTION_MAIN);
+        if (LimitApplication.isTimedTaskRunning && !isDefaultLauncher()) {
+            val homeIntent = Intent(Intent.ACTION_MAIN);
             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             homeIntent.addCategory(Intent.CATEGORY_HOME);
             startActivity(homeIntent);
@@ -169,7 +175,7 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack(null)
             .commit()
 
-        if (fragment !is FocusFragment2){
+        if (fragment !is FocusFragment2) {
             hideToolBar()
         }
     }
@@ -180,11 +186,11 @@ class MainActivity : AppCompatActivity() {
 //        setSystemUIVisible(false)
     }
 
-    fun hideToolBar(){
+    fun hideToolBar() {
         toolbar.visibility = View.INVISIBLE
     }
 
-    fun showToolBar(){
+    fun showToolBar() {
         toolbar.visibility = View.VISIBLE
     }
 

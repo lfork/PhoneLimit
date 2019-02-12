@@ -125,7 +125,7 @@ class LimitService : Service() {
             when (taskConfig.limitModel) {
                 TaskConfig.LIMIT_MODEL_LIGHT -> BaseLimitTask()
                 TaskConfig.LIMIT_MODEL_FLOATING -> FloatingLimitTask()
-                TaskConfig.LIMIT_MODEL_ULTIMATE -> UltimateFloatingLauncherLimitTask()
+                TaskConfig.LIMIT_MODEL_ULTIMATE -> FloatingLauncherLimitTask()
                 TaskConfig.LIMIT_MODEL_ROOT -> RootLimitTask()
                 else -> {
                     LauncherLimitTask()

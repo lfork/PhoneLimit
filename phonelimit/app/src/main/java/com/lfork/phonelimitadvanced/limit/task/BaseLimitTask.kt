@@ -84,7 +84,7 @@ open class BaseLimitTask : LimitTask {
         mContext = null
     }
 
-    private fun getTopRunningApp(context: Context, activityManager: ActivityManager): String {
+   fun getTopRunningApp(context: Context, activityManager: ActivityManager): String {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             val appTasks = activityManager.getRunningTasks(1)
             if (null != appTasks && !appTasks.isEmpty()) {
@@ -95,7 +95,7 @@ open class BaseLimitTask : LimitTask {
             val sUsageStatsManager =
                     context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
             val endTime = System.currentTimeMillis()
-            val beginTime = endTime - 10000
+            val beginTime = endTime - 500
             var result = ""
             val event = UsageEvents.Event()
             val usageEvents = sUsageStatsManager.queryEvents(beginTime, endTime)

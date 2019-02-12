@@ -10,7 +10,7 @@ import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefau
  * @author lfork@vip.qq.com
  * @date 2019/02/07 21:35
  */
-class UltimateFloatingLauncherLimitTask:LimitTask {
+class FloatingLauncherLimitTask:LimitTask {
 
     private lateinit var floatingLimitTask:FloatingLimitTask
 

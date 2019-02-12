@@ -1,9 +1,14 @@
 package com.lfork.phonelimitadvanced.limit.task
 
+import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Build
+import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +16,11 @@ import android.view.WindowManager
 import android.widget.TextView
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.AppConstants
+import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.main.MainHandler
+import com.lfork.phonelimitadvanced.utils.Constants
+
 
 /**
  * Created by L.Fork
@@ -23,7 +31,11 @@ import com.lfork.phonelimitadvanced.main.MainHandler
  * 只做悬浮窗
  *
  */
-class FloatingLimitTask : BaseLimitTask() {
+class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
+
+    companion object {
+        var isOnRecentApps = false
+    }
 
     private var wmParams: WindowManager.LayoutParams? = null
     private var mWindowManager: WindowManager? = null
@@ -31,14 +43,18 @@ class FloatingLimitTask : BaseLimitTask() {
     private var tips: TextView? = null
 
 
+    var mReceiver: RecentlyReceiver? = null
+
 
     override fun initLimit(context: Context) {
         super.initLimit(context)
         mContext = context
         initWindowParams()
         initView()
+        mReceiver = RecentlyReceiver()
+        mReceiver?.registerKeyListener(this)
+        mContext!!.registerReceiver(mReceiver, IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
-
 
 
     private fun initWindowParams() {
@@ -93,9 +109,9 @@ class FloatingLimitTask : BaseLimitTask() {
     }
 
     private fun removeWindow() {
-        MainHandler.getInstance().post {
-            if (viewIsAdded) {
-                if (mWindowView!!.isAttachedToWindow){
+        if (viewIsAdded) {
+            MainHandler.getInstance().post {
+                if (mWindowView!!.isAttachedToWindow) {
                     mWindowManager?.removeView(mWindowView)
                     viewIsAdded = false
                 }
@@ -103,25 +119,100 @@ class FloatingLimitTask : BaseLimitTask() {
         }
     }
 
+    @Synchronized
     override fun doLimit(): Boolean {
 
-        if (super.doLimit()) {
-            if (!mWindowView!!.isAttachedToWindow){
-                addWindowView()
-            }
-            return true
-        } else {
-            removeWindow()
+
+        if (mContext == null) {
             return false
         }
 
+        //获取栈顶app的包名
+        val packageName = getTopRunningApp(
+            mContext!!,
+            mContext!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        )
+
+        if (packageName.isEmpty()) {
+            return false
+        }
+
+        Log.d("当前包名", packageName + "  ")
+
+
+        try {
+            Thread.sleep(500)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+
+
+        if (packageName == "com.android.settings") {
+            val intent = Intent(Settings.ACTION_SETTINGS)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            mContext!!.startActivity(intent)
+            Thread.sleep(300)
+        }
+
+        if (AppInfoRepository.whiteNameList.contains(packageName) || Constants.SPECIAL_WHITE_NAME_LIST.contains(
+                packageName
+            )
+        ) {
+            if (!isOnRecentApps){
+                removeWindow()
+            }
+            return false
+        }
+
+        if (!mWindowView!!.isAttachedToWindow) {
+            addWindowView()
+        }
+
+        val intent = Intent(mContext!!, MainActivity::class.java)
+        intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName)
+        intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mContext!!.startActivity(intent)
+        return true
     }
 
+
+    override fun onRecentAppsClicked() {
+        isOnRecentApps = true
+        addWindowView()
+    }
+
+
     override fun closeLimit() {
+        mContext?.unregisterReceiver(mReceiver)
+        mReceiver?.unregisterKeyListener()
         removeWindow()
         mContext = null
     }
 
+    fun getTopPacakge(mContext: Context): String? {
+
+        try {
+            val am = mContext
+                .getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
+            val cn = am.getRunningTasks(1)[0].topActivity
+            return cn.packageName
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+//    private fun getTopRunningAppPackageName(): String {
+//        val result =
+//            LinuxShell.execCommand("dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp'", true)
+//        val str =result.successMsg
+//        if (str.isEmpty()){
+//            return ""
+//        }
+//        val pkg = str.substring(str.indexOf("com."), str.indexOf('/'))
+//        return pkg
+//    }
 
 
 }
