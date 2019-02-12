@@ -17,6 +17,7 @@ import com.lfork.phonelimitadvanced.utils.Constants.DEFAULT_WHITE_NAME_LIST
 import com.lfork.phonelimitadvanced.utils.LinuxShell
 import com.lfork.phonelimitadvanced.utils.getAppIcon
 import com.lfork.phonelimitadvanced.utils.getAppName
+import com.simple.spiderman.SpiderMan
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.LinkedBlockingDeque
@@ -137,6 +138,7 @@ class LimitApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         App = this
+        SpiderMan.init(this);
         initConfig()
         isFirstOpen = isFirstOpen()
         Log.d(

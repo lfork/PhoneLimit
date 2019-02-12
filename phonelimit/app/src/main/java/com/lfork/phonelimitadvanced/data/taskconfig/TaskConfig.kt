@@ -54,7 +54,8 @@ data class TaskConfig(
 
     var tips: String? = "权限不足，执行失败"
 
-    fun getStarTimeStr(): String {
+    fun getStarTimeStr(needWeek: Boolean = false): String {
+
 
         if (startTimeMinute == -1 || startTimeHourOfDay == -1) {
             val time = GregorianCalendar()
@@ -75,6 +76,22 @@ data class TaskConfig(
         } else {
             startTimeMinute.toString()
         }
+        if (needWeek) {
+
+
+            val week = when (startTimeDayOfWeek) {
+                1 -> " 周日"
+                2 -> " 周一"
+                3 -> " 周二"
+                4 -> " 周三"
+                5 -> " 周四"
+                6 -> " 周五"
+                7 -> " 周六"
+                else -> ""
+            }
+
+            return startTimeHourOfDay.toString() + ":" + minuteStr + week
+        }
 
         return startTimeHourOfDay.toString() + ":" + minuteStr
     }
@@ -84,8 +101,14 @@ data class TaskConfig(
         when {
             limitTimeSeconds > 60 * 60 ->
                 "${limitTimeSeconds / 3600}小时${(limitTimeSeconds % 3600) / 60}分${limitTimeSeconds % 60}秒"
-            limitTimeSeconds > 60 ->
-                "${limitTimeSeconds / 60}分${limitTimeSeconds % 60}秒"
+            limitTimeSeconds > 60 -> {
+                val result: String = if (limitTimeSeconds % 60 == 0L) {
+                    "${limitTimeSeconds / 60}分"
+                } else {
+                    "${limitTimeSeconds / 60}分${limitTimeSeconds % 60}秒"
+                }
+                result
+            }
             else -> "${limitTimeSeconds}秒"
         }
 

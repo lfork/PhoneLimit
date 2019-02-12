@@ -18,6 +18,18 @@
     <string-array name="limit_cycle_array">
         <item>单次</item>
         <item>每天</item>
+        <item>每周</item>     <!-- 悬浮窗模式+桌面模式  【在部分设备上不可用】  能避免某些特殊的办法来关闭限制-->
+    </string-array>
+
+    <string-array name="day_of_week">
+        <item>周日</item>
+        <item>周一</item>
+        <item>周二</item>
+        <item>周三</item>
+        <item>周四</item>
+        <item>周五</item>
+        <item>周六</item>
+
         <!--<item>每周</item>     &lt;!&ndash; 悬浮窗模式+桌面模式  【在部分设备上不可用】  能避免某些特殊的办法来关闭限制&ndash;&gt;-->
     </string-array>
 </resources>

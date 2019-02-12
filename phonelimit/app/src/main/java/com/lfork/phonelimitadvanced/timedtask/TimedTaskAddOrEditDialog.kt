@@ -28,32 +28,14 @@ import kotlinx.android.synthetic.main.dialog_add_or_edit_task_config.*
 
 class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
 
-    //    private var modelArray: Array<String> =
-//        context.resources.getStringArray(R.array.limit_model_array)
-//
-//    private var modelCycleArray: Array<String> =
-//        context.resources.getStringArray(R.array.limit_cycle_array)
     private var limitModelItemPosition = 0
-    //        set(value) {
-//            field = value
-//            taskConfig.limitModel = field
-//        }
     private var limitCycleItemPosition = 0
-//        set(value) {
-//            field = value
-//            taskConfig.cycleModel = field
-//        }
 
 
     var supportFragmentManager: FragmentManager? = null
     var taskConfig: TaskConfig =
         TaskConfig()
         @SuppressLint("SetTextI18n")
-        set(value) {
-            field = value
-
-
-        }
 
 
     override fun setWidthScale(): Float {
@@ -72,6 +54,22 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
     @SuppressLint("SetTextI18n")
     override fun init() {
 
+        taskConfig.let {
+            et_focus_time.setText("${it.limitTimeSeconds/60}")
+            tv_input_time.text = it.getStarTimeStr()
+            limitCycleItemPosition = it.cycleModel
+            limitModelItemPosition = it.limitModel
+        }
+        setupTaskEditFinishedButton()
+        btn_close.setOnClickListener { dismiss() }
+        setupLimitModelSpinner()
+        setupLimitCycleModelSpinner()
+        setupDayOfWeekSpinner()
+        setupTimePicker()
+
+    }
+
+    private fun setupTaskEditFinishedButton(){
         btn_finish_task.setOnClickListener {
 
             if (!modelPermissionCheck(context, limitModelItemPosition)) {
@@ -86,8 +84,8 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
                 val focusTimeText = et_focus_time.text.toString()
 
                 if (!TextUtils.isEmpty(focusTimeText)) {
-//                    limitTimeSeconds = focusTimeText.toLong() * 60
-                    limitTimeSeconds = focusTimeText.toLong()
+                    limitTimeSeconds = focusTimeText.toLong() * 60
+//                    limitTimeSeconds = focusTimeText.toLong()
                 }
                 isImmediatelyExecuted = false
                 limitModel = limitModelItemPosition
@@ -98,12 +96,9 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
             timedTaskEditCompletedListener?.onCompleted(taskConfig)
             dismiss()
         }
+    }
 
-        btn_close.setOnClickListener { dismiss() }
-
-        setupLimitModelSpinner()
-        setupLimitCycleModelSpinner()
-
+    private fun setupTimePicker(){
         tv_input_time.setOnClickListener {
             if (supportFragmentManager == null) {
                 ToastUtils.show("supportFragmentManager  cannot be null.")
@@ -121,16 +116,7 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
                     }
             timePicker.show(supportFragmentManager, "timePicker")
         }
-
-        taskConfig.let {
-            et_focus_time.setText("${it.limitTimeSeconds / 60}")
-            tv_input_time.text = it.getStarTimeStr()
-            limitCycleItemPosition = it.cycleModel
-            limitModelItemPosition = it.limitModel
-        }
-
     }
-
 
     private fun setupLimitModelSpinner() {
         val spinner = sp_model_select
@@ -196,11 +182,36 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
                 position: Int,
                 id: Long
             ) {
-
-
                 limitCycleItemPosition = position
+                if (position == 2) {
+                    sp_day_of_week.visibility = View.VISIBLE
+                } else {
+                    sp_day_of_week.visibility = View.INVISIBLE
+                }
             }
         }
+    }
+
+
+    private fun setupDayOfWeekSpinner() {
+        if (taskConfig.startTimeDayOfWeek > 0) {
+            sp_day_of_week.setSelection(taskConfig.startTimeDayOfWeek - 1)
+        }
+        sp_day_of_week.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                taskConfig.startTimeDayOfWeek = position + 1
+            }
+        }
+
+
     }
 
     var timedTaskEditCompletedListener: TimedTaskEditCompletedListener? = null

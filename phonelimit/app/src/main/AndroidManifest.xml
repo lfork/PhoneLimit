@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.DUMP" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!-- 应用锁需要的权限 -->
@@ -35,6 +34,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
+            android:theme="@style/MainActivityTheme"
             android:name=".main.MainActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"

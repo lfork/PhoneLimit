@@ -89,6 +89,9 @@ dependencies {
 
     implementation 'com.hjq:toast:5.2'
 
+    debugImplementation 'com.simple:spiderman:1.0.8'
+    releaseImplementation 'com.simple:spiderman-no-op:1.0.8'
+
 //    implementation 'com.wdullaer:materialdatetimepicker:4.1.1'
 
 }

@@ -118,6 +118,17 @@
             app:layout_constraintStart_toEndOf="@+id/textView14"
             app:layout_constraintTop_toTopOf="@+id/textView14" />
 
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/sp_day_of_week"
+            android:layout_width="0dp"
+            android:visibility="invisible"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:entries="@array/day_of_week"
+            app:layout_constraintBottom_toBottomOf="@+id/sp_cycle_select"
+            app:layout_constraintStart_toEndOf="@+id/sp_cycle_select"
+            app:layout_constraintTop_toTopOf="@+id/sp_cycle_select" />
+
         <TextView
             android:id="@+id/textView15"
             android:layout_width="wrap_content"

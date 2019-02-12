@@ -181,7 +181,7 @@ class TimedTaskActivity : AppCompatActivity(), LimitApplication.LimitSwitchListe
             val item = items[p1]
             view.tv_limit_time.text = item.getLimitTimeStr()
 
-            view.tv_start_time.text = item.getStarTimeStr()
+            view.tv_start_time.text = item.getStarTimeStr(true)
             view.tv_cycle_model.text = cycleModelArray[item.cycleModel]
             view.tv_limit_model.text = limitModelArray[item.limitModel]
 
