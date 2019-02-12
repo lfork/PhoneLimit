@@ -186,6 +186,7 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
                 if (position == 2) {
                     sp_day_of_week.visibility = View.VISIBLE
                 } else {
+                    taskConfig.startTimeDayOfWeek = -1
                     sp_day_of_week.visibility = View.INVISIBLE
                 }
             }
@@ -207,7 +208,9 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
                 position: Int,
                 id: Long
             ) {
-                taskConfig.startTimeDayOfWeek = position + 1
+                if (sp_day_of_week.visibility == View.VISIBLE){
+                    taskConfig.startTimeDayOfWeek = position + 1
+                }
             }
         }
 
