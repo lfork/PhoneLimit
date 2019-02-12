@@ -183,6 +183,7 @@ class LimitService : Service() {
         LimitApplication.isOnLimitation = true
         listener?.onLimitStarted()
         saveStartTime(startTime)
+        saveLimitModel(taskConfig.limitModel)
 
     }
 
@@ -310,11 +311,13 @@ class LimitService : Service() {
     private fun checkAndRecoveryLimitTask() {
         val remainTimeSeconds = getRemainTime()
         val startTimeMillis = getStartTime()
+        val limitModel = getLimitModel()
 
         val config = TaskConfig().apply {
             limitTimeSeconds = remainTimeSeconds
             isImmediatelyExecuted = true
             startTimeMillisForUnfinishedTask = startTimeMillis
+            this.limitModel = limitModel
 //            startTime.timeInMillis = startTimeMillis
         }
         if (remainTimeSeconds > 1) {

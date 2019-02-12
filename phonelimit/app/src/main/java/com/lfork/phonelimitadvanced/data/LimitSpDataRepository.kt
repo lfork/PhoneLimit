@@ -54,6 +54,17 @@ fun Context.getStartTime() = getSharedPreferences("LimitStatus", Context.MODE_PR
     0
 )
 
+fun Context.saveLimitModel(limitModel: Int) {
+    getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+        .edit()
+        .putInt("limit_model", limitModel)
+        .apply()
+}
+
+fun Context.getLimitModel() = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE).getInt(
+    "limit_model",
+    0
+)
 
 fun Context.saveDefaultLimitModel(@LimitModelType limitModel: Int) {
     getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
