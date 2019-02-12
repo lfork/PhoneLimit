@@ -138,7 +138,7 @@ data class TaskConfig(
         startTime.set(Calendar.SECOND, 0)
         var time: Long = -1
 
-        if (limitModel == TaskConfig.CYCLE_MODEL_DAILY
+        if (cycleModel == TaskConfig.CYCLE_MODEL_DAILY
             || cycleModel == TaskConfig.CYCLE_MODEL_NO_CYCLE
         ) {
             if (startTime.timeInMillis > currentTimeMillis) {
