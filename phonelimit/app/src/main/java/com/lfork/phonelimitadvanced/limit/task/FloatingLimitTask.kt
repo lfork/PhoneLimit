@@ -1,13 +1,12 @@
 package com.lfork.phonelimitadvanced.limit.task
 
-import android.app.Activity
+ import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Build
-import android.provider.Settings
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -98,11 +97,18 @@ class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
 
     @Synchronized
     private fun addWindowView() {
+
+        if (mWindowView!!.isAttachedToWindow) {
+            return
+        }
         if (viewIsAdded) {
             return
         }
         viewIsAdded = true
         MainHandler.getInstance().post {
+            if (mWindowView!!.isAttachedToWindow) {
+                return@post
+            }
             mWindowManager?.addView(mWindowView, wmParams)
         }
 
@@ -146,14 +152,6 @@ class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
             e.printStackTrace()
         }
 
-
-        if (packageName == "com.android.settings") {
-            val intent = Intent(Settings.ACTION_SETTINGS)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            mContext!!.startActivity(intent)
-            Thread.sleep(300)
-        }
-
         if (AppInfoRepository.whiteNameList.contains(packageName) || Constants.SPECIAL_WHITE_NAME_LIST.contains(
                 packageName
             )
@@ -163,11 +161,7 @@ class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
             }
             return false
         }
-
-        if (!mWindowView!!.isAttachedToWindow) {
-            addWindowView()
-        }
-
+        addWindowView()
         val intent = Intent(mContext!!, MainActivity::class.java)
         intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName)
         intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
