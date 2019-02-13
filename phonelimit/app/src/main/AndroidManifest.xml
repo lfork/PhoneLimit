@@ -34,10 +34,10 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
-            android:theme="@style/MainActivityTheme"
             android:name=".main.MainActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
+            android:theme="@style/MainActivityTheme"
             android:windowSoftInputMode="adjustNothing|stateHidden">
             <intent-filter>
 
@@ -66,8 +66,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".statistic.StatisticActivity" />
+        <activity android:name=".statistics.StatisticActivity" />
         <activity android:name=".whitename.WhiteNameEditActivity" />
+
         <activity
             android:name=".browser.BrowserActivity"
             android:configChanges="orientation|screenSize"
@@ -82,6 +83,24 @@
         <activity android:name=".ranklist.RankListActivity"></activity>
         <activity android:name=".community.CommunityActivity"></activity>
         <activity android:name=".timedtask.TimedTaskActivity"></activity>
+        <activity
+            android:theme="@style/StatisticsActivityTheme"
+            android:name=".statistics.AppStatisticsList"
+            android:hardwareAccelerated="true">
+
+        </activity>
+        <activity
+            android:theme="@style/StatisticsActivityTheme"
+            android:name=".statistics.PiePolylineChartActivity"
+            android:hardwareAccelerated="true">
+
+        </activity>
+        <activity
+            android:theme="@style/StatisticsActivityTheme"
+            android:name=".statistics.BarChartActivity"
+            android:hardwareAccelerated="true">
+
+        </activity>
     </application>
 
 </manifest>

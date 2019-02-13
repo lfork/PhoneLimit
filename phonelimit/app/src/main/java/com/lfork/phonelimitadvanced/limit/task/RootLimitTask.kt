@@ -14,14 +14,26 @@ import com.lfork.phonelimitadvanced.utils.RootShell
  * @author lfork@vip.qq.com
  * @date 2019/02/07 21:32
  */
-class RootLimitTask :LauncherLimitTask(){
+class RootLimitTask : LauncherLimitTask() {
+
+    /**
+     * 防止在安全模式里面安装桌面程序 和 使用浏览器。
+     */
+    companion object {
+        val appsNeedHide = arrayOf("com.android.chrome", "com.android.documentsui")
+    }
+
     override fun closeLimit() {
         super.closeLimit()
         if (isRooted && defaultLimitModel == LIMIT_MODEL_ROOT) {
             val launchers = LimitApplication.App.getLauncherApps()
             launchers?.forEach {
-               val result =  RootShell.execRootCmd("pm unhide $it")
+                val result = RootShell.execRootCmd("pm unhide $it")
                 Log.d("Rootshell", result)
+            }
+
+            appsNeedHide.forEach {
+                RootShell.execRootCmd("pm unhide $it")
             }
         }
     }
@@ -30,6 +42,9 @@ class RootLimitTask :LauncherLimitTask(){
         super.initLimit(context)
         if (isRooted && defaultLimitModel == LIMIT_MODEL_ROOT) {
             LimitApplication.App.getLauncherApps()?.forEach {
+                RootShell.execRootCmd("pm hide $it")
+            }
+            appsNeedHide.forEach {
                 RootShell.execRootCmd("pm hide $it")
             }
         }

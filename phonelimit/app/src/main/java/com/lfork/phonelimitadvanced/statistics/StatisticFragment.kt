@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.statistic
+package com.lfork.phonelimitadvanced.statistics
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle

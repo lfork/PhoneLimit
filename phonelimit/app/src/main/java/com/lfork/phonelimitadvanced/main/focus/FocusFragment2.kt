@@ -31,6 +31,7 @@ import com.lfork.phonelimitadvanced.base.permission.checkAndRequestUsagePermissi
 import com.lfork.phonelimitadvanced.base.permission.requestFloatingPermission
 import com.lfork.phonelimitadvanced.base.permission.requestLauncherPermission
 import com.lfork.phonelimitadvanced.base.permission.requestRootPermission
+import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
 import kotlinx.android.synthetic.main.item_window_floating.*
@@ -72,7 +73,6 @@ class FocusFragment2 : Fragment() {
             registerListener(root!!)
             setupRecyclerView()
             val limitIntent = Intent(context, LimitService::class.java)
-
             bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
             startService(limitIntent)
         }
@@ -99,6 +99,10 @@ class FocusFragment2 : Fragment() {
             startLimit(inputTimeMinuteCache)
         }
         refreshAppInfoData()
+
+        if (remainTimeCache.isEmpty()){
+            view?.btn_start_remain_time_text?.text = "Start"
+        }
 
         if (LimitApplication.isOnLimitation) {
             (activity as MainActivity?)?.hideOtherUI()
@@ -268,12 +272,14 @@ class FocusFragment2 : Fragment() {
     val limitStateListener = object : LimitService.StateListener {
         override fun onLimitFinished() {
             runOnUiThread {
-                btn_start_remain_time_text.text = "Start"
+                btn_start_remain_time_text?.text = "Start"
 //                tips.text = "限制已解除"
                 ToastUtil.showLong(context, "限制已解除")
-                (activity as MainActivity?)?.showOtherUI()
+                if (this@FocusFragment2.isVisible){
+                    (activity as MainActivity?)?.showOtherUI()
+                }
             }
-
+            UrlInfoRepository.activeUrl()
             remainTimeCache = ""
         }
 

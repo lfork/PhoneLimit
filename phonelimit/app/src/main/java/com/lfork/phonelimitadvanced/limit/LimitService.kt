@@ -20,6 +20,7 @@ import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig.Companion.CYCLE_M
 import com.lfork.phonelimitadvanced.limit.task.*
 import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager
+import java.lang.Exception
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -224,6 +225,9 @@ class LimitService : Service() {
         val delayTime = startTime - currentTime.timeInMillis
         Log.d("延迟时间测试", "当前时间${currentTime.timeInMillis},任务开始时间${startTime} ")
 
+        if (startTime < 0){
+            throw Exception("startTime error!!")
+        }
 
         if (taskConfig.cycleModel == CYCLE_MODEL_NO_CYCLE) {
             //传过来的参数是：【任务开始的时间】，【任务持续的时间】，【任务的重复周期】/不重复
@@ -318,11 +322,11 @@ class LimitService : Service() {
             isImmediatelyExecuted = true
             startTimeMillisForUnfinishedTask = startTimeMillis
             this.limitModel = limitModel
-//            startTime.timeInMillis = startTimeMillis
         }
         if (remainTimeSeconds > 1) {
             startLimitTask(config)
         }
+        Log.d("任务恢复检查", "remainTimeSeconds $remainTimeSeconds")
     }
 
     private fun checkTimedLimitTask() {

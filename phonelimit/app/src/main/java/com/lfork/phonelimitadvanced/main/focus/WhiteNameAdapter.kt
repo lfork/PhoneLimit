@@ -9,6 +9,7 @@ import android.widget.ImageView
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.isOnLimitation
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
+import com.lfork.phonelimitadvanced.statistics.StatisticActivity
 import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.startActivity
 import com.lfork.phonelimitadvanced.utils.startOtherApp
@@ -34,8 +35,10 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return items.size + 2
+        return items.size + customHeaderCount
     }
+
+    private val customHeaderCount = 3
 
     override fun onBindViewHolder(holder: NormalHolder, p1: Int) {
         val context = holder.imageView.context
@@ -47,9 +50,17 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                     customIconOnClickListener?.onBrowserClick()
                 }
             }
+
             1 -> {
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_chart_24dp))
+                holder.textView.text = "使用统计"
+                holder.item.setOnClickListener {
+                    it.context.startActivity<StatisticActivity>()
+                }
+            }
+            2 -> {
                 holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_edit_black_24dp))
-                holder.textView.text = "编辑白名单"
+                holder.textView.text = "使用统计"
                 holder.item.setOnClickListener {
                     if (!isOnLimitation) {
                         //跳转到编辑界面
@@ -60,11 +71,11 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 }
             }
             else -> {
-                holder.textView.text = items[p1-2].appName
-                val icon = items[p1-2].icon
+                holder.textView.text = items[p1-customHeaderCount].appName
+                val icon = items[p1-customHeaderCount].icon
                 holder.imageView.setImageDrawable(icon)
                 holder.item.setOnClickListener {
-                    it.context.startOtherApp(items[p1-2].packageName)
+                    it.context.startOtherApp(items[p1-customHeaderCount].packageName)
                 }
             }
         }

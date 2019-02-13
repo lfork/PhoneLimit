@@ -97,7 +97,7 @@ class BrowserFragment : Fragment() {
                 }
 
                 if (UrlInfoRepository.contains(url)) {
-                    BrowserActivity.loadUrl(context!!, url, "test")
+                    BrowserActivity.loadUrl(context!!, url, "WebBrowser")
                 } else {
                     ToastUtil.showShort(context, "当前网址不在白名单当中，限制模式下无法访问")
                 }

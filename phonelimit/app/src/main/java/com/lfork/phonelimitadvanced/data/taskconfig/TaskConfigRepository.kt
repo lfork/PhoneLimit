@@ -48,6 +48,7 @@ object TaskConfigRepository {
     }
 
     fun deleteTask(taskConfig: TaskConfig) {
+        cacheTasks?.remove(taskConfig)
         taskConfigDao.delete(taskConfig)
 //        val target = cacheTasks.find { it.id == taskConfig.id }
 //        cacheTasks.remove(target)
