@@ -138,7 +138,7 @@ public class MyWebViewClient extends WebViewClient {
         this.listener = listener;
     }
 
-    interface WebClientStatusListener{
+    public interface WebClientStatusListener{
         void urlChanged(String url);
     }
 
