@@ -31,6 +31,9 @@ import com.lfork.phonelimitadvanced.base.permission.checkAndRequestUsagePermissi
 import com.lfork.phonelimitadvanced.base.permission.requestFloatingPermission
 import com.lfork.phonelimitadvanced.base.permission.requestLauncherPermission
 import com.lfork.phonelimitadvanced.base.permission.requestRootPermission
+import com.lfork.phonelimitadvanced.base.widget.FirstItemSnapHelper
+import com.lfork.phonelimitadvanced.base.widget.ScrollLinearLayoutManager
+import com.lfork.phonelimitadvanced.data.getSettingsIndexTipsSwitch
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
@@ -53,6 +56,11 @@ class FocusFragment2 : Fragment() {
         private var inputTimeMinuteCache = -1L
 
         var remainTimeCache: String = ""
+
+        /**
+         * 第一打开APP的滑动提示是否完成
+         */
+        var isRecyclerScrolled = false
     }
 
 //    lateinit var dialog: AlertDialog
@@ -72,6 +80,9 @@ class FocusFragment2 : Fragment() {
             root = inflater.inflate(R.layout.main_focus_frag_v2, container, false)
             registerListener(root!!)
             setupRecyclerView()
+
+
+
             val limitIntent = Intent(context, LimitService::class.java)
             bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
             startService(limitIntent)
@@ -82,14 +93,15 @@ class FocusFragment2 : Fragment() {
 
     private fun setupRecyclerView() {
         root!!.recycle_white_list.layoutManager =
-                LinearLayoutManager(context, HORIZONTAL, false)
+                ScrollLinearLayoutManager(context, HORIZONTAL, false)
         adapter = WhiteNameAdapter()
         adapter.customIconOnClickListener = customIconOnClickListener
 
         root!!.recycle_white_list.adapter = adapter
 
-        LinearSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
+        FirstItemSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
     }
+
 
 
     override fun onResume() {
@@ -109,6 +121,32 @@ class FocusFragment2 : Fragment() {
         } else {
             (activity as MainActivity?)?.showOtherUI()
         }
+
+        if (LimitApplication.isFirstOpen && !isRecyclerScrolled){
+            LimitApplication.executeAsyncDataTask {
+                Thread.sleep(1500)
+                runOnUiThread {
+                    root!!.recycle_white_list.smoothScrollToPosition(adapter.itemCount - 1)
+                }
+
+                Thread.sleep(2500)
+
+                runOnUiThread {
+                    root!!.recycle_white_list.smoothScrollToPosition(0)
+                }
+
+                isRecyclerScrolled = true
+            }
+        }
+
+
+        if (context?.getSettingsIndexTipsSwitch() != false){
+            root!!.tv_index_tips.visibility = View.VISIBLE
+        } else{
+            root!!.tv_index_tips.visibility = View.GONE
+        }
+
+//
     }
 
     override fun onPause() {

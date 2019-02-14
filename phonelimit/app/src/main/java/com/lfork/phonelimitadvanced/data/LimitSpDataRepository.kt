@@ -15,6 +15,20 @@ import java.util.ArrayList
  */
 
 
+fun Context.saveSettingsIndexTipsSwitch(isOpen: Boolean) {
+    getSharedPreferences("settings", Context.MODE_PRIVATE)
+        .edit()
+        .putBoolean("isOpen", isOpen)
+        .apply()
+}
+
+
+fun Context.getSettingsIndexTipsSwitch() = getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean(
+    "isOpen",
+    true
+)
+
+
 fun Context.saveRootStatus(isRooted: Boolean) {
     getSharedPreferences("env", Context.MODE_PRIVATE)
         .edit()

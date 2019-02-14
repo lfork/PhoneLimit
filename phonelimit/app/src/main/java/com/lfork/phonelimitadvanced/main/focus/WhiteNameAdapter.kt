@@ -24,28 +24,30 @@ import java.util.*
  */
 class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
-    var customIconOnClickListener: CustomIconOnClickListener?=null
+    var customIconOnClickListener: CustomIconOnClickListener? = null
 
     private val items = ArrayList<AppInfo>(0);
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_recycle_app, parent, false)
+            .inflate(R.layout.item_recycle_app, parent, false)
         return NormalHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return items.size + customHeaderCount
+        return items.size + customHeaderCount + customTailCount
     }
 
     private val customHeaderCount = 3
+
+    private val customTailCount = 2
 
     override fun onBindViewHolder(holder: NormalHolder, p1: Int) {
         val context = holder.imageView.context
         when (p1) {
             0 -> {
-                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_search_black_24dp))
-                holder.textView.text = "学习浏览器"
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_browser_24dp))
+                holder.textView.text = "浏览器"
                 holder.item.setOnClickListener {
                     customIconOnClickListener?.onBrowserClick()
                 }
@@ -58,9 +60,37 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                     it.context.startActivity<StatisticActivity>()
                 }
             }
+
             2 -> {
-                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_edit_black_24dp))
-                holder.textView.text = "使用统计"
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_rank_24dp))
+                holder.textView.text = "排行榜"
+                holder.item.setOnClickListener {
+                    if (!isOnLimitation) {
+                        //跳转到编辑界面
+                        it.context.startActivity<WhiteNameEditActivity>()
+                    } else {
+                        ToastUtil.showShort(it.context, "暂时不能编辑噢")
+                    }
+                }
+            }
+
+            //最后一个按钮
+            itemCount - 1 -> {
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_help_24dp))
+                holder.textView.text = "帮助"
+                holder.item.setOnClickListener {
+                    if (!isOnLimitation) {
+                        //跳转到编辑界面
+                        it.context.startActivity<WhiteNameEditActivity>()
+                    } else {
+                        ToastUtil.showShort(it.context, "暂时不能编辑噢")
+                    }
+                }
+            }
+
+            itemCount - 2 -> {
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_white_name_24dp))
+                holder.textView.text = "白名单"
                 holder.item.setOnClickListener {
                     if (!isOnLimitation) {
                         //跳转到编辑界面
@@ -71,11 +101,11 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 }
             }
             else -> {
-                holder.textView.text = items[p1-customHeaderCount].appName
-                val icon = items[p1-customHeaderCount].icon
+                holder.textView.text = items[p1 - customHeaderCount].appName
+                val icon = items[p1 - customHeaderCount].icon
                 holder.imageView.setImageDrawable(icon)
                 holder.item.setOnClickListener {
-                    it.context.startOtherApp(items[p1-customHeaderCount].packageName)
+                    it.context.startOtherApp(items[p1 - customHeaderCount].packageName)
                 }
             }
         }
@@ -93,7 +123,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
         items.addAll(itemList)
     }
 
-    fun onDestroy(){
+    fun onDestroy() {
         customIconOnClickListener = null
     }
 

@@ -33,7 +33,7 @@
 
 
     <com.lfork.phonelimitadvanced.base.widget.MarqueeTextView
-        android:id="@+id/tips"
+        android:id="@+id/tv_index_tips"
         style="@style/marquee_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:gravity="center"
-        android:text="@string/limit_model_tips_normal"
+        android:text="@string/index_tips"
         android:textColor="#fff"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
