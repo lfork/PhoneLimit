@@ -21,7 +21,7 @@ import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
-import com.lfork.phonelimitadvanced.limit.LimitService
+import com.lfork.phonelimitadvanced.limitcore.LimitService
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedStatAccessPermission

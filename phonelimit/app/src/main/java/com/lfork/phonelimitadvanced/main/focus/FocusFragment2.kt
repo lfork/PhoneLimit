@@ -9,9 +9,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
-import android.support.v7.widget.LinearSnapHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +21,7 @@ import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
-import com.lfork.phonelimitadvanced.limit.LimitService
+import com.lfork.phonelimitadvanced.limitcore.LimitService
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
 import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedStatAccessPermission
@@ -151,7 +149,7 @@ class FocusFragment2 : Fragment() {
 
     override fun onPause() {
         super.onPause()
-//        (activity as MainActivity?)?.hideOtherUI()
+        (activity as MainActivity?)?.hideOtherUI()
     }
 
 

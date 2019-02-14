@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
-import com.lfork.phonelimitadvanced.limit.LimitModelType
+import com.lfork.phonelimitadvanced.limitcore.LimitModelType
 import java.util.ArrayList
 
 /**

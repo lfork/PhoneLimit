@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.main2_act.*
 import android.view.View
 import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
-import com.lfork.phonelimitadvanced.limit.task.FloatingLimitTask
+import com.lfork.phonelimitadvanced.limitcore.task.FloatingLimitTask
 import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
 import com.lfork.phonelimitadvanced.utils.startActivity
 
@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onAttachFragment(fragment: Fragment?) {
         super.onAttachFragment(fragment)
         //当前的界面的保存状态，只是重新让新的Fragment指向了原本未被销毁的fragment，它就是onAttach方法对应的Fragment对象
+        //防止重影
         if (focusFragment == null && fragment is FocusFragment2) {
             focusFragment = fragment
             focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
@@ -156,10 +157,6 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.main_frag, fragment)
             .addToBackStack(null)
             .commit()
-
-        if (fragment !is FocusFragment2) {
-            hideToolBar()
-        }
     }
 
 

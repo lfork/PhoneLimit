@@ -52,7 +52,7 @@
         </activity>
 
         <service
-            android:name=".limit.LimitService"
+            android:name=".limitcore.LimitService"
             android:enabled="true"
             android:exported="true" />
 
@@ -68,37 +68,35 @@
         </activity>
         <activity android:name=".statistics.StatisticActivity" />
         <activity android:name=".whitename.WhiteNameEditActivity" />
-
         <activity
             android:name=".browser.BrowserActivity"
             android:configChanges="orientation|screenSize"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_browser"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".user.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
-        <activity android:name=".user.RegisterActivity"></activity>
-        <activity android:name=".ranklist.RankListActivity"></activity>
-        <activity android:name=".community.CommunityActivity"></activity>
-        <activity android:name=".timedtask.TimedTaskActivity"></activity>
+            android:label="@string/title_activity_login" />
+        <activity android:name=".user.RegisterActivity" />
+        <activity android:name=".ranklist.RankListActivity" />
+        <activity android:name=".community.CommunityActivity" />
+        <activity android:name=".timedtask.TimedTaskActivity" />
         <activity
-            android:theme="@style/StatisticsActivityTheme"
             android:name=".statistics.AppStatisticsList"
-            android:hardwareAccelerated="true">
-
-        </activity>
+            android:hardwareAccelerated="true"
+            android:theme="@style/StatisticsActivityTheme"></activity>
         <activity
-            android:theme="@style/StatisticsActivityTheme"
             android:name=".statistics.PiePolylineChartActivity"
-            android:hardwareAccelerated="true">
-
-        </activity>
+            android:hardwareAccelerated="true"
+            android:theme="@style/StatisticsActivityTheme"></activity>
         <activity
-            android:theme="@style/StatisticsActivityTheme"
             android:name=".statistics.BarChartActivity"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:theme="@style/StatisticsActivityTheme"></activity>
+        <activity
+            android:name=".help.HelpActivity"
+            android:theme="@style/HelpActivityTheme">
 
         </activity>
     </application>

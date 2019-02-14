@@ -9,6 +9,8 @@ import android.widget.ImageView
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.isOnLimitation
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
+import com.lfork.phonelimitadvanced.help.HelpActivity
+import com.lfork.phonelimitadvanced.ranklist.RankListActivity
 import com.lfork.phonelimitadvanced.statistics.StatisticActivity
 import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.startActivity
@@ -67,7 +69,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 holder.item.setOnClickListener {
                     if (!isOnLimitation) {
                         //跳转到编辑界面
-                        it.context.startActivity<WhiteNameEditActivity>()
+                        it.context.startActivity<RankListActivity>()
                     } else {
                         ToastUtil.showShort(it.context, "暂时不能编辑噢")
                     }
@@ -81,7 +83,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 holder.item.setOnClickListener {
                     if (!isOnLimitation) {
                         //跳转到编辑界面
-                        it.context.startActivity<WhiteNameEditActivity>()
+                        it.context.startActivity<HelpActivity>()
                     } else {
                         ToastUtil.showShort(it.context, "暂时不能编辑噢")
                     }

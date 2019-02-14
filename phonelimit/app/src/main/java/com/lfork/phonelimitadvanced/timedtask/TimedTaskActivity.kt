@@ -14,9 +14,8 @@ import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfigRepository
-import com.lfork.phonelimitadvanced.limit.LimitService
+import com.lfork.phonelimitadvanced.limitcore.LimitService
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
-import com.lfork.phonelimitadvanced.utils.ToastUtil
 import kotlinx.android.synthetic.main.item_timed_task.view.*
 import kotlinx.android.synthetic.main.timed_task_setting_act.*
 import java.util.*
