@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -202,6 +203,9 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
                         return "其他应用";
                     else {
                         String str = ShowList.get(i).getLabel();
+                        if (TextUtils.isEmpty(str)){
+                            return "empty name";
+                        }
                         if (str.length() <= 4)
                             return str;
                         else return (str.substring(0, 3) + "..");
