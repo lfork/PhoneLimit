@@ -89,7 +89,7 @@
                     android:layout_marginTop="8dp"
                     android:text="使用情况访问权限"
                     android:textColor="@color/black"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
-                    android:text="App限制 使用情况统计 点击设置"
+                    android:text="App限制 点我设置"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView2"
                     app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -138,9 +138,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="显示在其他应用的上层"
+                    android:text="显示在其他应用上层"
                     android:textColor="@color/black"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -151,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
-                    android:text="App限制 防卸载 点击设置"
+                    android:text="防卸载 点我设置"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView21"
                     app:layout_constraintTop_toBottomOf="@+id/textView21" />
@@ -188,7 +188,7 @@
                     android:layout_marginTop="8dp"
                     android:text="默认桌面"
                     android:textColor="@color/black"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -199,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
-                    android:text="App限制 防特殊退出方法 点击设置"
+                    android:text="@string/tips_launcher_permission"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView211"
                     app:layout_constraintTop_toBottomOf="@+id/textView211" />
@@ -237,7 +237,7 @@
                     android:layout_marginTop="8dp"
                     android:text="Root权限"
                     android:textColor="@color/black"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -248,7 +248,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
-                    android:text="关闭程序入口 防开发者模式 点击设置"
+                    android:text="@string/tips_root_permission"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView2111"
                     app:layout_constraintTop_toBottomOf="@+id/textView2111" />

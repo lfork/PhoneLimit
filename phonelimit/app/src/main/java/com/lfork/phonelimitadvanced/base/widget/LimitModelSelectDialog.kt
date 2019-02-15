@@ -17,6 +17,7 @@ import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedS
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedFloatingWindowPermission
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.modelPermissionCheck
+import com.lfork.phonelimitadvanced.utils.openDefaultAppsSetting
 import kotlinx.android.synthetic.main.dialog_limit_model_select.*
 
 /**
@@ -109,8 +110,11 @@ class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
         }
 
         layout_launcher_permission.setOnClickListener {
-            context.requestLauncherPermission()
-
+            if (!context.isDefaultLauncher()){
+                context.requestLauncherPermission()
+            } else{
+                context.openDefaultAppsSetting()
+            }
         }
 
         layout_root_permission.setOnClickListener {
