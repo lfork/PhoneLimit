@@ -75,30 +75,25 @@
             android:label="@string/title_activity_browser"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".user.LoginActivity"
-            android:label="@string/title_activity_login" />
-        <activity android:name=".user.RegisterActivity" />
         <activity android:name=".ranklist.RankListActivity" />
         <activity android:name=".community.CommunityActivity" />
         <activity android:name=".timedtask.TimedTaskActivity" />
         <activity
             android:name=".statistics.AppStatisticsList"
             android:hardwareAccelerated="true"
-            android:theme="@style/StatisticsActivityTheme"></activity>
+            android:theme="@style/StatisticsActivityTheme" />
         <activity
             android:name=".statistics.PiePolylineChartActivity"
             android:hardwareAccelerated="true"
-            android:theme="@style/StatisticsActivityTheme"></activity>
+            android:theme="@style/StatisticsActivityTheme" />
         <activity
             android:name=".statistics.BarChartActivity"
             android:hardwareAccelerated="true"
-            android:theme="@style/StatisticsActivityTheme"></activity>
+            android:theme="@style/StatisticsActivityTheme" />
         <activity
             android:name=".help.HelpActivity"
-            android:theme="@style/HelpActivityTheme">
-
-        </activity>
+            android:theme="@style/HelpActivityTheme"></activity>
+        <activity android:name=".user.UserInfoActivity"></activity>
     </application>
 
 </manifest>

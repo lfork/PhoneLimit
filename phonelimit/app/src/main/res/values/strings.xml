@@ -19,6 +19,7 @@
         </font>
        专注模式可以避免非白名单应用的使用，让自己保持专注。
 
+
     </string>
     <string name="limit_model_tips_floating">
         <font color="#006600">
@@ -30,9 +31,9 @@
 
     <string name="limit_model_tips_floating_and_launcher">
         <font color="#006600">
-            <b>✔使用说明\n</b>
+            <b>✔使用说明</b>
         </font>
-       终极模式，结合了桌面、悬浮窗等权限。让限制更进一步。
+       \n1.终极模式，结合了桌面、悬浮窗等权限。让限制更进一步。\n2.部分机型上无法自动修改默认桌面，所以当终极模式结束后，您可能需要在上方的【权限检查】那里，手动修改默认桌面。\n3.如果您的设备不支持切换默认桌面，那么本模式就无法使用。
     </string>
 
     <string name="limit_model_tips_root">
@@ -55,7 +56,7 @@
     <string name="launcher_denied_tips">【默认桌面设置中…】请您将程序设置为默认桌面来保证程序正常工作。</string>
     <string name="floating_window_denied_tips">请您授予程序悬浮窗权限来保证程序正常工作。</string>
     <string name="tips_launcher_setting">APP需要默认桌面的权限才能保证正常运行😁</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">取消</string>
     <string name="action_default_apps_setting">去设置</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_home">Home</string>
@@ -102,6 +103,14 @@
     <string name="start_timed_task">Start Timed task</string>
     <string name="tips_1">请暂时远离手机，自律将帮您走得更远。\n返回中……</string>
     <string name="settings_index_tips_switch">是否显示首页的滚动提示</string>
+    <string name="tips_root_permission">关闭程序入口 点我设置</string>
+    <string name="tips_launcher_permission">防特殊退出方法  <font color="#DC143C">点我设置或取消</font></string>
+    <string name="btn_edit_username">修改昵称</string>
+    <string name="btn_edit_motto">修改格言</string>
+    <string name="btn_forget_password">忘记密码</string>
+    <string name="btn_logout">退出登录</string>
+    <string name="tv_login">点击登录</string>
+    <string name="default_motto">专注、热爱、全心贯注于你所期望的事物上，必有收获。</string>
 
     <!--<string-array name="planets_array">-->
     <!--<item>Mercury</item>-->

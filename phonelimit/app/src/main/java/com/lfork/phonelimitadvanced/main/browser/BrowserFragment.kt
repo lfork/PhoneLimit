@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +24,8 @@ import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.isHttpUrl
 import com.lfork.phonelimitadvanced.utils.runOnUiThread
-import kotlinx.android.synthetic.main.main_browser_frag.*
-import kotlinx.android.synthetic.main.main_browser_frag.view.*
-import kotlinx.android.synthetic.main.main_browser_url_recycle_item.view.*
+import kotlinx.android.synthetic.main.browser_frag.view.*
+import kotlinx.android.synthetic.main.browser_url_recycle_item.view.*
 
 class BrowserFragment : Fragment() {
 
@@ -43,7 +41,7 @@ class BrowserFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         if (root == null) {
-            root = inflater.inflate(R.layout.main_browser_frag, container, false)
+            root = inflater.inflate(R.layout.browser_frag, container, false)
             inputBox = root!!.edit_url
             adapter = WhiteNameAdapter()
             root!!.recycle_white_name_urls.adapter = adapter
@@ -114,7 +112,7 @@ class BrowserFragment : Fragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
             val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.main_browser_url_recycle_item, parent, false)
+                    .inflate(R.layout.browser_url_recycle_item, parent, false)
             return NormalHolder(view)
         }
 

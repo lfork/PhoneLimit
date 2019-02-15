@@ -30,7 +30,8 @@ import com.lfork.phonelimitadvanced.utils.Constants
  * 只做悬浮窗
  *
  */
-class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
+open class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
+
 
     companion object {
         var isOnRecentApps = false
@@ -176,6 +177,11 @@ class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
         addWindowView()
     }
 
+    override fun onHomeKeyClicked() {
+        isOnRecentApps = true
+        addWindowView()
+    }
+
 
     override fun closeLimit() {
         mContext?.unregisterReceiver(mReceiver)
@@ -183,30 +189,5 @@ class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
         removeWindow()
         mContext = null
     }
-
-    fun getTopPacakge(mContext: Context): String? {
-
-        try {
-            val am = mContext
-                .getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
-            val cn = am.getRunningTasks(1)[0].topActivity
-            return cn.packageName
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
-        }
-    }
-
-//    private fun getTopRunningAppPackageName(): String {
-//        val result =
-//            LinuxShell.execCommand("dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp'", true)
-//        val str =result.successMsg
-//        if (str.isEmpty()){
-//            return ""
-//        }
-//        val pkg = str.substring(str.indexOf("com."), str.indexOf('/'))
-//        return pkg
-//    }
-
 
 }

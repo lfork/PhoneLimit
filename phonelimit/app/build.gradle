@@ -40,6 +40,10 @@ android {
         }
     }
 
+    dataBinding {
+        enabled = true
+    }
+
 
 }
 

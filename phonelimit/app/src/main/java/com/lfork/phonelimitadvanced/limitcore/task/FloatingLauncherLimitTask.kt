@@ -10,25 +10,14 @@ import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefau
  * @author lfork@vip.qq.com
  * @date 2019/02/07 21:35
  */
-class FloatingLauncherLimitTask:LimitTask {
+class FloatingLauncherLimitTask: FloatingLimitTask() {
 
-    private lateinit var floatingLimitTask:FloatingLimitTask
-
-    override fun initLimit(context: Context) {
-        mContext = context
-        floatingLimitTask = FloatingLimitTask()
-        floatingLimitTask.initLimit(context)
+    override fun onHomeKeyClicked() {
+        //什么也不做
     }
-
-    override fun doLimit() :Boolean{
-        return floatingLimitTask.doLimit()
-    }
-
-    private var mContext: Context? = null
 
     override fun closeLimit() {
         mContext?.clearDefaultLauncher()
-        mContext = null
-        floatingLimitTask.closeLimit()
+        super.closeLimit()
     }
 }

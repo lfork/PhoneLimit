@@ -178,6 +178,4 @@ class MainActivity : AppCompatActivity() {
         showToolBar()
 //        setSystemUIVisible(true)
     }
-
-
 }

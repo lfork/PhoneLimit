@@ -75,7 +75,7 @@ class FocusFragment2 : Fragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         if (root == null) {
-            root = inflater.inflate(R.layout.main_focus_frag_v2, container, false)
+            root = inflater.inflate(R.layout.focus_frag_v2, container, false)
             registerListener(root!!)
             setupRecyclerView()
 

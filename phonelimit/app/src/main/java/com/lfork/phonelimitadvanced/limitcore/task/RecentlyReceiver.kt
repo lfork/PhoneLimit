@@ -16,7 +16,7 @@ class RecentlyReceiver : BroadcastReceiver() {
                 "homekey"//Home键
                 -> {
                     Log.d("反应速度测试", "homekey")
-                    systemKeyListener?.onRecentAppsClicked()
+                    systemKeyListener?.onHomeKeyClicked()
                 }
                 "recentapps"//最近任务键
                 -> {
@@ -37,6 +37,9 @@ class RecentlyReceiver : BroadcastReceiver() {
 
     interface SystemKeyListener{
         fun onRecentAppsClicked()
+
+        fun onHomeKeyClicked()
+
     }
 
     fun registerKeyListener(listener :SystemKeyListener){

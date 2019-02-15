@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.getSettingsIndexTipsSwitch
 import com.lfork.phonelimitadvanced.data.saveSettingsIndexTipsSwitch
-import kotlinx.android.synthetic.main.my_frag.view.*
+import kotlinx.android.synthetic.main.settings_frag.view.*
 
 class SettingsFragment : Fragment() {
 
@@ -27,7 +27,7 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         if (root == null) {
-            root = inflater.inflate(R.layout.my_frag, container, false)
+            root = inflater.inflate(R.layout.settings_frag, container, false)
             root!!.switch_index_tips.isChecked = context?.getSettingsIndexTipsSwitch()?:true
 
             root!!.switch_index_tips.setOnCheckedChangeListener { buttonView, isChecked ->

@@ -32,8 +32,8 @@ import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
 import com.lfork.phonelimitadvanced.base.widget.UsagePermissionDialog
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager
-import kotlinx.android.synthetic.main.main_focus_frag.*
-import kotlinx.android.synthetic.main.main_focus_frag.view.*
+import kotlinx.android.synthetic.main.focus_frag.*
+import kotlinx.android.synthetic.main.focus_frag.view.*
 
 class FocusFragment : Fragment() {
 
@@ -64,7 +64,7 @@ class FocusFragment : Fragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         if (root == null) {
-            root = inflater.inflate(R.layout.main_focus_frag, container, false)
+            root = inflater.inflate(R.layout.focus_frag, container, false)
 
             initDialog()
             registerListener(root!!)

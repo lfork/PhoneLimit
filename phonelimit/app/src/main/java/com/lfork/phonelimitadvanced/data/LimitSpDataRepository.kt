@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.lfork.phonelimitadvanced.LimitApplication
+import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.limitcore.LimitModelType
 import java.util.ArrayList
 
@@ -13,6 +14,91 @@ import java.util.ArrayList
  * @author lfork@vip.qq.com
  * @date 2019/02/07 11:14
  */
+
+fun Context.saveBio(bio:String) {
+    getSharedPreferences("user_info", Context.MODE_PRIVATE)
+        .edit()
+        .putString("motto", bio)
+        .apply()
+}
+
+
+fun Context.getBio() = getSharedPreferences("user_info", Context.MODE_PRIVATE).getString(
+    "motto",
+    getString(R.string.default_motto)
+)
+
+
+fun Context.saveUsername(username:String) {
+    getSharedPreferences("user_info", Context.MODE_PRIVATE)
+        .edit()
+        .putString("username", username)
+        .apply()
+}
+
+
+fun Context.getUsername() = getSharedPreferences("user_info", Context.MODE_PRIVATE).getString(
+    "username",
+    ""
+)
+
+
+
+fun Context.saveUserLoginStatus(isLogin:Boolean) {
+    getSharedPreferences("user_info", Context.MODE_PRIVATE)
+        .edit()
+        .putBoolean("is_login", isLogin)
+        .apply()
+}
+
+
+fun Context.getUserLoginStatus() = getSharedPreferences("user_info", Context.MODE_PRIVATE).getBoolean(
+    "is_login",
+    false
+)
+
+
+
+fun Context.saveUserAvatarIndex(avatarIndex:Int) {
+    getSharedPreferences("user_info", Context.MODE_PRIVATE)
+        .edit()
+        .putInt("avatar_index", avatarIndex)
+        .apply()
+}
+
+
+fun Context.getUserAvatarIndex() = getSharedPreferences("user_info", Context.MODE_PRIVATE).getInt(
+    "avatar_index",
+    -1
+)
+
+
+fun Context.saveUserPassword(password:String) {
+    getSharedPreferences("user_info", Context.MODE_PRIVATE)
+        .edit()
+        .putString("password", password)
+        .apply()
+}
+
+
+fun Context.getUserPassword() = getSharedPreferences("user_info", Context.MODE_PRIVATE).getString(
+    "password",
+    ""
+)
+
+fun Context.saveUserEmail(email:String) {
+    getSharedPreferences("user_info", Context.MODE_PRIVATE)
+        .edit()
+        .putString("email", email)
+        .apply()
+}
+
+
+fun Context.getUserEmail() = getSharedPreferences("user_info", Context.MODE_PRIVATE).getString(
+    "email",
+    ""
+)
+
 
 
 fun Context.saveSettingsIndexTipsSwitch(isOpen: Boolean) {

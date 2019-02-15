@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    >
+    tools:context=".user.UserInfoActivity">
 
     <data>
+
         <variable
             name="viewmodel"
-            type="com.lfork.phonelimitadvanced.ranklist.RankListViewModel"/>
+            type="com.lfork.phonelimitadvanced.user.UserInfoViewModel" />
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
     </data>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".ranklist.RankListActivity">
+      >
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/layout_user_info"
@@ -30,60 +31,60 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
                 android:text="昵称"
+                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv_avatar" />
 
             <TextView
-                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
                 android:id="@+id/tv_username"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                tools:text="986204478@qq.com"
                 android:text="@={viewmodel.username}"
+                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_username_label"
                 app:layout_constraintEnd_toStartOf="@+id/iv_avatar"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/tv_username_label"
-                app:layout_constraintTop_toTopOf="@+id/tv_username_label" />
+                app:layout_constraintTop_toTopOf="@+id/tv_username_label"
+                tools:text="986204478@qq.com" />
 
             <TextView
-                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
                 android:id="@+id/tv_email_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
-
                 android:text="邮箱"
+
+                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_avatar"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
-                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
                 android:id="@+id/tv_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="@={viewmodel.email}"
-                tools:text="986204478@qq.com"
+                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_email_label"
                 app:layout_constraintEnd_toStartOf="@+id/iv_avatar"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/tv_email_label"
-                app:layout_constraintTop_toTopOf="@+id/tv_email_label" />
+                app:layout_constraintTop_toTopOf="@+id/tv_email_label"
+                tools:text="986204478@qq.com" />
 
             <TextView
                 android:id="@+id/tv_login"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:gravity="center"
-                android:text="点击登录"
-                android:textSize="24dp"
+                android:text="@string/tv_login"
+                android:textSize="24sp"
                 android:visibility="@{viewmodel.isLoggedIn?View.GONE:View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_avatar"
                 app:layout_constraintEnd_toStartOf="@+id/iv_avatar"
@@ -96,10 +97,10 @@
                 android:layout_height="80dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
+                android:src="@{viewmodel.avatar}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@{viewmodel.avatar}"
-                />
+                tools:src="@drawable/ic_portrait_24dp" />
 
             <TextView
                 android:id="@+id/tv_motto"
@@ -121,31 +122,91 @@
         </android.support.constraint.ConstraintLayout>
 
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/black" />
+        <LinearLayout
 
-        <Spinner
-            android:id="@+id/sp_rank_type"
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_user_info">
+
+            <Button
+                android:id="@+id/btn_edit_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_edit_username" />
+
+            <Button
+                android:id="@+id/btn_edit_tips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_edit_motto" />
+
+            <Button
+                android:id="@+id/btn_forget_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_forget_password" />
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_logout" />
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:id="@+id/task_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:entries="@array/rank_list_type">
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="8dp"
+            android:background="#cc000000"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/layout_user_info"
+           >
 
-        </Spinner>
+            <!-- Login progress -->
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/login_form" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_rank_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="处理中..."
+                android:textColor="@color/white"
+                android:textSize="22sp" />
 
+        </LinearLayout>
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
 </layout>

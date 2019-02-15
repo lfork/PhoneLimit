@@ -23,4 +23,8 @@ import java.util.List;
 public class Test {
 
 
+    public String getRandomUserName(){
+        return null;
+    }
+
 }

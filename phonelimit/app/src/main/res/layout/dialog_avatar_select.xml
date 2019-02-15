@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <GridLayout
+        android:background="@drawable/bg_rectangle_light"
+        android:id="@+id/grid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:alignmentMode="alignBounds"
+        android:columnCount="4"
+        android:orientation="horizontal"
+        android:rowCount="4"
+        android:useDefaultMargins="false"
+        tools:context="com.strivestay.gridlayoutdemo.MainActivity">
+
+
+        <ImageView
+            android:id="@+id/avatar_male_01"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_male_01"
+            tools:ignore="ContentDescription" />
+
+
+        <ImageView
+            android:id="@+id/avatar_female_01"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_female_01"
+            tools:ignore="ContentDescription" />
+
+
+        <ImageView
+            android:id="@+id/avatar_male_02"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_male_02"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_female_02"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_female_02"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_male_03"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_male_03"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_female_03"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_female_03"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_male_04"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_male_04"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_female_04"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_female_04"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_male_05"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_male_05"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_female_05"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_female_05"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_male_06"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_male_06"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_female_06"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_female_06"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_male_07"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_male_07"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_female_07"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_female_07"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_male_08"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_male_08"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/avatar_female_08"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar_female_08"
+            tools:ignore="ContentDescription" />
+
+
+    </GridLayout>
+
+
+</android.support.constraint.ConstraintLayout>
