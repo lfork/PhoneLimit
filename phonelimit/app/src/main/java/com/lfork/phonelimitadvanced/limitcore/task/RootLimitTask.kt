@@ -20,7 +20,7 @@ class RootLimitTask : LauncherLimitTask() {
      * 防止在安全模式里面安装桌面程序 和 使用浏览器。
      */
     companion object {
-        val appsNeedHide = arrayOf("com.android.chrome", "com.android.documentsui")
+        val appsNeedHide = arrayOf("com.android.chrome", "com.android.documentsui","com.android.vending")
     }
 
     override fun closeLimit() {
