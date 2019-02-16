@@ -4,7 +4,7 @@
     android:id="@+id/activity_bar_chart"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="experment.zju.statistics.BarChartActivity">
+   >
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barchart"
