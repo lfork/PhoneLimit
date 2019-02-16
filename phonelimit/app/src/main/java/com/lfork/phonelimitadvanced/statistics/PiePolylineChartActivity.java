@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -49,7 +48,7 @@ public class PiePolylineChartActivity extends DemoBase implements OnChartValueSe
         super.onCreate(savedInstanceState);
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_pie_polyline_chart);
+        setContentView(R.layout.statistics_pie_polyline_chart_act);
 
         Button buttonday = (Button) findViewById(R.id.daybuttonchart1);
         buttonday.setOnClickListener(new View.OnClickListener() {

@@ -35,8 +35,8 @@ import com.lfork.phonelimitadvanced.data.getSettingsIndexTipsSwitch
 import com.lfork.phonelimitadvanced.data.urlinfo.UrlInfoRepository
 import com.lfork.phonelimitadvanced.utils.*
 import com.lfork.phonelimitadvanced.utils.ToastUtil.showLong
-import kotlinx.android.synthetic.main.item_window_floating.*
-import kotlinx.android.synthetic.main.item_window_floating.view.*
+import kotlinx.android.synthetic.main.focus_main_layout.*
+import kotlinx.android.synthetic.main.focus_main_layout.view.*
 
 
 class FocusFragment2 : Fragment() {

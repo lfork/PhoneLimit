@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.rankinfo.UserRankInfo
-import kotlinx.android.synthetic.main.item_rank_info.view.*
+import kotlinx.android.synthetic.main.rank_info_recycle_item.view.*
 import java.util.*
 
 
@@ -22,7 +22,7 @@ class RankListAdapter : RecyclerView.Adapter<RankListAdapter.NormalHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_rank_info, parent, false)
+            .inflate(R.layout.rank_info_recycle_item, parent, false)
         return NormalHolder(view)
     }
 

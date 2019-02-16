@@ -23,7 +23,7 @@ import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultL
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedFloatingWindowPermission
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedStatAccessPermission
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.modelPermissionCheck
-import kotlinx.android.synthetic.main.dialog_add_or_edit_task_config.*
+import kotlinx.android.synthetic.main.timed_task_add_or_edit_dialog.*
 
 
 class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
@@ -225,7 +225,7 @@ class TimedTaskAddOrEditDialog(context: Context) : BaseDialog(context) {
 
 
     override fun getContentViewId(): Int {
-        return R.layout.dialog_add_or_edit_task_config
+        return R.layout.timed_task_add_or_edit_dialog
     }
 
 

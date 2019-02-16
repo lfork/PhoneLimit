@@ -2,14 +2,13 @@ package com.lfork.phonelimitadvanced.user
 
 import android.content.Context
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.widget.BaseDialog
 import com.lfork.phonelimitadvanced.data.*
 import com.lfork.phonelimitadvanced.data.rankinfo.User
-import kotlinx.android.synthetic.main.dialog_change_password.*
+import kotlinx.android.synthetic.main.user_info_change_password_dialog.*
 import java.util.regex.Pattern
 
 /**
@@ -28,7 +27,7 @@ class ChangePasswordDialog(context: Context, var viewModel: UserInfoViewModel?) 
 
     override fun setExitAnim() = null
 
-    override fun getContentViewId() = R.layout.dialog_change_password
+    override fun getContentViewId() = R.layout.user_info_change_password_dialog
 
     override fun init() {
         tv_email.setText(context.getUserEmail())

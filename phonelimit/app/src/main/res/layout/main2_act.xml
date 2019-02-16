@@ -9,7 +9,6 @@
     tools:context=".main.MainActivity">
 
 
-
     <FrameLayout
         android:id="@+id/main_frag"
         android:layout_width="0dp"

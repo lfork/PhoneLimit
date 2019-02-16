@@ -76,7 +76,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity android:name=".ranklist.RankListActivity" />
-        <activity android:name=".community.CommunityActivity" />
         <activity android:name=".timedtask.TimedTaskActivity" />
         <activity
             android:name=".statistics.AppStatisticsList"

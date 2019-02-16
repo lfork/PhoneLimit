@@ -1,7 +1,6 @@
 package com.lfork.phonelimitadvanced.limitcore.task
 
- import android.app.Activity
-import android.app.ActivityManager
+ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -85,7 +84,7 @@ open class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListen
     }
 
     private fun initView() {
-        mWindowView = LayoutInflater.from(mContext).inflate(R.layout.item_window_tips, null)
+        mWindowView = LayoutInflater.from(mContext).inflate(R.layout.focus_window_tips, null)
         tips = mWindowView?.findViewById(R.id.tv_windows_tips)
         tips?.setOnClickListener {
             val intent = Intent(mContext!!, MainActivity::class.java)

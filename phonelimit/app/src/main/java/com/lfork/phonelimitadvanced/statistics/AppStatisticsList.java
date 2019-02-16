@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -36,7 +35,7 @@ public class AppStatisticsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_app_statistics_list);
+        setContentView(R.layout.statistics_list_act);
         this.style = StatisticsInfo.DAY;
 
         Button buttonday = (Button) findViewById(R.id.daybuttonlist3);
@@ -161,7 +160,7 @@ public class AppStatisticsList extends AppCompatActivity {
         datalist = getDataList(statisticsInfo.getShowList());
 
         ListView listView = (ListView)findViewById(R.id.AppStatisticsList);
-        SimpleAdapter adapter = new SimpleAdapter(this,datalist,R.layout.inner_list,
+        SimpleAdapter adapter = new SimpleAdapter(this,datalist,R.layout.statistics_inner_list,
                 new String[]{"label","info","times","icon"},
                 new int[]{R.id.label,R.id.info,R.id.times,R.id.icon});
         listView.setAdapter(adapter);

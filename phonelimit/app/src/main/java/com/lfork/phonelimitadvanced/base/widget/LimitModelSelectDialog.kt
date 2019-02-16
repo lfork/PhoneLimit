@@ -18,7 +18,7 @@ import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isGrantedF
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.modelPermissionCheck
 import com.lfork.phonelimitadvanced.utils.openDefaultAppsSetting
-import kotlinx.android.synthetic.main.dialog_limit_model_select.*
+import kotlinx.android.synthetic.main.focus_limit_model_select_dialog.*
 
 /**
  * Created by xian on 2017/2/28.
@@ -173,7 +173,7 @@ class LimitModelSelectDialog(context: Context) : BaseDialog(context) {
 
 
     override fun getContentViewId(): Int {
-        return R.layout.dialog_limit_model_select
+        return R.layout.focus_limit_model_select_dialog
     }
 
 

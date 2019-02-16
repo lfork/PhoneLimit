@@ -186,4 +186,8 @@ object UserRepository {
             }
         }
     }
+
+    fun uploadRankInfo(){
+
+    }
 }

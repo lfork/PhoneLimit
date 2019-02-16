@@ -1,9 +1,6 @@
 package com.lfork.phonelimitadvanced.base.widget
 
-import android.animation.AnimatorSet
 import android.content.Context
-import android.view.View
-import android.widget.TextView
 
 import com.lfork.phonelimitadvanced.R
 
@@ -13,6 +10,6 @@ import com.lfork.phonelimitadvanced.R
 
 class UsagePermissionDialog(context: Context?) : PermissionDialog(context) {
     override fun getContentViewId(): Int {
-        return R.layout.dialog_access_usage_permission
+        return R.layout.permission_access_usage_dialog
     }
 }

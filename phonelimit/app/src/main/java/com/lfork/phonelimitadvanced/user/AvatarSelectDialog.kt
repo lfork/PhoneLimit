@@ -1,25 +1,10 @@
 package com.lfork.phonelimitadvanced.user
 
 import android.content.Context
-import android.graphics.PixelFormat
-import android.widget.GridLayout
-import android.widget.ImageView
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.widget.BaseDialog
-import kotlinx.android.synthetic.main.dialog_avatar_select.*
-import com.lfork.phonelimitadvanced.utils.useless.ScreenUtil.getDisplayMetrics
-import android.util.TypedValue
-import android.view.Gravity
-import android.databinding.adapters.TextViewBindingAdapter.setText
-import android.databinding.adapters.TextViewBindingAdapter.setTextSize
-import com.hjq.toast.ToastUtils.setGravity
-import android.databinding.adapters.ViewBindingAdapter.setPadding
-import android.support.v4.view.ViewCompat.getMinimumHeight
-import android.support.v4.view.ViewCompat.getMinimumWidth
-import android.graphics.drawable.Drawable
-import android.widget.TextView
+import kotlinx.android.synthetic.main.user_info_avatar_select_dialog.*
 import com.lfork.phonelimitadvanced.data.saveUserAvatarIndex
-import com.lfork.phonelimitadvanced.user.UserInfoViewModel
 import com.lfork.phonelimitadvanced.utils.getAvatar
 
 
@@ -31,7 +16,7 @@ import com.lfork.phonelimitadvanced.utils.getAvatar
  */
 class AvatarSelectDialog(context: Context, var viewModel: UserInfoViewModel?) :
     BaseDialog(context) {
-    override fun getContentViewId() = R.layout.dialog_avatar_select
+    override fun getContentViewId() = R.layout.user_info_avatar_select_dialog
 
     override fun setWidthScale(): Float {
         return 0.9f

@@ -16,7 +16,7 @@ import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.startActivity
 import com.lfork.phonelimitadvanced.utils.startOtherApp
 import com.lfork.phonelimitadvanced.whitename.WhiteNameEditActivity
-import kotlinx.android.synthetic.main.item_recycle_app.view.*
+import kotlinx.android.synthetic.main.focus_recycle_app.view.*
 import java.util.*
 
 
@@ -32,7 +32,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_recycle_app, parent, false)
+            .inflate(R.layout.focus_recycle_app, parent, false)
         return NormalHolder(view)
     }
 

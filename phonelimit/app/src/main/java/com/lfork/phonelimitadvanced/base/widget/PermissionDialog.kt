@@ -45,7 +45,7 @@ abstract class PermissionDialog(context: Context?) : BaseDialog(context) {
 
 
     override fun getContentViewId(): Int {
-        return R.layout.dialog_access_usage_permission
+        return R.layout.permission_access_usage_dialog
     }
 
 }

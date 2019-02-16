@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="30dp"
-        tools:listitem="@layout/item_timed_task">
+        tools:listitem="@layout/timed_task_recycle_item">
 
     </android.support.v7.widget.RecyclerView>
     <android.support.design.widget.FloatingActionButton

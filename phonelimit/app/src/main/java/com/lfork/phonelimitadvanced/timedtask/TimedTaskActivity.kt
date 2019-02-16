@@ -16,7 +16,7 @@ import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfigRepository
 import com.lfork.phonelimitadvanced.limitcore.LimitService
 import com.lfork.phonelimitadvanced.data.taskconfig.TaskConfig
-import kotlinx.android.synthetic.main.item_timed_task.view.*
+import kotlinx.android.synthetic.main.timed_task_recycle_item.view.*
 import kotlinx.android.synthetic.main.timed_task_setting_act.*
 import java.util.*
 
@@ -149,7 +149,7 @@ class TimedTaskActivity : LimitActivity(){
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_timed_task, parent, false)
+                .inflate(R.layout.timed_task_recycle_item, parent, false)
             return NormalHolder(view)
         }
 

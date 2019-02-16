@@ -2,7 +2,6 @@ package com.lfork.phonelimitadvanced.ranklist
 
 import android.content.Context
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.R
@@ -10,7 +9,7 @@ import com.lfork.phonelimitadvanced.base.widget.BaseDialog
 import com.lfork.phonelimitadvanced.data.*
 import com.lfork.phonelimitadvanced.data.rankinfo.User
 import com.lfork.phonelimitadvanced.user.UserInfoViewModel
-import kotlinx.android.synthetic.main.dialog_login.*
+import kotlinx.android.synthetic.main.user_info_login_dialog.*
 import java.util.regex.Pattern
 
 /**
@@ -116,7 +115,7 @@ class LoginRegisterDialog(context: Context, var viewModel: UserInfoViewModel?) :
      */
     private fun appIsFree() = (task_progress.visibility == View.GONE)
 
-    override fun getContentViewId() = R.layout.dialog_login
+    override fun getContentViewId() = R.layout.user_info_login_dialog
 
     private fun userInfoCheck(checkPassword: Boolean = true): Boolean {
 

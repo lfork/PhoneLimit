@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -58,7 +57,7 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
         super.onCreate(savedInstanceState);
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_bar_chart);
+        setContentView(R.layout.statistics_bar_chart_act);
 
         Button buttonday = (Button) findViewById(R.id.daybuttonchart2);
         buttonday.setOnClickListener(new View.OnClickListener() {
