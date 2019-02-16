@@ -67,12 +67,8 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_rank_24dp))
                 holder.textView.text = "排行榜"
                 holder.item.setOnClickListener {
-                    if (!isOnLimitation) {
-                        //跳转到编辑界面
-                        it.context.startActivity<RankListActivity>()
-                    } else {
-                        ToastUtil.showShort(it.context, "暂时不能编辑噢")
-                    }
+                    //跳转到编辑界面
+                    it.context.startActivity<RankListActivity>()
                 }
             }
 
@@ -81,12 +77,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_help_24dp))
                 holder.textView.text = "帮助"
                 holder.item.setOnClickListener {
-                    if (!isOnLimitation) {
-                        //跳转到编辑界面
-                        it.context.startActivity<HelpActivity>()
-                    } else {
-                        ToastUtil.showShort(it.context, "暂时不能编辑噢")
-                    }
+                    it.context.startActivity<HelpActivity>()
                 }
             }
 
