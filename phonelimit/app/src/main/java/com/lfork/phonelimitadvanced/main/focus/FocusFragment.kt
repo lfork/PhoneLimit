@@ -50,7 +50,7 @@ class FocusFragment : Fragment() {
 
     }
 
-    lateinit var dialog: AlertDialog
+    lateinit var requestDefaultLauncherDialog: AlertDialog
 
     private var root: View? = null
 
@@ -197,8 +197,8 @@ class FocusFragment : Fragment() {
         } else {
             if (!isDefaultLauncher()) {
 
-                if (!dialog.isShowing) {
-                    dialog.show()
+                if (!requestDefaultLauncherDialog.isShowing) {
+                    requestDefaultLauncherDialog.show()
                 }
                 if (!isDefaultLauncher()) {
                     ToastUtil.showLong(context, getString(R.string.launcher_denied_tips))
@@ -266,7 +266,7 @@ class FocusFragment : Fragment() {
     }
 
     private fun initDialog() {
-        dialog = AlertDialog.Builder(context!!).setTitle(R.string.tips_launcher_setting)
+        requestDefaultLauncherDialog = AlertDialog.Builder(context!!).setTitle(R.string.tips_launcher_setting)
                 .setPositiveButton(R.string.action_default_apps_setting) { dialog, id ->
                     //去设置默认桌面
                     openDefaultAppsSetting()

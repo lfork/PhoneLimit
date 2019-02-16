@@ -75,8 +75,4 @@ class AvatarSelectDialog(context: Context, var viewModel: UserInfoViewModel?) :
         super.dismiss()
         viewModel = null
     }
-
-
-
-
 }

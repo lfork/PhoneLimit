@@ -1,4 +1,4 @@
-package com.lfork.phonelimitadvanced.ranklist
+package com.lfork.phonelimitadvanced.user
 
 import android.content.Context
 import android.text.TextUtils
@@ -9,8 +9,7 @@ import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.base.widget.BaseDialog
 import com.lfork.phonelimitadvanced.data.*
 import com.lfork.phonelimitadvanced.data.rankinfo.User
-import com.lfork.phonelimitadvanced.user.UserInfoViewModel
-import kotlinx.android.synthetic.main.dialog_login.*
+import kotlinx.android.synthetic.main.dialog_change_password.*
 import java.util.regex.Pattern
 
 /**
@@ -19,7 +18,7 @@ import java.util.regex.Pattern
  * @author lfork@vip.qq.com
  * @date 2019/02/14 15:51
  */
-class LoginRegisterDialog(context: Context, var viewModel: UserInfoViewModel?) :
+class ChangePasswordDialog(context: Context, var viewModel: UserInfoViewModel?) :
     BaseDialog(context) {
     override fun setWidthScale(): Float {
         return 0.9f
@@ -29,9 +28,10 @@ class LoginRegisterDialog(context: Context, var viewModel: UserInfoViewModel?) :
 
     override fun setExitAnim() = null
 
+    override fun getContentViewId() = R.layout.dialog_change_password
+
     override fun init() {
         tv_email.setText(context.getUserEmail())
-        tv_password.setText(context.getUserPassword())
         registerListener()
     }
 
@@ -43,51 +43,24 @@ class LoginRegisterDialog(context: Context, var viewModel: UserInfoViewModel?) :
         get() =
             tv_password?.text.toString()
 
+    private var newPassword: String? = null
+        get() =
+            tv_new_password?.text.toString()
+
+    private var newPasswordRepeat: String? = null
+        get() =
+            tv_new_password_repeat?.text.toString()
+
     private fun registerListener() {
-        btn_register.setOnClickListener {
+        btn_ok.setOnClickListener {
             if (appIsFree()) {
                 setProgressVisibility()
                 if (!userInfoCheck()) {
                     return@setOnClickListener
                 }
-                viewModel?.register(email!!, password!!, object :DataCallback<User>{
-                    override fun succeed(data: User) {
-                        setProgressVisibility(false, true)
-                    }
-
-                    override fun failed(code: Int, log: String) {
-                        setProgressVisibility(false)
-                    }
-                })
-            }
-
-
-        }
-        btn_sign_in.setOnClickListener {
-            if (appIsFree()) {
-                if (!userInfoCheck()) {
-                    return@setOnClickListener
-                }
-                setProgressVisibility()
-                viewModel?.signin(email!!, password!!, object :DataCallback<User>{
-                    override fun succeed(data: User) {
-                        setProgressVisibility(false, true)
-                    }
-
-                    override fun failed(code: Int, log: String) {
-                        setProgressVisibility(false)
-                    }
-                })
-            }
-        }
-        tv_forget_password.setOnClickListener {
-            if (appIsFree()) {
-                if (!userInfoCheck(false)) {
-                    return@setOnClickListener
-                }
-                setProgressVisibility()
-                viewModel?.forgetPassword(object :DataCallback<String>{
+                viewModel?.changePassword(email!!, password!!, newPassword!!,object : DataCallback<String> {
                     override fun succeed(data: String) {
+                        context.saveUserPassword(data)
                         setProgressVisibility(false, true)
                     }
 
@@ -96,17 +69,23 @@ class LoginRegisterDialog(context: Context, var viewModel: UserInfoViewModel?) :
                     }
                 })
             }
+
+
+        }
+
+        btn_cancel.setOnClickListener {
+            dismiss()
         }
     }
 
-    private fun setProgressVisibility(isVisible: Boolean = true, needCloseDialog:Boolean = false) {
+    private fun setProgressVisibility(isVisible: Boolean = true, needCloseDialog: Boolean = false) {
         if (isVisible) {
             task_progress.visibility = View.VISIBLE
         } else {
             task_progress.visibility = View.GONE
 
         }
-        if (needCloseDialog){
+        if (needCloseDialog) {
             dismiss()
         }
     }
@@ -116,17 +95,37 @@ class LoginRegisterDialog(context: Context, var viewModel: UserInfoViewModel?) :
      */
     private fun appIsFree() = (task_progress.visibility == View.GONE)
 
-    override fun getContentViewId() = R.layout.dialog_login
 
-    private fun userInfoCheck(checkPassword: Boolean = true): Boolean {
+    private fun userInfoCheck(): Boolean {
 
         if (!emailCheck(email)) {
             return false
         }
-        if (checkPassword) {
-            if (!passwordCheck(password)) {
-                return false
-            }
+
+
+        if (TextUtils.isEmpty(password)) {
+            ToastUtils.show("旧密码不能为空")
+            return false
+        }
+
+        if (password!!.length < 8) {
+            ToastUtils.show("旧密码长度必须在8位及以上")
+            return false
+        }
+
+        if (TextUtils.isEmpty(newPassword)) {
+            ToastUtils.show("新密码不能为空")
+            return false
+        }
+
+        if (newPassword!!.length < 8) {
+            ToastUtils.show("新密码长度必须在8位及以上")
+            return false
+        }
+
+        if (!newPassword.equals(newPasswordRepeat)){
+            ToastUtils.show("两次输入的密码不一致")
+            return false
         }
 
         return true
@@ -151,20 +150,6 @@ class LoginRegisterDialog(context: Context, var viewModel: UserInfoViewModel?) :
         context.saveUserEmail(email!!)
 
         return result
-    }
-
-    private fun passwordCheck(password: String?): Boolean {
-        if (TextUtils.isEmpty(password)) {
-            ToastUtils.show("密码不能为空")
-            return false
-        }
-
-        if (password!!.length < 8) {
-            ToastUtils.show("密码长度必须在8位及以上")
-            return false
-        }
-        context.saveUserPassword(password)
-        return true
     }
 
     var userInfoGetListener: UserInfoGetListener? = null

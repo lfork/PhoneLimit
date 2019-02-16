@@ -67,7 +67,7 @@ fun Context.requestFloatingPermission(): Boolean {
         dialog.setOnClickListener {
             requestFloatingWindowPermission()
         }
-//        dialog.setOnCancelListener { FocusFragment2.inputTimeMinuteCache = -1 }
+//        requestDefaultLauncherDialog.setOnCancelListener { FocusFragment2.inputTimeMinuteCache = -1 }
         dialog.show()
         return false
     }

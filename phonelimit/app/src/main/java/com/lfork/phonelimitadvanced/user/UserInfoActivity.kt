@@ -81,6 +81,11 @@ class UserInfoActivity : AppCompatActivity() {
             ToastUtils.show("退出成功")
             finish()
         }
+
+        btn_change_password.setOnClickListener {
+            val changePasswordDialog = ChangePasswordDialog(this, viewModel)
+            changePasswordDialog.show()
+        }
     }
 
 
@@ -90,8 +95,8 @@ class UserInfoActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         val editText = EditText(this)
         editText.setText(viewModel?.username?.get())
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
+        // Inflate and set the layout for the requestDefaultLauncherDialog
+        // Pass null as the parent view because its going in the requestDefaultLauncherDialog layout
         builder.setView(editText).setTitle("修改昵称")
             // Add action buttons
             .setPositiveButton(
@@ -121,8 +126,8 @@ class UserInfoActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         val editText = EditText(this)
         editText.setText(viewModel?.motto?.get())
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
+        // Inflate and set the layout for the requestDefaultLauncherDialog
+        // Pass null as the parent view because its going in the requestDefaultLauncherDialog layout
         builder.setView(editText).setTitle("修改格言")
             // Add action buttons
             .setPositiveButton(

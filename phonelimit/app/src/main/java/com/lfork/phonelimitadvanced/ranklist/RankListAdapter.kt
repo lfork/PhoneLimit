@@ -49,6 +49,11 @@ class RankListAdapter : RecyclerView.Adapter<RankListAdapter.NormalHolder>() {
         notifyDataSetChanged()
     }
 
+    fun clear(){
+        items.clear()
+        notifyDataSetChanged()
+    }
+
     fun getLimitTimeStr(limitTimeSeconds: Long) =
         when {
             limitTimeSeconds > 60 * 60 ->

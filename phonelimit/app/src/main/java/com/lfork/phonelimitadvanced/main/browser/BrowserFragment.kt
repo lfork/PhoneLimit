@@ -136,12 +136,12 @@ class BrowserFragment : Fragment() {
 //        //防止动画未消失再次点击到View ，此时Index为-1
 //        //ViewHolder是会复用的
 //        //减一是剪掉tail item
-//        if (position !in (0 until items.size - 1)) {
+//        if (position !in (0 until dailyItemsCache.size - 1)) {
 //            return
 //        }
-//        items.remove(items[position])
+//        dailyItemsCache.remove(dailyItemsCache[position])
 //        notifyItemRemoved(position)
-//        notifyItemRangeChanged(position, items.size - position)
+//        notifyItemRangeChanged(position, dailyItemsCache.size - position)
 //    }
 
         inner class NormalHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

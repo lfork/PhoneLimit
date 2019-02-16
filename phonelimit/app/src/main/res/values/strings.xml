@@ -111,6 +111,7 @@
     <string name="btn_logout">退出登录</string>
     <string name="tv_login">点击登录</string>
     <string name="default_motto">专注、热爱、全心贯注于你所期望的事物上，必有收获。</string>
+    <string name="btn_change_password">修改密码</string>
 
     <!--<string-array name="planets_array">-->
     <!--<item>Mercury</item>-->

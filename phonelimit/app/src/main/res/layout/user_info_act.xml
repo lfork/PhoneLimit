@@ -150,6 +150,13 @@
                 android:text="@string/btn_edit_motto" />
 
             <Button
+                android:id="@+id/btn_change_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_change_password" />
+
+
+            <Button
                 android:id="@+id/btn_forget_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

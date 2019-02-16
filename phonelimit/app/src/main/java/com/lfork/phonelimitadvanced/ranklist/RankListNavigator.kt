@@ -10,4 +10,6 @@ import com.lfork.phonelimitadvanced.data.rankinfo.UserRankInfo
  */
 interface RankListNavigator {
     fun onItemRefreshed(items:ArrayList<UserRankInfo>)
+
+    fun onError(log:String)
 }

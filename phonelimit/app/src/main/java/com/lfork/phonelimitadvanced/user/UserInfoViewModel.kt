@@ -24,18 +24,15 @@ open class UserInfoViewModel(_context: Context) : ViewModel() {
     @SuppressLint("StaticFieldLeak")
     var context: Context? = _context
 
-
     val username = ObservableField<String>("")
 
     val email = ObservableField<String>("")
-
 
     val isLoggedIn = ObservableBoolean(false)
 
     val avatar = ObservableField<Drawable>()
 
     val motto = ObservableField<String>(_context.getString(R.string.default_motto))
-
 
     fun initUserInfo() {
         context?.run {
@@ -76,11 +73,13 @@ open class UserInfoViewModel(_context: Context) : ViewModel() {
                 dataCallback.succeed(data)
                 setWorkStatus(false)
                 updateUserInfo(data)
+                ToastUtils.show("注册成功")
             }
 
             override fun failed(code: Int, log: String) {
                 dataCallback.failed(code, log)
                 setWorkStatus(false)
+                ToastUtils.show(log)
             }
         }
         UserRepository.register(email, password, callback)
@@ -96,11 +95,13 @@ open class UserInfoViewModel(_context: Context) : ViewModel() {
                 dataCallback.succeed(data)
                 setWorkStatus(false)
                 updateUserInfo(data)
+                ToastUtils.show("登录成功")
             }
 
             override fun failed(code: Int, log: String) {
                 dataCallback.failed(code, log)
                 setWorkStatus(false)
+                ToastUtils.show(log)
             }
         }
         UserRepository.signin(email, password, callback)
@@ -115,23 +116,51 @@ open class UserInfoViewModel(_context: Context) : ViewModel() {
             override fun succeed(data: String) {
                 dataCallback?.succeed(data)
                 setWorkStatus(false)
-                ToastUtils.show("修改密码的方式已经发送到您的邮箱，请及时查看")
+                ToastUtils.show("新密码已经发送到您的注册邮箱，请及时查看")
             }
 
             override fun failed(code: Int, log: String) {
                 ToastUtils.show(log)
                 dataCallback?.failed(code, log)
                 setWorkStatus(false)
+                ToastUtils.show(log)
             }
         }
         UserRepository.forgetPassword(email.get()!!, callback)
+    }
+
+    fun changePassword(
+        email: String,
+        password: String,
+        newPassword: String,
+        dataCallback: DataCallback<String>?
+    ) {
+        if (isDoingTimeCostTask) {
+            return
+        }
+        setWorkStatus(true)
+        val callback = object : DataCallback<String> {
+            override fun succeed(data: String) {
+                dataCallback?.succeed(data)
+                setWorkStatus(false)
+                ToastUtils.show("修改成功")
+            }
+
+            override fun failed(code: Int, log: String) {
+                ToastUtils.show(log)
+                dataCallback?.failed(code, log)
+                setWorkStatus(false)
+                ToastUtils.show(log)
+            }
+        }
+        UserRepository.changePassword(email, password, newPassword, callback)
     }
 
     open fun onDestroy() {
         context = null
     }
 
-    fun logout(){
+    fun logout() {
         isLoggedIn.set(false)
         context?.saveUserAvatarIndex(-1)
         context?.saveUserLoginStatus(false)
@@ -140,7 +169,7 @@ open class UserInfoViewModel(_context: Context) : ViewModel() {
     private fun updateUserInfo(user: User) {
         this@UserInfoViewModel.email.set(user.email)
         this@UserInfoViewModel.username.set(user.email)
-        context?.saveUsername(user.username?:user.email!!)
+        context?.saveUsername(user.username ?: user.email!!)
         context?.saveUserLoginStatus(true)
         isLoggedIn.set(true)
     }
@@ -149,7 +178,7 @@ open class UserInfoViewModel(_context: Context) : ViewModel() {
         username.set(_username)
     }
 
-    fun updateMotto(_motto:String){
+    fun updateMotto(_motto: String) {
         context?.saveBio(_motto)
         motto.set(_motto)
     }

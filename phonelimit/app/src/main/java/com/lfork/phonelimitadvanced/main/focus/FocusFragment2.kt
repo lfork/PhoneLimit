@@ -61,7 +61,7 @@ class FocusFragment2 : Fragment() {
         var isRecyclerScrolled = false
     }
 
-//    lateinit var dialog: AlertDialog
+//    lateinit var requestDefaultLauncherDialog: AlertDialog
 
     private var root: View? = null
 

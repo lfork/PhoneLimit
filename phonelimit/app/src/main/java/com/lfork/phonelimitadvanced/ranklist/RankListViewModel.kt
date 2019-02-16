@@ -1,11 +1,15 @@
 package com.lfork.phonelimitadvanced.ranklist
 
 import android.content.Context
+import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.rankinfo.UserRankInfo
+import com.lfork.phonelimitadvanced.data.rankinfo.UserRepository
 import com.lfork.phonelimitadvanced.user.UserInfoViewModel
 import kotlinx.android.synthetic.main.rank_list_act.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by L.Fork
@@ -14,56 +18,37 @@ import java.util.*
  * @date 2019/02/14 16:31
  */
 class RankListViewModel(_context: Context) : UserInfoViewModel(_context) {
-    val items = ArrayList<UserRankInfo>()
-
-    init {
-        for (i in 0 until 100) {
-            val random = Math.abs(Random().nextInt())
-            val item = UserRankInfo()
-            item.username = "测试用户 $i"
-            item.dailyLimitTime = 60L * 60 * 1000 * (random % 24)
-            item.weeklyLimitTime = item.dailyLimitTime + 24 * 60L * 60 * 1000 * (random % 6)
-            item.monthlyLimitTime = item.weeklyLimitTime + 30 * 24 * 60L * 60 * 1000 * (random % 21)
-            item.totalLimitTime = item.monthlyLimitTime + 30 * 24 * 60L * 60 * 1000 * (random % 100)
-            item.motto = "专注、热爱、全心贯注于你所期望的事物上，必有收获。"
-            items.add(item)
-        }
-    }
 
     var navigator: RankListNavigator? = null
 
+    val callback = object : DataCallback<ArrayList<UserRankInfo>> {
+        override fun succeed(data: ArrayList<UserRankInfo>) {
+            navigator?.onItemRefreshed(data)
+        }
+
+        override fun failed(code: Int, log: String) {
+            navigator?.onError(log)
+            ToastUtils.show(log)
+        }
+    }
+
     fun getDailyRankList() {
-        items.sortBy {
-            it.showTime =it.dailyLimitTime
-            it.dailyLimitTime }
-        navigator?.onItemRefreshed(items)
+        UserRepository.getDailyRankList(callback)
     }
 
 
     fun getWeekLyRankList() {
-        items.sortBy {
-            it.showTime =it.weeklyLimitTime
-            it.weeklyLimitTime }
-        navigator?.onItemRefreshed(items)
-
+        UserRepository.getWeeklyRankList(callback)
     }
 
 
     fun getMonthlyRankList() {
-        items.sortBy {
-            it.showTime =it.monthlyLimitTime
-            it.monthlyLimitTime }
-        navigator?.onItemRefreshed(items)
-
+        UserRepository.getMonthlyRankList(callback)
     }
 
 
     fun getTotalRankList() {
-        items.sortBy {
-            it.showTime =it.totalLimitTime
-            it.totalLimitTime }
-        navigator?.onItemRefreshed(items)
-
+        UserRepository.getTotallyRankList(callback)
     }
 
 

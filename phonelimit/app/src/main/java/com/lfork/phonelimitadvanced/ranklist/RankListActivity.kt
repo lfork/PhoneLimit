@@ -15,7 +15,13 @@ import com.lfork.phonelimitadvanced.utils.startActivity
 import kotlinx.android.synthetic.main.rank_list_act.*
 
 class RankListActivity : AppCompatActivity(),RankListNavigator {
+    override fun onError(log: String) {
+        task_progress.visibility = View.GONE
+        (rv_rank_list.adapter as RankListAdapter).clear()
+    }
+
     override fun onItemRefreshed(items: ArrayList<UserRankInfo>) {
+        task_progress.visibility = View.GONE
         (rv_rank_list.adapter as RankListAdapter).setItems(items)
     }
 
@@ -44,6 +50,7 @@ class RankListActivity : AppCompatActivity(),RankListNavigator {
                 position: Int,
                 id: Long
             ) {
+                task_progress.visibility = View.VISIBLE
                when(position){
                    0->viewModel?.getDailyRankList()
                    1->viewModel?.getWeekLyRankList()
@@ -87,7 +94,6 @@ class RankListActivity : AppCompatActivity(),RankListNavigator {
                 startActivity<UserInfoActivity>()
             }
         }
-
     }
 
 
