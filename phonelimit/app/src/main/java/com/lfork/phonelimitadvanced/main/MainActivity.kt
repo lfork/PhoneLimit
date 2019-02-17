@@ -20,6 +20,7 @@ import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.limitcore.task.FloatingLimitTask
 import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
+import com.lfork.phonelimitadvanced.utils.setTransparentSystemUI
 import com.lfork.phonelimitadvanced.utils.startActivity
 
 
@@ -53,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main2_act)
         setupToolBar(toolbar, "Phone Limit")
         initFragments()
+        setTransparentSystemUI()
     }
 
 

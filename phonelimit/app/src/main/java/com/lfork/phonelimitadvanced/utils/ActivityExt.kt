@@ -3,9 +3,12 @@ package com.lfork.phonelimitadvanced.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.View
+import android.view.WindowManager
 import java.util.*
 
 /**
@@ -56,4 +59,22 @@ inline fun <reified T : Activity> Context.startActivity() {
 fun  Context.startOtherApp(packageName:String) {
     val resolveIntent = packageManager.getLaunchIntentForPackage(packageName);
     startActivity(resolveIntent)
+}
+
+
+fun Activity.setTransparentSystemUI(){
+    // Android 5.0 以上 全透明
+    val window = getWindow();
+    window.clearFlags(
+        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+    window.getDecorView().setSystemUiVisibility(
+        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+    // 状态栏（以上几行代码必须，参考setStatusBarColor|setNavigationBarColor方法源码）
+    window.setStatusBarColor(Color.TRANSPARENT);
+    // 虚拟导航键
+    window.setNavigationBarColor(Color.TRANSPARENT);
 }
