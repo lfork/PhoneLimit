@@ -97,7 +97,7 @@ class FocusFragment2 : Fragment() {
 
         root!!.recycle_white_list.adapter = adapter
 
-        FirstItemSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
+//        FirstItemSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
     }
 
 
