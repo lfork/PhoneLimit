@@ -20,7 +20,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             android:text="@string/settings_index_tips_switch"
             android:textColor="@color/black"
             android:textSize="18sp"
@@ -39,14 +39,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView9" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_height="1dp"
-            android:layout_marginBottom="1dp"
-            android:background="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent" />
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_height="1dp"-->
+            <!--android:layout_marginBottom="1dp"-->
+            <!--android:background="@color/black"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent" />-->
 
     </android.support.constraint.ConstraintLayout>
 

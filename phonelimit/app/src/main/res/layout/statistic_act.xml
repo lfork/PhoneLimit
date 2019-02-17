@@ -7,20 +7,22 @@
     tools:context=".statistics.StatisticActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="需要开启相应权限"
-        android:textSize="40sp"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:id="@+id/textView" />
+        android:layout_marginTop="228dp"
+        android:text="需要开启相应权限"
+        android:textSize="36sp" />
 
     <Button
-        android:text="点我开启"
-        android:layout_width="100dp"
+        android:id="@+id/OpenButton"
+        android:layout_width="164dp"
         android:layout_height="50dp"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:id="@+id/OpenButton" />
+        android:background="@drawable/btn_rectangle_green"
+        android:text="点我开启"
+        android:textColor="@color/white" />
 </RelativeLayout>

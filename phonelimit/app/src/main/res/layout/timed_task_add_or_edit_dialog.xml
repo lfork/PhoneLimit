@@ -4,10 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+    android:layout_height="wrap_content">
 
-    <android.support.constraint.ConstraintLayout 
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_rectangle_light">
@@ -121,10 +120,10 @@
         <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/sp_day_of_week"
             android:layout_width="0dp"
-            android:visibility="invisible"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:entries="@array/day_of_week"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/sp_cycle_select"
             app:layout_constraintStart_toEndOf="@+id/sp_cycle_select"
             app:layout_constraintTop_toTopOf="@+id/sp_cycle_select" />
@@ -203,7 +202,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginBottom="8dp"
                     android:text="App限制 使用情况统计 点击设置"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView2"
@@ -226,9 +225,9 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/layout_floating_permission"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:visibility="gone"
-                tools:visibility="visible"
-                android:layout_height="match_parent">
+                tools:visibility="visible">
 
 
                 <View
@@ -254,7 +253,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="App限制 防卸载 点击设置"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView21"
@@ -277,13 +276,15 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/layout_launcher_permission"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:visibility="gone"
-                tools:visibility="visible"
-                android:layout_height="match_parent">
+                tools:visibility="visible">
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.4dp"
                     android:background="@color/black" />
+
                 <TextView
                     android:id="@+id/textView211"
                     android:layout_width="wrap_content"
@@ -302,7 +303,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="App限制 防特殊退出方法 点击设置"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView211"
@@ -322,17 +323,18 @@
             </android.support.constraint.ConstraintLayout>
 
 
-
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/layout_root_permission"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:visibility="visible">
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.4dp"
                     android:background="@color/black" />
+
                 <TextView
                     android:id="@+id/textView2111"
                     android:layout_width="wrap_content"
@@ -351,7 +353,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="关闭程序入口 防开发者模式 点击设置"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView2111"
@@ -377,16 +379,19 @@
             android:id="@+id/btn_finish_task"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="16dp"
+            android:background="@drawable/btn_rectangle_green"
             android:text="完成编辑"
+            android:textColor="@color/white"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 
-    </android.support.constraint.ConstraintLayout>    
+    </android.support.constraint.ConstraintLayout>
 </ScrollView>

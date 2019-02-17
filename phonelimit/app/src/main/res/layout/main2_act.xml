@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/mountain"
+    android:background="@drawable/bg_background"
     tools:context=".main.MainActivity">
 
 
@@ -14,7 +14,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_above="@id/navigation"
-        android:fitsSystemWindows="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,14 +24,12 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="24dp"
+        android:background="@color/black_pure_42"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/main_frag"
+        app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ToolbarStyle"
-
-        >
+        app:theme="@style/ToolbarStyle">
 
     </android.support.v7.widget.Toolbar>
 

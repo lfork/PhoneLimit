@@ -14,28 +14,27 @@
         tools:listitem="@layout/timed_task_recycle_item">
 
     </android.support.v7.widget.RecyclerView>
+
     <android.support.design.widget.FloatingActionButton
-        android:layout_gravity="bottom|end"
         android:id="@+id/btn_add_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_add_24dp"
-        app:layout_behavior="com.lfork.phonelimitadvanced.base.widget.FabScrollBehavior"
         android:layout_marginBottom="8dp"
-       />
+        android:src="@drawable/ic_add_24dp"
+        app:layout_behavior="com.lfork.phonelimitadvanced.base.widget.FabScrollBehavior" />
 
     <TextView
-        android:textColor="@color/black"
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
-        android:layout_gravity="center|top"
-        android:gravity="center"
         android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:gravity="center"
         android:text="设置定时任务，最多添加5个"
-       />
+        android:textColor="@color/colorPrimaryDark" />
 
 </android.support.design.widget.CoordinatorLayout>

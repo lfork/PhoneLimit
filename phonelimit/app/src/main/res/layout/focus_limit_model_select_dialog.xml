@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="10dp"
-    android:padding="4dp"
-    android:background="@drawable/bg_rectangle">
+    android:background="@drawable/bg_rectangle"
+    android:padding="4dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -39,7 +39,6 @@
             android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="0.4dp"
-
             android:layout_marginStart="16dp"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="16dp"
@@ -57,6 +56,7 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/bg_rectangle_light"
             android:orientation="vertical"
+            android:padding="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view2">
@@ -99,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginBottom="8dp"
                     android:text="App限制 点我设置"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView2"
@@ -122,9 +122,9 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/layout_floating_permission"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:visibility="gone"
-                tools:visibility="visible"
-                android:layout_height="match_parent">
+                tools:visibility="visible">
 
 
                 <View
@@ -150,7 +150,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="防卸载 点我设置"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView21"
@@ -173,13 +173,15 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/layout_launcher_permission"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:visibility="gone"
-                tools:visibility="visible"
-                android:layout_height="match_parent">
+                tools:visibility="visible">
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.4dp"
                     android:background="@color/black" />
+
                 <TextView
                     android:id="@+id/textView211"
                     android:layout_width="wrap_content"
@@ -198,7 +200,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@string/tips_launcher_permission"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView211"
@@ -218,17 +220,18 @@
             </android.support.constraint.ConstraintLayout>
 
 
-
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/layout_root_permission"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:visibility="visible">
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.4dp"
                     android:background="@color/black" />
+
                 <TextView
                     android:id="@+id/textView2111"
                     android:layout_width="wrap_content"
@@ -247,7 +250,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@string/tips_root_permission"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView2111"
@@ -286,11 +289,13 @@
 
         <Button
             android:id="@+id/btn_set_default_model"
-            android:layout_width="wrap_content"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
+            android:background="@drawable/btn_rectangle_green"
             android:text="设置为默认模式"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/tv_model_tips"
             app:layout_constraintStart_toStartOf="@+id/tv_model_tips"

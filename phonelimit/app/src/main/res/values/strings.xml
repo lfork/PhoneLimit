@@ -8,9 +8,9 @@
     <string name="close_limit">close limit</string>
 
     <string name="index_tips">
-            😘点击专注模式选择更多模式\t
-            😎右上角菜单中设置定时任务\t
-            😁横向滑动APP栏体验更多功能\t
+            ·点击专注模式选择更多模式\t
+            ·右上角菜单中设置定时任务\t
+            ·横向滑动APP栏体验更多功能\t
     </string>
 
     <string name="limit_model_tips_normal">
@@ -101,7 +101,7 @@
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="start_timed_task">Start Timed task</string>
-    <string name="tips_1">请暂时远离手机，自律将帮您走得更远。\n返回中……</string>
+    <string name="tips_1">请暂时远离手机，\n自律将帮您走得更远。\n返回中……</string>
     <string name="settings_index_tips_switch">是否显示首页的滚动提示</string>
     <string name="tips_root_permission">关闭程序入口 点我设置</string>
     <string name="tips_launcher_permission">防特殊退出方法  <font color="#DC143C">点我设置或取消</font></string>
