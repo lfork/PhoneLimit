@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:paddingLeft="8dp"
+    android:paddingTop="4dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="4dp">
 
 
-    <ImageView android:id="@+id/icon"
+    <ImageView
+        android:id="@+id/icon"
         android:layout_width="190px"
         android:layout_height="190px"
-        android:layout_margin="5px"/>
+        android:layout_margin="5px" />
 
-    <LinearLayout android:orientation="vertical"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView android:id="@+id/label"
+        <TextView
+            android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5px"
-            android:textStyle="bold"
-            android:textSize="50px"/>
+            android:textSize="50px"
+            android:textStyle="bold" />
 
-        <TextView android:id="@+id/info"
+        <TextView
+            android:id="@+id/info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5px"
             android:textSize="45px" />
-        <TextView android:id="@+id/times"
+
+        <TextView
+            android:id="@+id/times"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5px"

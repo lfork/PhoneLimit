@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_green_3"
+    android:background="@drawable/bg_background"
     tools:context=".main.MainActivity">
 
 
@@ -23,12 +23,13 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        app:theme="@style/ToolbarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:layout_height="?attr/actionBarSize"
+        android:background="@color/black_pure_42"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ToolbarStyle">
 
     </android.support.v7.widget.Toolbar>
 

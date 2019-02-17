@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_rectangle_light"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="@drawable/bg_rectangle_light"
     tools:context=".ranklist.RankListActivity">
 
     <ScrollView
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -35,7 +35,7 @@
                     android:hint="邮箱"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -53,41 +53,45 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
 
             <Button
                 android:id="@+id/btn_register"
-                android:textAllCaps="false"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="@color/crimson"
                 android:text="注册"
-                android:textStyle="bold"/>
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btn_sign_in"
-                android:textAllCaps="false"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="@color/colorPrimary"
                 android:text="登录"
-                android:textStyle="bold"/>
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
 
             <TextView
-                android:gravity="end"
                 android:id="@+id/tv_forget_password"
-                android:textAllCaps="false"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:gravity="end"
                 android:text="忘记密码"
-                android:textStyle="bold"/>
+                android:textAllCaps="false"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>
@@ -136,10 +140,6 @@
             android:textSize="22sp" />
 
     </LinearLayout>
-
-
-
-
 
 
 </android.support.constraint.ConstraintLayout>
