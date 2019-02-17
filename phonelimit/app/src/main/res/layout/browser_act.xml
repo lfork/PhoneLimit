@@ -108,7 +108,6 @@
         app:layout_constraintTop_toBottomOf="parent"
         tools:visibility="visible">
 
-        <!--播放全屏视频时用-->
         <TextView
             android:id="@+id/site_info"
             android:layout_width="match_parent"
@@ -117,11 +116,10 @@
             android:layout_marginTop="84dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:text="www.baidu.com"
+            tools:text="www.baidu.com"
             tools:background="@color/white"
             tools:visibility="visible" />
 
-        <!--播放全屏视频时用-->
         <TextView
             android:id="@+id/limit_tips"
             android:layout_width="match_parent"
