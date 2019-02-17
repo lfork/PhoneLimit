@@ -233,7 +233,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.4dp"
-                    android:background="@color/black" />
+                    android:background="@color/black"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView21"
@@ -283,7 +284,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.4dp"
-                    android:background="@color/black" />
+                    android:background="@color/black"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView211"
@@ -333,7 +335,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.4dp"
-                    android:background="@color/black" />
+                    android:background="@color/black"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView2111"

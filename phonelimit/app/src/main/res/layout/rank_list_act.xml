@@ -18,112 +18,137 @@
         android:orientation="vertical"
         tools:context=".ranklist.RankListActivity">
 
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/layout_user_info"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <ImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="24dp"
+                android:src="@{viewmodel.avatar}"
+                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/avatar_male_02" />
 
             <TextView
                 android:id="@+id/tv_username_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="32dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:text="昵称："
-                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}" />
+                android:textColor="@color/white"
+                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
+                app:layout_constraintLeft_toRightOf="@id/iv_avatar"
+                app:layout_constraintTop_toTopOf="@id/iv_avatar" />
 
             <TextView
                 android:id="@+id/tv_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@id/tv_username_label"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_toRightOf="@id/tv_username_label"
                 android:text="@={viewmodel.username}"
+                android:textColor="@color/white"
                 android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
+                app:layout_constraintLeft_toRightOf="@id/tv_username_label"
+                app:layout_constraintTop_toTopOf="@id/tv_username_label"
                 tools:text="986204478@qq.com" />
 
             <TextView
                 android:id="@+id/tv_email_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tv_username_label"
-                android:layout_alignStart="@id/tv_username_label"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:text="邮箱："
+                android:textColor="@color/white"
                 android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_avatar"/>
+                app:layout_constraintLeft_toLeftOf="@id/tv_username_label"
+                app:layout_constraintTop_toBottomOf="@id/tv_username_label" />
 
             <TextView
                 android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@id/tv_email_label"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_toRightOf="@id/tv_email_label"
                 android:text="@={viewmodel.email}"
+                android:textColor="@color/white"
                 android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
+                app:layout_constraintLeft_toRightOf="@id/tv_email_label"
+                app:layout_constraintTop_toTopOf="@id/tv_email_label"
                 tools:text="986204478@qq.com" />
 
             <TextView
-                android:id="@+id/tv_login"
-                android:layout_width="128dp"
-                android:layout_height="64dp"
-                android:layout_marginLeft="64dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/btn_rectangle_green"
-                android:gravity="center"
-                android:padding="18dp"
-                android:text="登录"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:visibility="@{viewmodel.isLoggedIn?View.GONE:View.VISIBLE}" />
-
-            <ImageView
-                android:id="@+id/iv_avatar"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                android:src="@{viewmodel.avatar}"
-                tools:src="@drawable/avatar_male_02" />
-
-            <TextView
                 android:id="@+id/tv_motto"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginBottom="10dp"
                 android:gravity="left"
                 android:maxLines="2"
                 android:text="@={viewmodel.motto}"
+                android:textColor="@color/white"
+                android:visibility="@{viewmodel.isLoggedIn?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_avatar"
                 tools:text="@string/default_motto" />
 
-        </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:gravity="center"
+                android:text="@string/default_motto"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:visibility="@{viewmodel.isLoggedIn?View.GONE:View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="登录"
+                android:textColor="@color/white"
+                android:visibility="@{viewmodel.isLoggedIn?View.GONE:View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
 
 
-        <View
-            android:id="@+id/view3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:background="@color/gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_user_info" />
+        <!--<View-->
+        <!--android:id="@+id/view3"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:layout_marginStart="16dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginEnd="16dp"-->
+        <!--android:background="@color/gray"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/layout_user_info" />-->
 
         <Spinner
             android:id="@+id/sp_rank_type"
@@ -135,7 +160,7 @@
             android:entries="@array/rank_list_type"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view3">
+            app:layout_constraintTop_toBottomOf="@+id/layout_user_info">
 
         </Spinner>
 

@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <GridLayout
-        android:background="@drawable/bg_rectangle_light"
         android:id="@+id/grid_layout"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:alignmentMode="alignBounds"
+        android:background="@drawable/bg_rectangle_light"
         android:columnCount="4"
         android:orientation="horizontal"
         android:rowCount="4"
         android:useDefaultMargins="false"
+        app:layout_constraintTop_toTopOf="parent"
         tools:context="com.strivestay.gridlayoutdemo.MainActivity">
 
 

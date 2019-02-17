@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -23,6 +23,7 @@
         android:singleLine="true"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TextFields" />
 
     <TextView
@@ -31,8 +32,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_url"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:text="白名单网址"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_url" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycle_white_name_urls"
@@ -41,8 +46,9 @@
         android:layout_below="@+id/textView"
         android:layout_margin="24dp"
         android:background="@drawable/et_select_un"
-        android:padding="8dp" />
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/textView" />
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
 

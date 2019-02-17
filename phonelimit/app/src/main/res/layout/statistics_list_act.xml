@@ -44,7 +44,7 @@
 
     <ListView
         android:id="@+id/AppStatisticsList"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ActionBarList3"
         android:layout_below="@+id/buttonbarList3" />
