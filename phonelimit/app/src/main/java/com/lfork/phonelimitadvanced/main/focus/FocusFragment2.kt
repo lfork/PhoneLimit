@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.Fragment
@@ -100,6 +101,15 @@ class FocusFragment2 : Fragment() {
 //        FirstItemSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
     }
 
+    override fun onStart() {
+        super.onStart()
+        activity?.window?.setNavigationBarColor(resources.getColor(R.color.black_pure_50));
+    }
+
+    override fun onStop() {
+        super.onStop()
+        activity?.window?.setNavigationBarColor(Color.TRANSPARENT);
+    }
 
 
     override fun onResume() {
