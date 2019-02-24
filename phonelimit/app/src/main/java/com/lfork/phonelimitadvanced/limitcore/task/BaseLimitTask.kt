@@ -32,7 +32,19 @@ open class BaseLimitTask : LimitTask {
         mContext = context
     }
 
+    /**
+     * 限制开启后，第一次[doLimit]需要立马启动到[MainActivity]，true表示已经启动成功。
+     */
+    protected var started = false
+
     override fun doLimit() :Boolean{
+        if (!started){
+            val intent = Intent(mContext!!, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            mContext!!.startActivity(intent)
+            started = true
+            return true
+        }
 
         if (mContext == null) {
             return false

@@ -42,6 +42,7 @@ open class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListen
     private var tips: TextView? = null
 
 
+
     var mReceiver: RecentlyReceiver? = null
 
 
@@ -128,9 +129,16 @@ open class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListen
     @Synchronized
     override fun doLimit(): Boolean {
 
-
         if (mContext == null) {
             return false
+        }
+
+        if (!started){
+            val intent = Intent(mContext!!, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            mContext!!.startActivity(intent)
+            started = true
+            return true
         }
 
         //获取栈顶app的包名

@@ -16,5 +16,4 @@ open class LauncherLimitTask : BaseLimitTask() {
         mContext!!.clearDefaultLauncher()
         super.closeLimit()
     }
-
 }
