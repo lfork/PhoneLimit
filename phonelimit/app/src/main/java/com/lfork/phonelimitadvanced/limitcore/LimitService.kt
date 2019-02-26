@@ -27,6 +27,8 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 
+
+
 /**
  * 模拟CS模式,Activity作为客户端，Service作为服务端
  * activity 需要在服务结束(通过binder来通知activity)后关闭服务。
@@ -370,14 +372,24 @@ class LimitService : Service() {
             //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
             val limitIntent = Intent(context, LimitService::class.java)
             limitIntent.putExtra("limit_task_time_info", taskInfo)
-            context.startService(limitIntent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                context.startForegroundService(limitIntent)
+            } else{
+                context.startService(limitIntent)
+            }
         }
 
         fun commitTimedTask(context: Context, taskConfig: TaskConfig) {
             //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
             val limitIntent = Intent(context, LimitService::class.java)
             limitIntent.putExtra("limit_task_time_info", taskConfig)
-            context.startService(limitIntent)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                context.startForegroundService(limitIntent)
+            } else{
+                context.startService(limitIntent)
+            }
+
         }
 
 

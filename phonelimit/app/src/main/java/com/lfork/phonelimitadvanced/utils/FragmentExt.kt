@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.SharedPreferences
+import android.os.Build
 import android.support.v4.app.Fragment
 
 /**
@@ -23,7 +24,13 @@ fun Fragment.bindService(
 }
 
 fun Fragment.startService(service: Intent): ComponentName? {
-    return activity!!.startService(service)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        return activity!!.startForegroundService(service)
+    } else{
+        return activity!!.startService(service)
+    }
+
+
 }
 
 fun Fragment.unbindService(conn: ServiceConnection) {
