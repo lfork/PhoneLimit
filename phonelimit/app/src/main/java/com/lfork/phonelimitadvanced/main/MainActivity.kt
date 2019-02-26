@@ -27,6 +27,7 @@ import com.lfork.phonelimitadvanced.utils.startActivity
 class MainActivity : AppCompatActivity() {
 
     private var focusFragment: FocusFragment2? = null
+    private var browserFragment: BrowserFragment? = null
 
 
     private val mOnNavigationItemSelectedListener = object : CustomIconOnClickListener {
@@ -47,137 +48,144 @@ class MainActivity : AppCompatActivity() {
             focusFragment = fragment
             focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.main2_act)
-        setupToolBar(toolbar, "Phone Limit")
-        initFragments()
-        setTransparentSystemUI()
-    }
 
 
-    var limitModelMenuItem: MenuItem? = null
+        if (browserFragment == null && fragment is BrowserFragment) {
+            browserFragment = fragment
+        }
 
 
-    var limitModelSelectionDialog: LimitModelSelectDialog? = null
+}
 
-    override fun onResume() {
-        super.onResume()
-        FloatingLimitTask.isOnRecentApps = false
-        limitModelSelectionDialog?.onResume()
-    }
-
-    private fun showLimitModelSelectionDialog() {
-        limitModelSelectionDialog = LimitModelSelectDialog(this)
-        limitModelSelectionDialog?.show()
-
-        limitModelSelectionDialog?.limitModelUpdateListener =
-                object : LimitModelSelectDialog.LimitModelUpdateListener {
-                    override fun updateLimitModel(model: String) {
-                        limitModelMenuItem?.title = model
-                    }
-                }
-    }
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.main2_act)
+    setupToolBar(toolbar, "Phone Limit")
+    initFragments()
+    setTransparentSystemUI()
+}
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.limit_menu, menu)
-        limitModelMenuItem = menu?.findItem(R.id.limit_model)
-        limitModelMenuItem?.title =
-                resources.getStringArray(R.array.limit_model_array)[LimitApplication.defaultLimitModel]
-        return super.onCreateOptionsMenu(menu)
-    }
+var limitModelMenuItem: MenuItem? = null
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            R.id.limit_model -> {
-                showLimitModelSelectionDialog()
-            }
-            R.id.timed_task -> {
-                startActivity<TimedTaskActivity>()
-            }
-            R.id.settings -> {
-                openSecondFragment(SettingsFragment())
+
+var limitModelSelectionDialog: LimitModelSelectDialog? = null
+
+override fun onResume() {
+    super.onResume()
+    FloatingLimitTask.isOnRecentApps = false
+    limitModelSelectionDialog?.onResume()
+}
+
+private fun showLimitModelSelectionDialog() {
+    limitModelSelectionDialog = LimitModelSelectDialog(this)
+    limitModelSelectionDialog?.show()
+
+    limitModelSelectionDialog?.limitModelUpdateListener =
+        object : LimitModelSelectDialog.LimitModelUpdateListener {
+            override fun updateLimitModel(model: String) {
+                limitModelMenuItem?.title = model
             }
         }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        //清楚Fake桌面，不然在选择默认桌面的时候fake activity会出现在列表当中
-        clearDefaultLauncherFake()
-
-    }
+}
 
 
-    override fun onDestroy() {
-        super.onDestroy()
-        limitModelSelectionDialog?.dismiss()
-    }
+override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    menuInflater.inflate(R.menu.limit_menu, menu)
+    limitModelMenuItem = menu?.findItem(R.id.limit_model)
+    limitModelMenuItem?.title =
+        resources.getStringArray(R.array.limit_model_array)[LimitApplication.defaultLimitModel]
+    return super.onCreateOptionsMenu(menu)
+}
 
-    override fun onBackPressed() {
-
-        //碎片之间的返回
-        if (!focusFragment!!.isVisible) {
-            super.onBackPressed()
-            return
+override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    when (item?.itemId) {
+        R.id.limit_model -> {
+            showLimitModelSelectionDialog()
         }
-
-        if (LimitApplication.isOnLimitation) {
-            return
+        R.id.timed_task -> {
+            startActivity<TimedTaskActivity>()
         }
-
-        if (LimitApplication.isTimedTaskRunning && !isDefaultLauncher()) {
-            val homeIntent = Intent(Intent.ACTION_MAIN);
-            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            homeIntent.addCategory(Intent.CATEGORY_HOME);
-            startActivity(homeIntent);
-            return
+        R.id.settings -> {
+            openSecondFragment(SettingsFragment())
         }
+    }
+    return super.onOptionsItemSelected(item)
+}
+
+override fun onPause() {
+    super.onPause()
+    //清楚Fake桌面，不然在选择默认桌面的时候fake activity会出现在列表当中
+    clearDefaultLauncherFake()
+
+}
+
+
+override fun onDestroy() {
+    super.onDestroy()
+    limitModelSelectionDialog?.dismiss()
+}
+
+override fun onBackPressed() {
+
+    //碎片之间的返回
+    if (!focusFragment!!.isVisible) {
         super.onBackPressed()
+        return
     }
 
-    private fun initFragments() {
-        if (focusFragment != null) {
-            return
-        }
-        focusFragment = FocusFragment2()
-        supportFragmentManager.beginTransaction()
-            .add(R.id.main_frag, focusFragment!!, focusFragment!!.tag)
-            .show(focusFragment!!)
-            .commit()
-        focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
+    if (LimitApplication.isOnLimitation) {
+        return
     }
 
-
-    private fun openSecondFragment(fragment: Fragment) {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.main_frag, fragment)
-            .addToBackStack(null)
-            .commit()
+    if (LimitApplication.isTimedTaskRunning && !isDefaultLauncher()) {
+        val homeIntent = Intent(Intent.ACTION_MAIN);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(homeIntent);
+        return
     }
+    super.onBackPressed()
+}
+
+private fun initFragments() {
+    if (focusFragment != null) {
+        return
+    }
+    focusFragment = FocusFragment2()
+    supportFragmentManager.beginTransaction()
+        .add(R.id.main_frag, focusFragment!!, focusFragment!!.tag)
+        .show(focusFragment!!)
+        .commit()
+    focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
+}
 
 
-    fun hideOtherUI() {
-        hideToolBar()
+private fun openSecondFragment(fragment: Fragment) {
+    supportFragmentManager
+        .beginTransaction()
+        .replace(R.id.main_frag, fragment)
+        .addToBackStack(null)
+        .commit()
+}
+
+
+fun hideOtherUI() {
+    hideToolBar()
 //        setSystemUIVisible(false)
-    }
+}
 
-    fun hideToolBar() {
-        toolbar.visibility = View.INVISIBLE
-    }
+fun hideToolBar() {
+    toolbar.visibility = View.INVISIBLE
+}
 
-    fun showToolBar() {
-        toolbar.visibility = View.VISIBLE
-    }
+fun showToolBar() {
+    toolbar.visibility = View.VISIBLE
+}
 
 
-    fun showOtherUI() {
-        showToolBar()
+fun showOtherUI() {
+    showToolBar()
 //        setSystemUIVisible(true)
-    }
+}
 }

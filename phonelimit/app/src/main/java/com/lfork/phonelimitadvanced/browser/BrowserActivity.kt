@@ -378,7 +378,7 @@ class BrowserActivity : AppCompatActivity(), IWebPageView {
             val callback = object : DataCallback<String> {
                 override fun succeed(data: String) {
                     closeLimit()
-                    ToastUtils.show("添加成功")
+                    ToastUtils.show(data)
                 }
 
                 override fun failed(code: Int, log: String) {

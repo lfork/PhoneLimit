@@ -4,6 +4,7 @@ import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.executeAsyncDataTask
 import com.lfork.phonelimitadvanced.data.DataCallback
 import com.lfork.phonelimitadvanced.data.LimitDatabase
+import java.lang.Exception
 
 
 /**
@@ -63,8 +64,20 @@ object UrlInfoRepository {
      */
     fun addNextUrl(url: String, callback: DataCallback<String>) {
         LimitApplication.executeAsyncDataTask {
-            mUrlInfoDao.insert(UrlInfo(url, isActive = false))
-            callback.succeed("添加成功")
+            try {
+                val urlInfo = mUrlInfoDao.getUrlInfo(url)
+
+                if (urlInfo== null){
+                    mUrlInfoDao.insert(UrlInfo(url, isActive = false))
+                    callback.succeed("添加成功")
+                } else{
+                    callback.succeed("URL已添加，不用重复添加")
+                }
+
+            }catch (e:Exception){
+                callback.failed(-1,"添加失败")
+            }
+
         }
     }
 

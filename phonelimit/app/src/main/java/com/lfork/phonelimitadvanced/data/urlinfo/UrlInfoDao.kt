@@ -18,7 +18,7 @@ interface UrlInfoDao {
     fun update(vararg urlInfo: UrlInfo):Int
 
     @Insert
-    fun insert(urlInfo: UrlInfo)
+    fun insert(urlInfo: UrlInfo):Long
 
 //    @Query("delete from url_info  WHERE url=:url")
     @Delete

@@ -14,16 +14,16 @@ import java.util.*
  * @date 2019/02/07 17:54
  */
 @Entity
-data class TaskConfig(
+class TaskConfig : Serializable {
+
     /**
      * 默认为25分钟
      */
-    var limitTimeSeconds: Long = 25 * 60,
+    var limitTimeSeconds: Long = 25 * 60
 
-    var cycleModel: Int = CYCLE_MODEL_DAILY,
+    var cycleModel: Int = CYCLE_MODEL_DAILY
 
     var limitModel: Int = LIMIT_MODEL_LIGHT
-) : Serializable {
 
     //0~23
     var startTimeHourOfDay: Int = -1
