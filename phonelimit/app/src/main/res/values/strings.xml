@@ -8,9 +8,10 @@
     <string name="close_limit">close limit</string>
 
     <string name="index_tips">
-            ·点击专注模式选择更多模式\t
-            ·右上角菜单中设置定时任务\t
-            ·横向滑动APP栏体验更多功能\t
+            🔸点击专注模式选择更多模式\t
+            🔸右上角菜单中设置定时任务\t
+            🔸横向滑动APP栏体验更多功能\t
+            🔸在设置中可设置Start的默认时间
     </string>
 
     <string name="limit_model_tips_normal">

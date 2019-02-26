@@ -258,7 +258,9 @@ class FocusFragment : Fragment() {
             //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
             val limitIntent = Intent(context, LimitService::class.java)
             val taskInfo =
-                TaskConfig(limitTimeSeconds = 100)
+                TaskConfig().apply {
+                    limitTimeSeconds = 100
+                }
             limitIntent.putExtra("limit_task_time_info",taskInfo)
             startService(limitIntent)
         }

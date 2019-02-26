@@ -12,6 +12,7 @@ import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
 import com.lfork.phonelimitadvanced.help.HelpActivity
 import com.lfork.phonelimitadvanced.ranklist.RankListActivity
 import com.lfork.phonelimitadvanced.statistics.StatisticActivity
+import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
 import com.lfork.phonelimitadvanced.utils.ToastUtil
 import com.lfork.phonelimitadvanced.utils.startActivity
 import com.lfork.phonelimitadvanced.utils.startOtherApp
@@ -40,14 +41,22 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
         return items.size + customHeaderCount + customTailCount
     }
 
-    private val customHeaderCount = 3
+    private val customHeaderCount = 4
 
-    private val customTailCount = 2
+    private val customTailCount = 3
 
     override fun onBindViewHolder(holder: NormalHolder, p1: Int) {
         val context = holder.imageView.context
         when (p1) {
             0 -> {
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_timed_task_24dp))
+                holder.textView.text = "定时任务"
+                holder.item.setOnClickListener {
+                    it.context.startActivity<TimedTaskActivity>()
+                }
+            }
+
+            1 -> {
                 holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_browser_24dp))
                 holder.textView.text = "浏览器"
                 holder.item.setOnClickListener {
@@ -55,7 +64,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 }
             }
 
-            1 -> {
+            2 -> {
                 holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_chart_24dp))
                 holder.textView.text = "使用统计"
                 holder.item.setOnClickListener {
@@ -63,7 +72,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 }
             }
 
-            2 -> {
+            3 -> {
                 holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_rank_24dp))
                 holder.textView.text = "排行榜"
                 holder.item.setOnClickListener {
@@ -91,6 +100,14 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                     } else {
                         ToastUtil.showShort(it.context, "暂时不能编辑噢")
                     }
+                }
+            }
+
+            itemCount - 3 -> {
+                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_settings_black_24dp))
+                holder.textView.text = "设置"
+                holder.item.setOnClickListener {
+                    customIconOnClickListener?.onSettingsClick()
                 }
             }
             else -> {
