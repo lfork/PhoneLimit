@@ -13,12 +13,12 @@
         android:id="@+id/timed_task"
         android:orderInCategory="100"
         android:title="定时任务"
-        android:visible="false"
+        android:visible="true"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/settings"
-        android:visible="false"
+        android:visible="true"
         android:orderInCategory="100"
         android:title="设置"
         app:showAsAction="never" />

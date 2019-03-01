@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.main2_act.*
 import android.view.View
 import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
+import com.lfork.phonelimitadvanced.data.getMainMenuVisibility
 import com.lfork.phonelimitadvanced.limitcore.task.FloatingLimitTask
 import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
 import com.lfork.phonelimitadvanced.utils.setTransparentSystemUI
@@ -89,6 +90,15 @@ private fun showLimitModelSelectionDialog() {
         }
 }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+
+        if (getMainMenuVisibility() == true){
+            menu?.findItem(R.id.timed_task)?.isVisible = false;
+            menu?.findItem(R.id.settings)?.isVisible = false;
+        }
+
+        return super.onPrepareOptionsMenu(menu)
+    }
 
 override fun onCreateOptionsMenu(menu: Menu?): Boolean {
     menuInflater.inflate(R.menu.limit_menu, menu)

@@ -15,6 +15,20 @@ import java.util.ArrayList
  * @date 2019/02/07 11:14
  */
 
+
+fun Context.saveMainMenuVisibility(visible:Boolean) {
+    getSharedPreferences("settings", Context.MODE_PRIVATE)
+        .edit()
+        .putBoolean("main_menu_visibility", visible)
+        .apply()
+}
+
+
+fun Context.getMainMenuVisibility() = getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean(
+    "main_menu_visibility",
+    true
+)
+
 fun Context.saveBio(bio:String) {
     getSharedPreferences("user_info", Context.MODE_PRIVATE)
         .edit()
