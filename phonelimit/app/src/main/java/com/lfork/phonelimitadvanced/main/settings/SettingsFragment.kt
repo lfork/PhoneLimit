@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.lfork.phonelimitadvanced.R
+import com.lfork.phonelimitadvanced.data.getMainMenuVisibility
 import com.lfork.phonelimitadvanced.data.getSettingsIndexTipsSwitch
+import com.lfork.phonelimitadvanced.data.saveMainMenuVisibility
 import com.lfork.phonelimitadvanced.data.saveSettingsIndexTipsSwitch
-import kotlinx.android.synthetic.main.settings_frag.view.*
+import com.lfork.phonelimitadvanced.main.MainActivity
+import kotlinx.android.synthetic.main.settings_frag.*
 
 class SettingsFragment : Fragment() {
 
@@ -20,7 +23,7 @@ class SettingsFragment : Fragment() {
 
     private lateinit var viewModel: MyViewModel
 
-    private var root:View?=null;
+    private var root: View? = null;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,15 +31,38 @@ class SettingsFragment : Fragment() {
     ): View? {
         if (root == null) {
             root = inflater.inflate(R.layout.settings_frag, container, false)
-            root!!.switch_index_tips.isChecked = context?.getSettingsIndexTipsSwitch()?:true
-
-            root!!.switch_index_tips.setOnCheckedChangeListener { buttonView, isChecked ->
-                context?.saveSettingsIndexTipsSwitch(isChecked)
-            }
         }
 
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        switch_index_tips.isChecked = context?.getSettingsIndexTipsSwitch() ?: true
+
+        switch_index_tips.setOnCheckedChangeListener { buttonView, isChecked ->
+            context?.saveSettingsIndexTipsSwitch(isChecked)
+        }
+
+        switch_main_menu.isChecked = context?.getMainMenuVisibility() ?: true
+
+        switch_main_menu.setOnCheckedChangeListener { buttonView, isChecked ->
+            context?.saveMainMenuVisibility(isChecked)
+            activity?.invalidateOptionsMenu()
+        }
+
+        btn_bg_set.setOnClickListener {
+            SettingsChangeManager.addListener(listener)
+            BackgroundSettingActivity.startBackgroundSelectActivity(context!!)
+        }
+
+    }
+
+    val listener = object : SettingsChangeManager.SettingsChangeListener {
+        override fun onBackgroundChanged() {
+            (activity as MainActivity?)?.setBackground()
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

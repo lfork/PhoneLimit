@@ -38,7 +38,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/app_green_3</item>
         <item name="colorAccent">@color/app_green_3</item>
-        <item name="android:windowBackground">@drawable/bg_background</item>
+        <item name="android:windowDisablePreview">true</item>
+        <!--<item name="android:windowBackground">@color/app_green_3</item>-->
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <!-- Navigation Bar -->
         <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
@@ -94,6 +95,12 @@
         <item name="android:marqueeRepeatLimit">marquee_forever</item>
         <item name="android:focusable">true</item>
         <item name="android:focusableInTouchMode">true</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="TransparentAppTheme" parent="@style/Theme.AppCompat.Dialog.Alert">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
 </resources>

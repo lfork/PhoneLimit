@@ -10,7 +10,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 应用锁需要的权限 -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission
@@ -91,8 +93,23 @@
             android:theme="@style/StatisticsActivityTheme" />
         <activity
             android:name=".help.HelpActivity"
-            android:theme="@style/HelpActivityTheme"></activity>
-        <activity android:name=".user.UserInfoActivity"></activity>
+            android:theme="@style/HelpActivityTheme"/>
+        <activity android:name=".user.UserInfoActivity"/>
+
+        <activity
+            android:name=".main.settings.BackgroundSettingActivity"
+            android:theme="@style/TransparentAppTheme"/>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.lfork.phonelimitadvanced.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
 
 </manifest>

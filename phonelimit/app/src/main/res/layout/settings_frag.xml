@@ -71,17 +71,17 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="16dp"
-                android:text="点击设置开始界面的默认限制时间"
+                android:text="隐藏主界面右上角的菜单"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/switch_index_tips2"
+                app:layout_constraintEnd_toStartOf="@+id/switch_main_menu"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Switch
-                android:id="@+id/switch_index_tips2"
+                android:id="@+id/switch_main_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
@@ -91,6 +91,16 @@
 
 
         </android.support.constraint.ConstraintLayout>
+
+        <Button
+            android:background="@drawable/bg_rectangle_light"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:layout_margin="8dp"
+            android:text="主界面背景设置"
+            android:id="@+id/btn_bg_set"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

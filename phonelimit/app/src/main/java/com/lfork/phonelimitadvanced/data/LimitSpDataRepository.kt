@@ -15,6 +15,19 @@ import java.util.ArrayList
  * @date 2019/02/07 11:14
  */
 
+fun Context.saveBackgroundFilePath(path:String) {
+    getSharedPreferences("settings", Context.MODE_PRIVATE)
+        .edit()
+        .putString("background_file_path", path)
+        .apply()
+}
+
+
+fun Context.getBackgroundFilePath() = getSharedPreferences("settings", Context.MODE_PRIVATE).getString(
+    "background_file_path",
+    null
+)
+
 
 fun Context.saveMainMenuVisibility(visible:Boolean) {
     getSharedPreferences("settings", Context.MODE_PRIVATE)
