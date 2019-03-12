@@ -1,5 +1,6 @@
 package com.lfork.phonelimitadvanced.utils
 
+import android.util.Log
 import com.lfork.phonelimitadvanced.utils.LinuxShell
 import java.io.*
 
@@ -14,8 +15,13 @@ object RootShell {
      */
     @Synchronized
     fun execRootCmd(cmd: String): String {
+
+        Log.d("Rootshell-cmd", cmd)
         val result = LinuxShell.execCommand(cmd, true)
-        return "code:${result.result}  errorMsg:${result.errorMsg}  successMsg:${result.successMsg}"
+        val resultStr = "code:${result.result}  errorMsg:${result.errorMsg}  successMsg:${result.successMsg}"
+
+        Log.d("Rootshell-result", resultStr)
+        return resultStr
     }
 
 }

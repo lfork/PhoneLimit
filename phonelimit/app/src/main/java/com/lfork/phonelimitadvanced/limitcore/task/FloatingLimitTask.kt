@@ -17,7 +17,8 @@ import com.lfork.phonelimitadvanced.base.AppConstants
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.main.MainActivity
 import com.lfork.phonelimitadvanced.MainHandler
-import com.lfork.phonelimitadvanced.utils.Constants
+ import com.lfork.phonelimitadvanced.limitcore.LimitEnvironment.isOnRecentApps
+ import com.lfork.phonelimitadvanced.utils.Constants
 
 
 /**
@@ -31,20 +32,12 @@ import com.lfork.phonelimitadvanced.utils.Constants
  */
 open class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListener {
 
-
-    companion object {
-        var isOnRecentApps = false
-    }
-
     private var wmParams: WindowManager.LayoutParams? = null
     private var mWindowManager: WindowManager? = null
     private var mWindowView: View? = null
     private var tips: TextView? = null
 
-
-
     var mReceiver: RecentlyReceiver? = null
-
 
     override fun initLimit(context: Context) {
         super.initLimit(context)
@@ -155,7 +148,7 @@ open class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListen
 
 
         try {
-            Thread.sleep(500)
+            Thread.sleep(300)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }

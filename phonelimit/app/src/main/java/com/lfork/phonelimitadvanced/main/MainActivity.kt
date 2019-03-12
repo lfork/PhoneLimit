@@ -23,6 +23,7 @@ import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultLauncher
 import com.lfork.phonelimitadvanced.data.getBackgroundFilePath
 import com.lfork.phonelimitadvanced.data.getMainMenuVisibility
+import com.lfork.phonelimitadvanced.limitcore.LimitEnvironment.isOnRecentApps
 import com.lfork.phonelimitadvanced.limitcore.task.FloatingLimitTask
 import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
 import com.lfork.phonelimitadvanced.utils.setTransparentSystemUI
@@ -91,7 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        FloatingLimitTask.isOnRecentApps = false
+        isOnRecentApps = false
         limitModelSelectionDialog?.onResume()
     }
 

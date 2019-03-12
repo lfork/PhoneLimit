@@ -126,8 +126,6 @@ object UserRepository {
                 }
             }
         }
-
-
     }
 
     fun getWeeklyRankList(dataCallback: DataCallback<ArrayList<UserRankInfo>>) {

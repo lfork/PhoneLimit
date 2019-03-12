@@ -77,9 +77,6 @@ class FocusFragment2 : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         if (root == null) {
             root = inflater.inflate(R.layout.focus_frag_v2, container, false)
-            registerListener(root!!)
-            setupRecyclerView()
-
 
 
             val limitIntent = Intent(context, LimitService::class.java)
@@ -90,13 +87,19 @@ class FocusFragment2 : Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        registerListener()
+        setupRecyclerView()
+    }
+
     private fun setupRecyclerView() {
-        root!!.recycle_white_list.layoutManager =
-                ScrollLinearLayoutManager(context, HORIZONTAL, false)
+        recycle_white_list.layoutManager =
+            ScrollLinearLayoutManager(context, HORIZONTAL, false)
         adapter = WhiteNameAdapter()
         adapter.customIconOnClickListener = customIconOnClickListener
 
-        root!!.recycle_white_list.adapter = adapter
+        recycle_white_list.adapter = adapter
 
 //        FirstItemSnapHelper().attachToRecyclerView(root!!.recycle_white_list)
     }
@@ -120,7 +123,7 @@ class FocusFragment2 : Fragment() {
         }
         refreshAppInfoData()
 
-        if (remainTimeCache.isEmpty()){
+        if (remainTimeCache.isEmpty()) {
             view?.btn_start_remain_time_text?.text = "Start"
         }
 
@@ -130,7 +133,7 @@ class FocusFragment2 : Fragment() {
             (activity as MainActivity?)?.showOtherUI()
         }
 
-        if (LimitApplication.isFirstOpen && !isRecyclerScrolled){
+        if (LimitApplication.isFirstOpen && !isRecyclerScrolled) {
             LimitApplication.executeAsyncDataTask {
                 Thread.sleep(1500)
                 runOnUiThread {
@@ -148,9 +151,9 @@ class FocusFragment2 : Fragment() {
         }
 
 
-        if (context?.getSettingsIndexTipsSwitch() != false){
+        if (context?.getSettingsIndexTipsSwitch() != false) {
             root!!.tv_index_tips.visibility = View.VISIBLE
-        } else{
+        } else {
             root!!.tv_index_tips.visibility = View.GONE
         }
 
@@ -266,13 +269,13 @@ class FocusFragment2 : Fragment() {
     }
 
 
-    private fun registerListener(view: View) {
+    private fun registerListener() {
 
         if (remainTimeCache.isNotEmpty()) {
-            view.btn_start_remain_time_text.text = ""
+            btn_start_remain_time_text.text = ""
         }
 
-        view.btn_start_remain_time_text.setOnClickListener {
+       btn_start_remain_time_text.setOnClickListener {
 
             if (LimitApplication.isOnLimitation) {
                 return@setOnClickListener
@@ -321,7 +324,7 @@ class FocusFragment2 : Fragment() {
                 btn_start_remain_time_text?.text = "Start"
 //                tips.text = "限制已解除"
                 ToastUtil.showLong(context, "限制已解除")
-                if (this@FocusFragment2.isVisible){
+                if (this@FocusFragment2.isVisible) {
                     (activity as MainActivity?)?.showOtherUI()
                 }
             }

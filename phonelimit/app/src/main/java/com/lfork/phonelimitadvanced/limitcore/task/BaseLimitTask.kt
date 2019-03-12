@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import com.lfork.phonelimitadvanced.base.AppConstants
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfoRepository
 import com.lfork.phonelimitadvanced.limitcore.LimitTask
@@ -56,6 +57,8 @@ open class BaseLimitTask : LimitTask {
                 mContext!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         )
 
+        Log.d("doLimit", "栈顶app的包名$packageName")
+
         //判断包名打开解锁页面
         if (TextUtils.isEmpty(packageName)) {
             return false
@@ -80,7 +83,7 @@ open class BaseLimitTask : LimitTask {
         if (AppInfoRepository.whiteNameList.contains(packageName) || SPECIAL_WHITE_NAME_LIST.contains(packageName)) {
             return false
         }
-
+        Log.d("doLimit", "执行限制")
         val intent = Intent(mContext!!, MainActivity::class.java)
         intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName)
         intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH)
