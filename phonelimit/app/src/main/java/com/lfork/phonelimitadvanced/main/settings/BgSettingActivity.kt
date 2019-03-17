@@ -11,7 +11,6 @@ import android.provider.MediaStore
 import android.content.Intent
 import android.widget.ImageButton
 import java.io.File
-import kotlinx.android.synthetic.main.background_set_act.*
 import java.io.IOException
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -19,7 +18,7 @@ import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
-import android.view.Window
+import android.util.Log
 import android.widget.Toast
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.saveBackgroundFilePath
@@ -27,7 +26,7 @@ import com.lfork.phonelimitadvanced.utils.ContentUriUtil
 import com.lfork.phonelimitadvanced.utils.setTransparentSystemUI
 
 
-class BackgroundSettingActivity : AppCompatActivity() {
+class BgSettingActivity : AppCompatActivity() {
 
     val REQUEST_CAMERA = 1
     val REQUEST_ALBUM = 2
@@ -38,6 +37,7 @@ class BackgroundSettingActivity : AppCompatActivity() {
     private val mPictureIb: ImageButton? = null
     private var mImageFile: File? = null
     private var resultIsOk: Boolean? = null
+    val TAG = "BgSettingActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +57,7 @@ class BackgroundSettingActivity : AppCompatActivity() {
     companion object {
         @JvmStatic
         fun startBackgroundSelectActivity(context: Context) {
-            context.startActivity(Intent(context, BackgroundSettingActivity::class.java))
+            context.startActivity(Intent(context, BgSettingActivity::class.java))
         }
     }
 
@@ -66,7 +66,7 @@ class BackgroundSettingActivity : AppCompatActivity() {
         if (!haveReadPermission() || !haveWritePermission()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ActivityCompat.requestPermissions(
-                    this@BackgroundSettingActivity,
+                    this@BgSettingActivity,
                     arrayOf(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE
@@ -106,9 +106,11 @@ class BackgroundSettingActivity : AppCompatActivity() {
         return permissionCheck1 == PackageManager.PERMISSION_GRANTED
     }
 
+    var dialog: AlertDialog? = null
+
 
     fun onClickPicker() {
-        AlertDialog.Builder(this)
+        dialog = AlertDialog.Builder(this)
             .setTitle("选择照片")
             .setCancelable(true)
             .setItems(arrayOf("拍照", "相册"), object : DialogInterface.OnClickListener {
@@ -118,7 +120,7 @@ class BackgroundSettingActivity : AppCompatActivity() {
                         if (!haveCameraPermission()) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 ActivityCompat.requestPermissions(
-                                    this@BackgroundSettingActivity,
+                                    this@BgSettingActivity,
                                     arrayOf(Manifest.permission.CAMERA),
                                     REQUEST_CAMERA_PERMISSION
                                 )
@@ -135,14 +137,31 @@ class BackgroundSettingActivity : AppCompatActivity() {
                 finish()
             }
             .create()
-            .show()
+        dialog?.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dialog?.dismiss()
     }
 
 
     private fun selectAlbum() {
+        createImageFile()
         val albumIntent = Intent(Intent.ACTION_PICK)
         albumIntent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         startActivityForResult(albumIntent, REQUEST_ALBUM)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putSerializable("FilePath", mImageFile);
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        mImageFile = savedInstanceState?.getSerializable("FilePath") as File?;
+        Log.d("BackgroundSetting", mImageFile?.path ?: "test")
     }
 
 
@@ -160,12 +179,14 @@ class BackgroundSettingActivity : AppCompatActivity() {
                 finish()
             }
             REQUEST_ALBUM -> {
-                createImageFile()
                 if (!mImageFile!!.exists()) {
                     return
                 }
                 val uri = data!!.data
+
                 if (uri != null) {
+
+                    Log.d(TAG, "uri?.path ${ContentUriUtil.getPath(this, uri)}")
 //                    toast("图片真实途径：${ContentUriUtil.getPath(this, uri)}")
 //                    iv_bg.setImageURI(uri)
 
@@ -208,6 +229,7 @@ class BackgroundSettingActivity : AppCompatActivity() {
         if (!mImageFile!!.exists()) {
             return
         }
+        Log.d("BackgroundSetting", mImageFile?.path ?: "test")
         val cameraImageUri = initImageUri()
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri)

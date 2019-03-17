@@ -97,7 +97,7 @@
         <activity android:name=".user.UserInfoActivity"/>
 
         <activity
-            android:name=".main.settings.BackgroundSettingActivity"
+            android:name=".main.settings.BgSettingActivity"
             android:theme="@style/TransparentAppTheme"/>
 
         <provider

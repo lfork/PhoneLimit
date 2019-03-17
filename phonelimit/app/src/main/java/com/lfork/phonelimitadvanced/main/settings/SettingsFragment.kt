@@ -12,7 +12,6 @@ import com.lfork.phonelimitadvanced.data.getMainMenuVisibility
 import com.lfork.phonelimitadvanced.data.getSettingsIndexTipsSwitch
 import com.lfork.phonelimitadvanced.data.saveMainMenuVisibility
 import com.lfork.phonelimitadvanced.data.saveSettingsIndexTipsSwitch
-import com.lfork.phonelimitadvanced.main.MainActivity
 import kotlinx.android.synthetic.main.settings_frag.*
 
 class SettingsFragment : Fragment() {
@@ -53,17 +52,11 @@ class SettingsFragment : Fragment() {
         }
 
         btn_bg_set.setOnClickListener {
-            SettingsChangeManager.addListener(listener)
-            BackgroundSettingActivity.startBackgroundSelectActivity(context!!)
+            BgSettingActivity.startBackgroundSelectActivity(context!!)
         }
 
     }
 
-    val listener = object : SettingsChangeManager.SettingsChangeListener {
-        override fun onBackgroundChanged() {
-            (activity as MainActivity?)?.setBackground()
-        }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
