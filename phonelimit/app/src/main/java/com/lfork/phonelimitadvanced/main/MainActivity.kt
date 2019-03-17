@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.lfork.phonelimitadvanced.LimitApplication
@@ -16,7 +17,6 @@ import com.lfork.phonelimitadvanced.main.focus.CustomIconOnClickListener
 import com.lfork.phonelimitadvanced.main.focus.FocusFragment2
 import com.lfork.phonelimitadvanced.main.settings.SettingsFragment
 import com.lfork.phonelimitadvanced.base.permission.PermissionManager.clearDefaultLauncherFake
-import com.lfork.phonelimitadvanced.utils.setupToolBar
 import kotlinx.android.synthetic.main.main2_act.*
 import android.view.View
 import com.lfork.phonelimitadvanced.base.widget.LimitModelSelectDialog
@@ -24,10 +24,11 @@ import com.lfork.phonelimitadvanced.base.permission.PermissionManager.isDefaultL
 import com.lfork.phonelimitadvanced.data.getBackgroundFilePath
 import com.lfork.phonelimitadvanced.data.getMainMenuVisibility
 import com.lfork.phonelimitadvanced.limitcore.LimitEnvironment.isOnRecentApps
+import com.lfork.phonelimitadvanced.limitcore.LimitService
 import com.lfork.phonelimitadvanced.limitcore.task.FloatingLimitTask
+import com.lfork.phonelimitadvanced.main.settings.SettingsChangeManager
 import com.lfork.phonelimitadvanced.timedtask.TimedTaskActivity
-import com.lfork.phonelimitadvanced.utils.setTransparentSystemUI
-import com.lfork.phonelimitadvanced.utils.startActivity
+import com.lfork.phonelimitadvanced.utils.*
 import java.io.File
 
 
@@ -35,11 +36,12 @@ class MainActivity : AppCompatActivity() {
 
     private var focusFragment: FocusFragment2? = null
     private var browserFragment: BrowserFragment? = null
-
+    private var settingsFragment: SettingsFragment? = null
 
     private val mOnNavigationItemSelectedListener = object : CustomIconOnClickListener {
         override fun onBrowserClick() {
             openSecondFragment(BrowserFragment())
+
         }
 
         override fun onSettingsClick() {
@@ -47,20 +49,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+    }
+
+
+    val TAG = "MainActivity"
+    /**
+     * 如果activity被回收，系统会在这里恢复之前的fragment
+     */
     override fun onAttachFragment(fragment: Fragment?) {
-        super.onAttachFragment(fragment)
+//        super.onAttachFragment(fragment)
         //当前的界面的保存状态，只是重新让新的Fragment指向了原本未被销毁的fragment，它就是onAttach方法对应的Fragment对象
         //防止重影
-        if (focusFragment == null && fragment is FocusFragment2) {
-            focusFragment = fragment
-            focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
-        }
-
-
-        if (browserFragment == null && fragment is BrowserFragment) {
-            browserFragment = fragment
-        }
+//        Log.d(TAG, "onAttachFragment" + fragment?.toString() + "   ${focusFragment?.hashCode()}")
+//        if (focusFragment == null && fragment is FocusFragment2) {
+//            focusFragment = fragment
+//            focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
+//        } else if (browserFragment == null && fragment is BrowserFragment) {
+//            browserFragment = fragment
+//        } else if (settingsFragment == null && fragment is SettingsFragment) {
+//            settingsFragment = fragment
+//        }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,16 +87,18 @@ class MainActivity : AppCompatActivity() {
         initFragments()
         setBackground()
         setTransparentSystemUI()
+        SettingsChangeManager.addListener(listener)
+
     }
 
-     fun setBackground(){
+    fun setBackground() {
         val bgPath = getBackgroundFilePath()
 
         if (bgPath != null) {
             val drawable = Drawable.createFromPath(bgPath)
             iv_bg.setImageDrawable(drawable)
             window.setBackgroundDrawable(ColorDrawable(0))
-        } else{
+        } else {
             iv_bg.setImageDrawable(getDrawable(R.drawable.mountain))
             window.setBackgroundDrawable(ColorDrawable(0))
 //            window.setBackgroundDrawable(getDrawable(R.drawable.mountain))
@@ -148,9 +168,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    val listener = object : SettingsChangeManager.SettingsChangeListener {
+        override fun onBackgroundChanged() {
+            setBackground()
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
+        SettingsChangeManager.removeListener(listener)
         limitModelSelectionDialog?.dismiss()
     }
 
@@ -172,17 +198,20 @@ class MainActivity : AppCompatActivity() {
             homeIntent.addCategory(Intent.CATEGORY_HOME);
             startActivity(homeIntent);
             return
+        } else {
+            focusFragment?.unbindLimitService()
         }
         super.onBackPressed()
     }
 
     private fun initFragments() {
+
         if (focusFragment != null) {
             return
         }
         focusFragment = FocusFragment2()
         supportFragmentManager.beginTransaction()
-            .add(R.id.main_frag, focusFragment!!, focusFragment!!.tag)
+            .replace(R.id.main_frag, focusFragment!!, focusFragment!!.tag)
             .show(focusFragment!!)
             .commit()
         focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
@@ -190,6 +219,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun openSecondFragment(fragment: Fragment) {
+        Log.d(TAG, fragment.toString())
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.main_frag, fragment)

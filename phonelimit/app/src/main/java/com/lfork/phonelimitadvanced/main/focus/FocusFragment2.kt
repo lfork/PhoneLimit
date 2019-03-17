@@ -78,12 +78,10 @@ class FocusFragment2 : Fragment() {
         if (root == null) {
             root = inflater.inflate(R.layout.focus_frag_v2, container, false)
 
-
             val limitIntent = Intent(context, LimitService::class.java)
             bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
             startService(limitIntent)
         }
-
         return root
     }
 
@@ -172,7 +170,7 @@ class FocusFragment2 : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         adapter.onDestroy()
-        unbindLimitService()
+//        unbindLimitService()
     }
 
 
@@ -360,7 +358,7 @@ class FocusFragment2 : Fragment() {
         }
     }
 
-    private val limitServiceConnection = object : ServiceConnection {
+    val limitServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
             limitBinder = iBinder as LimitService.LimitBinder
             limitBinder.setLimitStateListener(limitStateListener)
@@ -385,7 +383,7 @@ class FocusFragment2 : Fragment() {
         inputTimeMinuteCache = -1
     }
 
-    private fun unbindLimitService() {
+    fun unbindLimitService() {
         if (context != null) {
             val stopIntent = Intent(context, LimitService::class.java)
             stopService(stopIntent)
@@ -400,6 +398,5 @@ class FocusFragment2 : Fragment() {
     fun setCustomClickListener(customIconOnClickListener: CustomIconOnClickListener) {
         this.customIconOnClickListener = customIconOnClickListener
     }
-
 
 }
