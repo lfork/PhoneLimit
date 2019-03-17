@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -206,6 +205,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initFragments() {
 
+        //清除由于activity被回收，然后可能保存的一些错误的回退栈的信息。
+        supportFragmentManager.popBackStackImmediate()
         if (focusFragment != null) {
             return
         }
@@ -215,6 +216,8 @@ class MainActivity : AppCompatActivity() {
             .show(focusFragment!!)
             .commit()
         focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
+
+
     }
 
 
