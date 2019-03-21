@@ -156,6 +156,20 @@ fun Context.getRootStatus() = getSharedPreferences("env", Context.MODE_PRIVATE).
 )
 
 
+fun Context.saveLimitTime(remainTimeSeconds: Long) {
+    val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
+    val editor = sp.edit()
+    editor.putLong("limit_time_seconds", remainTimeSeconds)
+    editor.apply()
+}
+
+
+fun Context.getLimitTime() = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE).getLong(
+    "limit_time_seconds",
+    0
+)
+
+
 fun Context.saveRemainTime(remainTimeSeconds: Long) {
     val sp: SharedPreferences = getSharedPreferences("LimitStatus", Context.MODE_PRIVATE)
     val editor = sp.edit()

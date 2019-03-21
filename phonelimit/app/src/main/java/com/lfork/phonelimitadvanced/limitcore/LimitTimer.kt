@@ -1,12 +1,18 @@
 package com.lfork.phonelimitadvanced.limitcore
 
+import android.util.Log
 import java.lang.Exception
+import java.util.*
 
 /**
  * 倒计时的计时器,只能使用一次。
  * Created by 98620 on 2018/12/14.
  */
-class LimitTimer(private val limitTimeSeconds: Long, private val listener: TimeListener, private var startTimeMillis: Long) {
+class LimitTimer(
+    private val limitTimeSeconds: Long,
+    private val listener: TimeListener,
+    private var startTimeMillis: Long
+) {
 
     private var remainTimeSeconds: Long = limitTimeSeconds
 
@@ -28,7 +34,7 @@ class LimitTimer(private val limitTimeSeconds: Long, private val listener: TimeL
      */
     fun start(): Boolean {
 
-        if (startTimeMillis > System.currentTimeMillis()){
+        if (startTimeMillis > System.currentTimeMillis()) {
             return false
         }
 
@@ -48,9 +54,9 @@ class LimitTimer(private val limitTimeSeconds: Long, private val listener: TimeL
                 while (remainTimeSeconds > 0) {
                     listener.onRemainTimeRefreshed(remainTimeSeconds)
                     Thread.sleep(1000)
-
                     //限制总时间 - (从限制开始的时间起，已经过去的时间)
-                    remainTimeSeconds = limitTimeSeconds - (System.currentTimeMillis() - startTimeMillis) / 1000
+                    val costTime = System.currentTimeMillis() - startTimeMillis
+                    remainTimeSeconds = limitTimeSeconds - costTime / 1000
                 }
                 listener.onCompleted()
             } catch (e: Exception) {

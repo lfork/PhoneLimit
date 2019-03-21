@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 
 
-
 /**
  * 模拟CS模式,Activity作为客户端，Service作为服务端
  * activity 需要在服务结束(通过binder来通知activity)后关闭服务。
@@ -150,13 +149,11 @@ class LimitService : Service() {
                 limitTaskExecutor.close()
                 LimitApplication.isOnLimitation = false
                 listener?.onLimitFinished()
-                saveRemainTime(0)
                 clearStartTime()
             }
 
             override fun onRemainTimeRefreshed(remainTimeSeconds: Long) {
                 listener?.updateRemainTime(remainTimeSeconds)
-                saveRemainTime(remainTimeSeconds)
             }
         }
 
@@ -165,10 +162,9 @@ class LimitService : Service() {
         } else {
             System.currentTimeMillis()
         }
-
         limitTimer = LimitTimer(limitTimeSeconds, timerListener, startTime)
 
-
+        saveLimitTime(limitTimeSeconds)
         //计时器开启前需要先开启限制服务
         //需要先开 limitTaskExecutor ，因为如果时间很短，然后先开的 limitTimer，可能会导致在 limitTaskExecutor 开启之前时间就结束了，然后等下
         //就会执行 limitTaskExecutor，此时就没有人能关闭 limitTaskExecutor 了
@@ -208,11 +204,11 @@ class LimitService : Service() {
             //TODO 权限检查，如果权限不足，就把权限不足的状态写入数据库。然后再toast一下。在任务列表的界面就直接提示权限不足
             if (PermissionManager.modelPermissionCheck(this@LimitService, taskConfig.limitModel)) {
                 timedTaskController.remove(taskConfig.id)
-                if (timedTaskController.isEmpty()){
+                if (timedTaskController.isEmpty()) {
                     LimitApplication.isTimedTaskRunning = false
                 }
                 startLimitTask(taskConfig)
-                if (taskConfig.cycleModel == TaskConfig.CYCLE_MODEL_NO_CYCLE){
+                if (taskConfig.cycleModel == TaskConfig.CYCLE_MODEL_NO_CYCLE) {
                     taskConfig.isActive = false
                 }
                 TaskConfigRepository.updateLimitTask(taskConfig)
@@ -227,7 +223,7 @@ class LimitService : Service() {
         val delayTime = startTime - currentTime.timeInMillis
         Log.d("延迟时间测试", "当前时间${currentTime.timeInMillis},任务开始时间${startTime} ")
 
-        if (startTime < 0){
+        if (startTime < 0) {
             throw Exception("startTime error!!")
         }
 
@@ -315,20 +311,17 @@ class LimitService : Service() {
     }
 
     private fun checkAndRecoveryLimitTask() {
-        val remainTimeSeconds = getRemainTime()
+        val limitTime = getLimitTime()
         val startTimeMillis = getStartTime()
         val limitModel = getLimitModel()
 
         val config = TaskConfig().apply {
-            limitTimeSeconds = remainTimeSeconds
+            limitTimeSeconds = limitTime
             isImmediatelyExecuted = true
             startTimeMillisForUnfinishedTask = startTimeMillis
             this.limitModel = limitModel
         }
-        if (remainTimeSeconds > 1) {
-            startLimitTask(config)
-        }
-        Log.d("任务恢复检查", "remainTimeSeconds $remainTimeSeconds")
+        startLimitTask(config)
     }
 
     private fun checkTimedLimitTask() {
@@ -339,7 +332,7 @@ class LimitService : Service() {
         LimitApplication.executeAsyncDataTask {
             val tasks = TaskConfigRepository.getTasks()
             tasks.forEach {
-                if (it.isActive){
+                if (it.isActive) {
                     commitTimedTask(this@LimitService, it)
                     LimitApplication.isTimedTaskRunning = true
                 }
@@ -372,9 +365,9 @@ class LimitService : Service() {
             //开启之前需要把权限获取到位  不同的限制模式需要不同的权限。
             val limitIntent = Intent(context, LimitService::class.java)
             limitIntent.putExtra("limit_task_time_info", taskInfo)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(limitIntent)
-            } else{
+            } else {
                 context.startService(limitIntent)
             }
         }
@@ -384,9 +377,9 @@ class LimitService : Service() {
             val limitIntent = Intent(context, LimitService::class.java)
             limitIntent.putExtra("limit_task_time_info", taskConfig)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(limitIntent)
-            } else{
+            } else {
                 context.startService(limitIntent)
             }
 
@@ -400,7 +393,7 @@ class LimitService : Service() {
             }
             if (control.cancel(false)) {
                 timedTaskController.remove(id)
-                if (timedTaskController.isEmpty()){
+                if (timedTaskController.isEmpty()) {
                     LimitApplication.isTimedTaskRunning = false
                 }
                 return true
