@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.view.LayoutInflater
 import android.widget.ImageView
+import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.LimitApplication.Companion.isOnLimitation
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.appinfo.AppInfo
@@ -19,6 +20,7 @@ import com.lfork.phonelimitadvanced.utils.startOtherApp
 import com.lfork.phonelimitadvanced.whitename.WhiteNameEditActivity
 import kotlinx.android.synthetic.main.focus_recycle_app.view.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -29,7 +31,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
 
     var customIconOnClickListener: CustomIconOnClickListener? = null
 
-    private val items = ArrayList<AppInfo>(0);
+    private var items = ArrayList<AppInfo>(0);
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NormalHolder {
         val view = LayoutInflater.from(parent.context)
@@ -98,7 +100,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                         //跳转到编辑界面
                         it.context.startActivity<WhiteNameEditActivity>()
                     } else {
-                        ToastUtil.showShort(it.context, "暂时不能编辑噢")
+                        ToastUtils.show("暂时不能编辑噢")
                     }
                 }
             }
@@ -130,7 +132,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
     fun setItems(itemList: MutableList<AppInfo>) {
         items.clear()
         itemList.sort()
-        items.addAll(itemList)
+        items = ArrayList(itemList)
     }
 
     fun onDestroy() {

@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.hjq.toast.ToastUtils
 import com.lfork.phonelimitadvanced.LimitApplication
 import com.lfork.phonelimitadvanced.R
 import com.lfork.phonelimitadvanced.data.DataCallback
@@ -320,8 +321,7 @@ class FocusFragment2 : Fragment() {
         override fun onLimitFinished() {
             runOnUiThread {
                 btn_start_remain_time_text?.text = "Start"
-//                tips.text = "限制已解除"
-                ToastUtil.showLong(context, "限制已解除")
+                ToastUtils.show("限制已解除")
                 if (this@FocusFragment2.isVisible) {
                     (activity as MainActivity?)?.showOtherUI()
                 }
@@ -332,7 +332,6 @@ class FocusFragment2 : Fragment() {
 
         override fun onLimitStarted() {
             runOnUiThread {
-                //ToastUtil.showLong(context, "限制已开启")
                 (activity as MainActivity?)?.hideOtherUI()
             }
         }
