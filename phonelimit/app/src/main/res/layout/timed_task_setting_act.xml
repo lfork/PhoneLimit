@@ -23,7 +23,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_add_24dp"
-        app:layout_behavior="com.lfork.phonelimitadvanced.base.widget.FabScrollBehavior" />
+        app:layout_behavior="com.lfork.phonelimit.base.widget.FabScrollBehavior" />
 
     <TextView
         android:id="@+id/textView4"
