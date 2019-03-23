@@ -40,7 +40,7 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
         return items.size + customHeaderCount + customTailCount
     }
 
-    private val customHeaderCount = 4
+    private val customHeaderCount = 3
 
     private val customTailCount = 3
 
@@ -71,14 +71,14 @@ class WhiteNameAdapter : RecyclerView.Adapter<WhiteNameAdapter.NormalHolder>() {
                 }
             }
 
-            3 -> {
-                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_rank_24dp))
-                holder.textView.text = "排行榜"
-                holder.item.setOnClickListener {
-                    //跳转到编辑界面
-                    it.context.startActivity<RankListActivity>()
-                }
-            }
+//            3 -> {
+//                holder.imageView.setImageDrawable(context.resources.getDrawable(R.drawable.ic_rank_24dp))
+//                holder.textView.text = "排行榜"
+//                holder.item.setOnClickListener {
+//                    //跳转到编辑界面
+//                    it.context.startActivity<RankListActivity>()
+//                }
+//            }
 
             //最后一个按钮
             itemCount - 1 -> {
