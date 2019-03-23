@@ -141,7 +141,7 @@ class LimitService : Service() {
             override fun onClosedInAdvance(remainTimeSeconds: Long) {
                 limitTaskExecutor.close()
                 listener?.onLimitFinished()
-                clearStartTime()
+                clearCacheLimitTaskInfo()
             }
 
             override fun onCompleted() {
@@ -149,7 +149,7 @@ class LimitService : Service() {
                 limitTaskExecutor.close()
                 LimitApplication.isOnLimitation = false
                 listener?.onLimitFinished()
-                clearStartTime()
+                clearCacheLimitTaskInfo()
             }
 
             override fun onRemainTimeRefreshed(remainTimeSeconds: Long) {
@@ -164,7 +164,7 @@ class LimitService : Service() {
         }
         limitTimer = LimitTimer(limitTimeSeconds, timerListener, startTime)
 
-        saveLimitTime(limitTimeSeconds)
+        setLimitTime(limitTimeSeconds)
         //计时器开启前需要先开启限制服务
         //需要先开 limitTaskExecutor ，因为如果时间很短，然后先开的 limitTimer，可能会导致在 limitTaskExecutor 开启之前时间就结束了，然后等下
         //就会执行 limitTaskExecutor，此时就没有人能关闭 limitTaskExecutor 了

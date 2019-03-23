@@ -129,10 +129,6 @@ class TaskConfig : Serializable {
         val startTime: Calendar = GregorianCalendar()
         val currentTimeMillis = startTime.timeInMillis
 
-//        val testTime = System.currentTimeMillis()
-
-//        println("当前时间1:$testTime  当前时间2:$currentTimeMillis 手动设置的时间 ${startTime.time}, millis${startTime.timeInMillis}")
-
         startTime.set(Calendar.HOUR_OF_DAY, startTimeHourOfDay)
         startTime.set(Calendar.MINUTE, startTimeMinute)
         startTime.set(Calendar.SECOND, 0)
