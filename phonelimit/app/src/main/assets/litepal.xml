@@ -30,7 +30,7 @@
             </list>
         -->
     <list>
-        <mapping class="com.lfork.phonelimitadvanced.data.appinfo.AppInfo"/>
+        <mapping class="com.lfork.phonelimit.data.appinfo.AppInfo"/>
     </list>
 
     <!--

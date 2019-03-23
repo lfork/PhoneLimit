@@ -9,7 +9,7 @@
 
         <variable
             name="viewmodel"
-            type="com.lfork.phonelimitadvanced.user.UserInfoViewModel" />
+            type="com.lfork.phonelimit.user.UserInfoViewModel" />
 
         <import type="android.view.View" />
     </data>

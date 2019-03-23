@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.lfork.phonelimitadvanced">
+    package="com.lfork.phonelimit">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -26,7 +26,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
-        android:name=".LimitApplication"
+        android:name="com.lfork.phonelimit.LimitApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -36,7 +36,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
-            android:name=".main.MainActivity"
+            android:name="com.lfork.phonelimit.main.MainActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/MainActivityTheme"
@@ -54,12 +54,12 @@
         </activity>
 
         <service
-            android:name=".limitcore.LimitService"
+            android:name="com.lfork.phonelimit.limitcore.LimitService"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".main.focus.FakeHomeActivity"
+            android:name="com.lfork.phonelimit.main.focus.FakeHomeActivity"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,41 +68,41 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".statistics.StatisticActivity" />
-        <activity android:name=".whitename.WhiteNameEditActivity" />
+        <activity android:name="com.lfork.phonelimit.statistics.StatisticActivity" />
+        <activity android:name="com.lfork.phonelimit.whitename.WhiteNameEditActivity" />
         <activity
-            android:name=".browser.BrowserActivity"
+            android:name="com.lfork.phonelimit.browser.BrowserActivity"
             android:configChanges="orientation|screenSize"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_browser"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity android:name=".ranklist.RankListActivity" />
-        <activity android:name=".timedtask.TimedTaskActivity" />
+        <activity android:name="com.lfork.phonelimit.ranklist.RankListActivity" />
+        <activity android:name="com.lfork.phonelimit.timedtask.TimedTaskActivity" />
         <activity
-            android:name=".statistics.AppStatisticsList"
+            android:name="com.lfork.phonelimit.statistics.AppStatisticsList"
             android:hardwareAccelerated="true"
             android:theme="@style/StatisticsActivityTheme" />
         <activity
-            android:name=".statistics.PiePolylineChartActivity"
+            android:name="com.lfork.phonelimit.statistics.PiePolylineChartActivity"
             android:hardwareAccelerated="true"
             android:theme="@style/StatisticsActivityTheme" />
         <activity
-            android:name=".statistics.BarChartActivity"
+            android:name="com.lfork.phonelimit.statistics.BarChartActivity"
             android:hardwareAccelerated="true"
             android:theme="@style/StatisticsActivityTheme" />
         <activity
-            android:name=".help.HelpActivity"
+            android:name="com.lfork.phonelimit.help.HelpActivity"
             android:theme="@style/HelpActivityTheme"/>
-        <activity android:name=".user.UserInfoActivity"/>
+        <activity android:name="com.lfork.phonelimit.user.UserInfoActivity"/>
 
         <activity
-            android:name=".main.settings.BgSettingActivity"
+            android:name="com.lfork.phonelimit.main.settings.BgSettingActivity"
             android:theme="@style/TransparentAppTheme"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.lfork.phonelimitadvanced.fileprovider"
+            android:authorities="com.lfork.phonelimit.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

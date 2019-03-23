@@ -31,7 +31,7 @@
     <!--剩余时间:\n16秒-->
 
 
-    <com.lfork.phonelimitadvanced.base.widget.MarqueeTextView
+    <com.lfork.phonelimit.base.widget.MarqueeTextView
         android:id="@+id/tv_index_tips"
         style="@style/marquee_text"
         android:layout_width="match_parent"

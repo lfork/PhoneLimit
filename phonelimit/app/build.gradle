@@ -11,7 +11,7 @@ android {
 
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.lfork.phonelimitadvanced"
+        applicationId "com.lfork.phonelimit"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 2
@@ -93,8 +93,8 @@ dependencies {
 
     implementation 'com.hjq:toast:5.2'
 
-    debugImplementation 'com.simple:spiderman:1.0.8'
-    releaseImplementation 'com.simple:spiderman-no-op:1.0.8'
+    debugImplementation 'com.simple:spiderman:1.1.0'
+    releaseImplementation 'com.simple:spiderman-no-op:1.1.0'
 
 //    implementation 'com.wdullaer:materialdatetimepicker:4.1.1'
 

@@ -7,7 +7,7 @@
 
         <variable
             name="viewmodel"
-            type="com.lfork.phonelimitadvanced.ranklist.RankListViewModel" />
+            type="com.lfork.phonelimit.ranklist.RankListViewModel" />
 
         <import type="android.view.View" />
     </data>
