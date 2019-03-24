@@ -103,11 +103,11 @@ open class FloatingLimitTask : BaseLimitTask(), RecentlyReceiver.SystemKeyListen
             if (mWindowView!!.isAttachedToWindow) {
                 return@post
             }
-//            try {
+            try {
                 mWindowManager?.addView(mWindowView, wmParams)
-//            } catch (e:Exception){
-//                e.printStackTrace()
-//            }
+            } catch (e:Exception){
+                e.printStackTrace()
+            }
         }
 
     }

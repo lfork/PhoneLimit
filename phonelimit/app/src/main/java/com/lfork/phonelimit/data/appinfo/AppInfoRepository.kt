@@ -53,7 +53,7 @@ object AppInfoRepository {
                 whiteNameList.add(it.packageName)
             }
 
-            whiteNameList.add("com.lfork.phonelimitadvanced")
+            whiteNameList.add("com.lfork.phonelimit")
 
             callback.succeed(data)
         }
