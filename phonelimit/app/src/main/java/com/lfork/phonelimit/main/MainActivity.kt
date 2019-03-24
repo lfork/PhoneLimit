@@ -13,7 +13,7 @@ import com.lfork.phonelimit.LimitApplication
 import com.lfork.phonelimit.R
 import com.lfork.phonelimit.main.browser.BrowserFragment
 import com.lfork.phonelimit.main.focus.CustomIconOnClickListener
-import com.lfork.phonelimit.main.focus.FocusFragment2
+import com.lfork.phonelimit.main.focus.FocusFragment
 import com.lfork.phonelimit.main.settings.SettingsFragment
 import com.lfork.phonelimit.base.permission.PermissionManager.clearDefaultLauncherFake
 import kotlinx.android.synthetic.main.main2_act.*
@@ -30,7 +30,7 @@ import com.lfork.phonelimit.utils.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var focusFragment: FocusFragment2? = null
+    private var focusFragment: FocusFragment? = null
     private var browserFragment: BrowserFragment? = null
     private var settingsFragment: SettingsFragment? = null
 
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         //当前的界面的保存状态，只是重新让新的Fragment指向了原本未被销毁的fragment，它就是onAttach方法对应的Fragment对象
         //防止重影
 //        Log.d(TAG, "onAttachFragment" + fragment?.toString() + "   ${focusFragment?.hashCode()}")
-//        if (focusFragment == null && fragment is FocusFragment2) {
+//        if (focusFragment == null && fragment is FocusFragment) {
 //            focusFragment = fragment
 //            focusFragment!!.setCustomClickListener(mOnNavigationItemSelectedListener)
 //        } else if (browserFragment == null && fragment is BrowserFragment) {
@@ -206,7 +206,7 @@ class MainActivity : AppCompatActivity() {
         if (focusFragment != null) {
             return
         }
-        focusFragment = FocusFragment2()
+        focusFragment = FocusFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_frag, focusFragment!!, focusFragment!!.tag)
             .show(focusFragment!!)

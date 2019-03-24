@@ -47,6 +47,4 @@ abstract class LimitDatabase : RoomDatabase() {
 
         fun getDataBase() = INSTANCE!!
     }
-
-
 }

@@ -57,7 +57,7 @@ open class BaseLimitTask : LimitTask {
                 mContext!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         )
 
-        Log.d("doLimit", "栈顶app的包名$packageName")
+//        Log.d("doLimit", "栈顶app的包名$packageName")
 
         //判断包名打开解锁页面
         if (TextUtils.isEmpty(packageName)) {

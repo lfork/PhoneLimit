@@ -40,7 +40,7 @@ import kotlinx.android.synthetic.main.focus_main_layout.*
 import kotlinx.android.synthetic.main.focus_main_layout.view.*
 
 
-class FocusFragment2 : Fragment() {
+class FocusFragment : Fragment() {
 
 
     companion object {
@@ -76,7 +76,7 @@ class FocusFragment2 : Fragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         if (root == null) {
-            root = inflater.inflate(R.layout.focus_frag_v2, container, false)
+            root = inflater.inflate(R.layout.focus_frag, container, false)
 
             val limitIntent = Intent(context, LimitService::class.java)
             bindService(limitIntent, limitServiceConnection, Context.BIND_AUTO_CREATE)
@@ -321,7 +321,7 @@ class FocusFragment2 : Fragment() {
             runOnUiThread {
                 btn_start_remain_time_text?.text = "Start"
                 ToastUtils.show("限制已解除")
-                if (this@FocusFragment2.isVisible) {
+                if (this@FocusFragment.isVisible) {
                     (activity as MainActivity?)?.showOtherUI()
                 }
             }

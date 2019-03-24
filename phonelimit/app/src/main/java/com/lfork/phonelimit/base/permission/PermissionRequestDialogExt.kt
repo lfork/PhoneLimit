@@ -42,7 +42,7 @@ fun Context.checkAndRequestUsagePermission(): Boolean {
             startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
         }
         dialog.setOnCancelListener {
-//            FocusFragment2.inputTimeMinuteCache = -1
+//            FocusFragment.inputTimeMinuteCache = -1
         }
         dialog.show()
         return false
@@ -67,7 +67,7 @@ fun Context.requestFloatingPermission(): Boolean {
         dialog.setOnClickListener {
             requestFloatingWindowPermission()
         }
-//        requestDefaultLauncherDialog.setOnCancelListener { FocusFragment2.inputTimeMinuteCache = -1 }
+//        requestDefaultLauncherDialog.setOnCancelListener { FocusFragment.inputTimeMinuteCache = -1 }
         dialog.show()
         return false
     }
@@ -92,7 +92,7 @@ fun Context.requestLauncherPermission(): Boolean {
             openDefaultAppsSetting()
             dialog.dismiss()
         }.setNegativeButton(R.string.cancel) { dialog, id ->
-//            FocusFragment2.inputTimeMinuteCache = -1
+//            FocusFragment.inputTimeMinuteCache = -1
         }
         .setCancelable(false)
         .create()
