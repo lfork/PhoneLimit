@@ -24,6 +24,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="com.huawei.permission.sec.SDK_LAUNCHER" />
+
 
     <application
         android:name="com.lfork.phonelimit.LimitApplication"
@@ -43,11 +45,14 @@
             android:windowSoftInputMode="adjustNothing|stateHidden">
             <intent-filter>
 
-                <!-- 增加launcher配置 -->
+
                 <action android:name="android.intent.action.MAIN" />
 
+                <!-- 增加launcher配置 -->
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
+
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>

@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main2_act)
-        setupToolBar(toolbar, "Phone Limit")
+        setupToolBar(toolbar, "学习监督与娱乐控制系统")
         initFragments()
         setBackground()
         setTransparentSystemUI()

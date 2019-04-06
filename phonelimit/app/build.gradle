@@ -11,7 +11,7 @@ android {
         releaseconfig {
             keyAlias 'release'
             keyPassword 'release'
-            storeFile file('C:/Users/98620/Desktop/PhoneLimit/phonelimit/phonelimit.jks')
+            storeFile file('../phonelimit.jks')
             storePassword 'release'
         }
     }
