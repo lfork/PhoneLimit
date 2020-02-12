@@ -5,7 +5,7 @@ import com.hjq.toast.ToastUtils
 import com.lfork.phonelimit.data.DataCallback
 import com.lfork.phonelimit.data.rankinfo.UserRankInfo
 import com.lfork.phonelimit.data.rankinfo.UserRepository
-import com.lfork.phonelimit.user.UserInfoViewModel
+import com.lfork.phonelimit.view.user.UserInfoViewModel
 import kotlin.collections.ArrayList
 
 /**

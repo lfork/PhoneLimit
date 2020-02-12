@@ -10,7 +10,7 @@ import com.lfork.phonelimit.R
 import com.lfork.phonelimit.data.getUserLoginStatus
 import com.lfork.phonelimit.data.rankinfo.UserRankInfo
 import com.lfork.phonelimit.databinding.RankListActBinding
-import com.lfork.phonelimit.user.UserInfoActivity
+import com.lfork.phonelimit.view.user.UserInfoActivity
 import com.lfork.phonelimit.utils.startActivity
 import kotlinx.android.synthetic.main.rank_list_act.*
 

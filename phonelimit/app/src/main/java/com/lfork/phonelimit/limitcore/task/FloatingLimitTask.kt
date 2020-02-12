@@ -15,7 +15,7 @@ import android.widget.TextView
 import com.lfork.phonelimit.R
 import com.lfork.phonelimit.base.AppConstants
 import com.lfork.phonelimit.data.appinfo.AppInfoRepository
-import com.lfork.phonelimit.main.MainActivity
+import com.lfork.phonelimit.view.main.MainActivity
 import com.lfork.phonelimit.MainHandler
  import com.lfork.phonelimit.limitcore.LimitEnvironment.isOnRecentApps
  import com.lfork.phonelimit.utils.Constants

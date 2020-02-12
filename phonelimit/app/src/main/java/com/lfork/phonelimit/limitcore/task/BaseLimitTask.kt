@@ -12,7 +12,7 @@ import android.util.Log
 import com.lfork.phonelimit.base.AppConstants
 import com.lfork.phonelimit.data.appinfo.AppInfoRepository
 import com.lfork.phonelimit.limitcore.LimitTask
-import com.lfork.phonelimit.main.MainActivity
+import com.lfork.phonelimit.view.main.MainActivity
 import com.lfork.phonelimit.utils.Constants.SPECIAL_WHITE_NAME_LIST
 
 /**

@@ -8,7 +8,7 @@ import com.lfork.phonelimit.R
 import com.lfork.phonelimit.base.widget.BaseDialog
 import com.lfork.phonelimit.data.*
 import com.lfork.phonelimit.data.rankinfo.User
-import com.lfork.phonelimit.user.UserInfoViewModel
+import com.lfork.phonelimit.view.user.UserInfoViewModel
 import kotlinx.android.synthetic.main.user_info_login_dialog.*
 import java.util.regex.Pattern
 

@@ -14,7 +14,7 @@ import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.util.Log
-import com.lfork.phonelimit.main.focus.FakeHomeActivity
+import com.lfork.phonelimit.view.main.focus.FakeHomeActivity
 import com.lfork.phonelimit.utils.LinuxShell.execCommand
 import com.lfork.phonelimit.base.widget.UsagePermissionDialog
 import com.lfork.phonelimit.data.taskconfig.TaskConfig

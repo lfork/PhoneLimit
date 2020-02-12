@@ -18,7 +18,7 @@ import com.lfork.phonelimit.data.taskconfig.TaskConfig
 import com.lfork.phonelimit.data.taskconfig.TaskConfigRepository
 import com.lfork.phonelimit.data.taskconfig.TaskConfig.Companion.CYCLE_MODEL_NO_CYCLE
 import com.lfork.phonelimit.limitcore.task.*
-import com.lfork.phonelimit.main.MainActivity
+import com.lfork.phonelimit.view.main.MainActivity
 import com.lfork.phonelimit.base.permission.PermissionManager
 import java.lang.Exception
 import java.util.*

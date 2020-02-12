@@ -16,7 +16,7 @@
             android:background="@drawable/bg_rectangle_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".main.settings.SettingsFragment">
+            tools:context=".view.main.settings.SettingsFragment">
 
             <TextView
                 android:id="@+id/textView9"
@@ -61,7 +61,7 @@
             android:background="@drawable/bg_rectangle_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".main.settings.SettingsFragment">
+            tools:context=".view.main.settings.SettingsFragment">
 
             <TextView
                 android:id="@+id/textView1"
